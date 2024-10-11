@@ -1510,7 +1510,7 @@ Route::post('/item/report', 'Front\CatalogController@report')->name('product.rep
     // CART SECTION
     Route::get('/carts/view','Front\CartController@cartview');
     Route::get('/carts','Front\CartController@cart')->name('front.cart');
-    Route::get('/addcart/{id}','Front\CartController@addcart')->name('product.cart.add');
+    Route::post('/addcart/{id}','Front\CartController@addcart')->name('product.cart.add');
     Route::get('/addtocart/{id}','Front\CartController@addtocart')->name('product.cart.quickadd');
     Route::get('/addnumcart','Front\CartController@addnumcart')->name('details.cart');
     Route::get('/addtonumcart','Front\CartController@addtonumcart');

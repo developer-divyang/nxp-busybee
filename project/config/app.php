@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => 'http://localhost/easybee/project/',
+    'url' => 'http://localhost/nxp-busybee/project/',
 
     'asset_url' => env('ASSET_URL', null),
 

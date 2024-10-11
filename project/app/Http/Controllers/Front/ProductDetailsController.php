@@ -93,24 +93,22 @@ class ProductDetailsController extends FrontBaseController
             if ($productt) {
                 // $request = $request->all();
 
-                $colorId = $request->input('selected_color');
+                $colorIds = $request->input('selected_color');
                 $quantity = $request->input('quantity');
                 // dd($colorId, $sizeId, $quantity);
-                $color = Color::find($colorId);
-                // dd($color);
-                // $size = Size::find($sizeId);
-
-                // $oldCart = Session::has('cart') ? Session::get('cart') : null;
-                // $cart = new Cart($oldCart);
-                // $cart->removeItem($id);
+                // $color = Color::find($colorId);
+                
                 // Session::forget('cart');
                 $oldCart = Session::get('cart');
+                // dd($oldCart);
                 $cart = new Cart($oldCart);
                 $products = $cart->items;
+
+                // dd($products);
                 // dd($products[$productt->id. $color->color_name. $size->size_name]);
             
 
-                $html =  view('frontend.ajax.variation-items', compact('productt', 'request', 'products'))->render();
+                $html =  view('frontend.ajax.variation-items', compact('productt', 'request', 'products', 'colorIds'))->render();
             }
             return response()->json([
                 'success' => true,
@@ -136,7 +134,13 @@ class ProductDetailsController extends FrontBaseController
         }
         $curr = $this->curr;
 
-        return view('frontend.customization.step1', compact('productt', 'curr', 'related_products'));
+        $oldCart = Session::get('cart');
+        // dd($oldCart);
+        $cart = new Cart($oldCart);
+        $products = $cart->items;
+        // dd($products);
+
+        return view('frontend.customization.step1', compact('productt', 'curr', 'related_products', 'products'));
     }
 
     public function customization2(Request $request, $slug)

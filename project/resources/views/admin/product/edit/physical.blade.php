@@ -33,1139 +33,314 @@
 	<form id="geniusform" action="{{route('admin-prod-update',$data->id)}}" method="POST" enctype="multipart/form-data">
 		{{csrf_field()}}
 		@include('alerts.admin.form-both')
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="add-product-content">
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="product-description">
-								<div class="body-area">
-									<div class="gocover" style="background: url({{asset('assets/images/'.$gs->admin_loader)}}) no-repeat scroll center center rgba(45, 45, 45, 0.5);"></div>
-
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __("Product Name") }}* </h4>
-												<p class="sub-heading">{{ __("(In Any Language)") }}</p>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input type="text" class="input-field" placeholder="{{ __("Enter Product Name") }}" name="name" required="" value="{{ $data->name }}">
-											<input type="hidden" value="1" name="language_id">
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Product Sku') }}* </h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input type="text" class="input-field" placeholder="{{ __('Enter Product Sku') }}" name="sku" required="" value="{{ $data->sku }}">
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Category') }}*</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<select id="cat" name="category_id" required="">
-												<option>{{ __('Select Category') }}</option>
-												@foreach($cats as $cat)
-												<option data-href="{{ route('admin-subcat-load',$cat->id) }}" value="{{$cat->id}}" {{$cat->id == $data->category_id ? "selected":""}}>{{$cat->name}}</option>
-												@endforeach
-											</select>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Sub Category') }}*</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<select id="subcat" name="subcategory_id">
-												<option value="">{{ __('Select Sub Category') }}</option>
-												@if($data->subcategory_id == null)
-												@foreach($data->category->subs as $sub)
-												<option data-href="{{ route('admin-childcat-load',$sub->id) }}" value="{{$sub->id}}">{{$sub->name}}</option>
-												@endforeach
-												@else
-												@foreach($data->category->subs as $sub)
-												<option data-href="{{ route('admin-childcat-load',$sub->id) }}" value="{{$sub->id}}" {{$sub->id == $data->subcategory_id ? "selected":""}}>{{$sub->name}}</option>
-												@endforeach
-												@endif
-											</select>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Child Category') }}*</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<select id="childcat" name="childcategory_id" {{$data->subcategory_id == null ? "disabled":""}}>
-												<option value="">{{ __('Select Child Category') }}</option>
-												@if($data->subcategory_id != null)
-												@if($data->childcategory_id == null)
-												@foreach($data->subcategory->childs as $child)
-												<option value="{{$child->id}}">{{$child->name}}</option>
-												@endforeach
-												@else
-												@foreach($data->subcategory->childs as $child)
-												<option value="{{$child->id}} " {{$child->id == $data->childcategory_id ? "selected":""}}>{{$child->name}}</option>
-												@endforeach
-												@endif
-												@endif
-											</select>
-										</div>
-									</div>
-
-									@php
-									$selectedAttrs = json_decode($data->attributes, true);
-									// dd($selectedAttrs);
-									@endphp
-
-									{{-- Attributes of category starts --}}
-									<div id="catAttributes">
-										@php
-										$catAttributes = !empty($data->category->attributes) ? $data->category->attributes : '';
-										@endphp
-										@if (!empty($catAttributes))
-										@foreach ($catAttributes as $catAttribute)
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">{{ $catAttribute->name }} *</h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												@php
-												$i = 0;
-												@endphp
-												@foreach ($catAttribute->attribute_options as $optionKey => $option)
-												@php
-												$inName = $catAttribute->input_name;
-												$checked = 0;
-												@endphp
-												<div class="row">
-													<div class="col-lg-5">
-														<div class="custom-control custom-checkbox">
-															<input type="checkbox" id="{{ $catAttribute->input_name }}{{$option->id}}" name="{{ $catAttribute->input_name }}[]" value="{{$option->name}}" class="custom-control-input attr-checkbox"
-																@if (is_array($selectedAttrs) && array_key_exists($catAttribute->input_name,$selectedAttrs))
-															@if (is_array($selectedAttrs["$inName"]["values"]) && in_array($option->name, $selectedAttrs["$inName"]["values"]))
-															checked
-															@php
-															$checked = 1;
-															@endphp
-															@endif
-															@endif
-															>
-															<label class="custom-control-label" for="{{ $catAttribute->input_name }}{{$option->id}}">{{ $option->name }}</label>
-														</div>
-													</div>
-
-													<div class="col-lg-7 {{ $catAttribute->price_status == 0 ? 'd-none' : '' }}">
-														<div class="row">
-															<div class="col-2">
-																+
-															</div>
-															<div class="col-10">
-																<div class="price-container">
-																	<span class="price-curr">{{ $sign->sign }}</span>
-																	<input type="text" class="input-field price-input" id="{{ $catAttribute->input_name }}{{$option->id}}_price" data-name="{{ $catAttribute->input_name }}_price[]" placeholder="0.00 (Additional Price)" value="{{ !empty($selectedAttrs["$inName"]['prices'][$i]) && $checked == 1 ? $selectedAttrs["$inName"]['prices'][$i] : '' }}">
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												@php
-												if ($checked == 1) {
-												$i++;
-												}
-												@endphp
-												@endforeach
-											</div>
-										</div>
-										@endforeach
-										@endif
-									</div>
-									{{-- Attributes of category ends --}}
-
-									{{-- Attributes of subcategory starts --}}
-									<div id="subcatAttributes">
-										@php
-										$subAttributes = !empty($data->subcategory->attributes) ? $data->subcategory->attributes : '';
-										@endphp
-										@if (!empty($subAttributes))
-										@foreach ($subAttributes as $subAttribute)
-										<div class="row">
-											<div class="col-lg-12 mb-2">
-												<div class="left-area">
-													<h4 class="heading">{{ $subAttribute->name }} *</h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												@php
-												$i = 0;
-												@endphp
-												@foreach ($subAttribute->attribute_options as $option)
-												@php
-												$inName = $subAttribute->input_name;
-												$checked = 0;
-												@endphp
-
-												<div class="row">
-													<div class="col-lg-5">
-														<div class="custom-control custom-checkbox">
-															<input type="checkbox" id="{{ $subAttribute->input_name }}{{$option->id}}" name="{{ $subAttribute->input_name }}[]" value="{{$option->name}}" class="custom-control-input attr-checkbox"
-																@if (is_array($selectedAttrs) && array_key_exists($subAttribute->input_name,$selectedAttrs))
-															@php
-															$inName = $subAttribute->input_name;
-															@endphp
-															@if (is_array($selectedAttrs["$inName"]["values"]) && in_array($option->name, $selectedAttrs["$inName"]["values"]))
-															checked
-															@php
-															$checked = 1;
-															@endphp
-															@endif
-															@endif
-															>
-
-															<label class="custom-control-label" for="{{ $subAttribute->input_name }}{{$option->id}}">{{ $option->name }}</label>
-														</div>
-													</div>
-													<div class="col-lg-7 {{ $subAttribute->price_status == 0 ? 'd-none' : '' }}">
-														<div class="row">
-															<div class="col-2">
-																+
-															</div>
-															<div class="col-10">
-																<div class="price-container">
-																	<span class="price-curr">{{ $sign->sign }}</span>
-																	<input type="text" class="input-field price-input" id="{{ $subAttribute->input_name }}{{$option->id}}_price" data-name="{{ $subAttribute->input_name }}_price[]" placeholder="0.00 (Additional Price)" value="{{ !empty($selectedAttrs["$inName"]['prices'][$i]) && $checked == 1 ? $selectedAttrs["$inName"]['prices'][$i] : '' }}">
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												@php
-												if ($checked == 1) {
-												$i++;
-												}
-												@endphp
-												@endforeach
-											</div>
-										</div>
-										@endforeach
-										@endif
-									</div>
-									{{-- Attributes of subcategory ends --}}
-
-									{{-- Attributes of child category starts --}}
-									<div id="childcatAttributes">
-										@php
-										$childAttributes = !empty($data->childcategory->attributes) ? $data->childcategory->attributes : '';
-										@endphp
-										@if (!empty($childAttributes))
-										@foreach ($childAttributes as $childAttribute)
-										<div class="row">
-											<div class="col-lg-12 mb-2">
-												<div class="left-area">
-													<h4 class="heading">{{ $childAttribute->name }} *</h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												@php
-												$i = 0;
-												@endphp
-												@foreach ($childAttribute->attribute_options as $optionKey => $option)
-												@php
-												$inName = $childAttribute->input_name;
-												$checked = 0;
-												@endphp
-												<div class="row">
-													<div class="col-lg-5">
-														<div class="custom-control custom-checkbox">
-															<input type="checkbox" id="{{ $childAttribute->input_name }}{{$option->id}}" name="{{ $childAttribute->input_name }}[]" value="{{$option->name}}" class="custom-control-input attr-checkbox"
-																@if (is_array($selectedAttrs) && array_key_exists($childAttribute->input_name,$selectedAttrs))
-															@php
-															$inName = $childAttribute->input_name;
-															@endphp
-															@if (is_array($selectedAttrs["$inName"]["values"]) && in_array($option->name, $selectedAttrs["$inName"]["values"]))
-															checked
-															@php
-															$checked = 1;
-															@endphp
-															@endif
-															@endif
-
-															>
-
-															<label class="custom-control-label" for="{{ $childAttribute->input_name }}{{$option->id}}">{{ $option->name }}</label>
-														</div>
-													</div>
-
-
-													<div class="col-lg-7 {{ $childAttribute->price_status == 0 ? 'd-none' : '' }}">
-														<div class="row">
-															<div class="col-2">
-																+
-															</div>
-															<div class="col-10">
-																<div class="price-container">
-																	<span class="price-curr">{{ $sign->sign }}</span>
-																	<input type="text" class="input-field price-input" id="{{ $childAttribute->input_name }}{{$option->id}}_price" data-name="{{ $childAttribute->input_name }}_price[]" placeholder="0.00 (Additional Price)" value="{{ !empty($selectedAttrs["$inName"]['prices'][$i]) && $checked == 1 ? $selectedAttrs["$inName"]['prices'][$i] : '' }}">
-																</div>
-															</div>
-														</div>
-													</div>
-												</div>
-												@php
-												if ($checked == 1) {
-												$i++;
-												}
-												@endphp
-												@endforeach
-											</div>
-
-										</div>
-										@endforeach
-										@endif
-									</div>
-									{{-- Attributes of child category ends --}}
-
-									<div class="{{ !empty($data->size) ? "showbox":"" }}" id="stckprod">
-										<div class="row">
-
-											<div class="col-lg-12">
-												<div class="checkbox-wrapper">
-													<input type="checkbox" name="measure_check" class="checkclick1" id="allowProductMeasurement" value="1" {{ $data->measure == null ? '' : 'checked' }}>
-													<label for="allowProductMeasurement">{{ __('Allow Product Measurement') }}</label>
-												</div>
-											</div>
-										</div>
-
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input class="checkclick1" name="product_condition_check" type="checkbox" id="conditionCheck" value="1" {{ $data->product_condition != 0 ? "checked":"" }}>
-													<label for="conditionCheck">{{ __('Allow Product Condition') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-									<div class="{{ $data->product_condition == 0 ? "showbox":"" }}">
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">{{ __('Product Condition') }}*</h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<select name="product_condition">
-													<option value="2" {{$data->product_condition == 2
-																	? "selected":""}}>{{ __('New') }}</option>
-													<option value="1" {{$data->product_condition == 1
-																	? "selected":""}}>{{ __('Used') }}</option>
-												</select>
-											</div>
-										</div>
-									</div>
-
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input class="checkclick1" name="preordered_check" type="checkbox" id="preorderedCheck" value="1" {{ $data->preordered != 0 ? "checked":"" }}>
-													<label for="preorderedCheck">{{ __('Allow Product Preorder') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-									<div class="{{ $data->preordered == 0 ? "showbox":"" }}">
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">{{ __('Product Preorder') }}*</h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<select name="preordered">
-													<option value="1" {{$data->preordered == 1
-																	? "selected":""}}>{{ __('Sale') }}</option>
-													<option value="2" {{$data->preordered == 2
-																	? "selected":""}}>{{ __('Preordered') }}</option>
-												</select>
-											</div>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input class="checkclick1" name="minimum_qty_check" type="checkbox" id="check111" value="1" {{$data->minimum_qty != null ? "checked":""}}>
-													<label for="check111">{{ __('Allow Minimum Order Qty') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-									<div class="{{ $data->minimum_qty != null ? "":"showbox" }}">
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">{{ __('Product Minimum Order Qty') }}* </h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<input type="number" class="input-field" min="1"
-													placeholder="{{ __('Minimum Order Qty') }}" name="minimum_qty" value="{{  $data->minimum_qty == null ? '' : $data->minimum_qty  }}">
-											</div>
-										</div>
-									</div>
-
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input class="checkclick1" name="shipping_time_check" type="checkbox" id="check1" value="1" {{$data->ship != null ? "checked":""}}>
-													<label for="check1">{{ __('Allow Estimated Shipping Time') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-
-									<div class="{{ $data->ship != null ? "":"showbox" }}">
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">{{ __('Product Estimated Shipping Time') }}* </h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<input type="text" class="input-field"
-													placeholder="{{ __('Estimated Shipping Time') }}" name="ship"
-													value="{{ $data->ship == null ? "" : $data->ship }}">
-											</div>
-										</div>
-									</div>
-
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input class="checkclickc" name="color_check" type="checkbox" id="check3" value="1" {{ !empty($data->color_all) ? "checked":"" }}>
-													<label for="check3">{{ __('Allow Product Colors') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-									<div class="{{ !empty($data->color_all) ? "":"showbox" }}">
-										<div class="row">
-											@if(!empty($data->color_all))
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">
-														{{ __('Product Colors') }}*
-													</h4>
-													<p class="sub-heading">
-														{{ __('(Choose Your Favorite Colors)') }}
-													</p>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<div class="select-input-color" id="color-section">
-													@foreach(array_unique(explode(',',$data->color_all)) as $ct)
-													<div class="color-area">
-														<span class="remove color-remove"><i class="fas fa-times"></i></span>
-														<div class="input-group colorpicker-component cp">
-															<input type="text" name="color_all[]" value="{{ $ct }}" class="input-field cp tcolor" />
-															<span class="input-group-addon"><i></i></span>
-														</div>
-													</div>
-													@endforeach
-												</div>
-												<a href="javascript:;" id="color-btn" class="add-more mt-4 mb-3"><i class="fas fa-plus"></i>{{ __('Add More Color') }} </a>
-											</div>
-
-											@else
-
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">
-														{{ __('Product Colors') }}*
-													</h4>
-													<p class="sub-heading">
-														{{ __('(Choose Your Favorite Colors)') }}
-													</p>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<div class="select-input-color" id="color-section">
-													<div class="color-area">
-														<span class="remove color-remove"><i class="fas fa-times"></i></span>
-														<div class="input-group colorpicker-component cp">
-															<input type="text" name="color_all[]" class="input-field cp tcolor" />
-															<span class="input-group-addon"><i></i></span>
-														</div>
-													</div>
-												</div>
-												<a href="javascript:;" id="color-btn" class="add-more mt-4 mb-3"><i class="fas fa-plus"></i>{{ __('Add More Color') }} </a>
-											</div>
-											@endif
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input class="checkclicks" name="size_check" type="checkbox" id="tcheck" value="1" {{ !empty($data->size_all) ? "checked":"" }}>
-													<label for="tcheck">{{ __('Allow Product Sizes') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-									<div class="{{ !empty($data->size_all) ? "":"showbox" }}">
-										@if(!empty($data->size_all))
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">
-														{{ __('Product Size') }}*
-													</h4>
-													<p class="sub-heading">
-														{{ __('(eg. S,M,L,XL,XXL,3XL,4XL)') }}
-													</p>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<div class="select-input-tsize" id="tsize-section">
-													@foreach(array_unique(explode(',',$data->size_all)) as $dt)
-													<div class="tsize-area">
-														<span class="remove tsize-remove"><i class="fas fa-times"></i></span>
-														<input type="text" name="size_all[]" class="input-field tsize" placeholder="{{ __('Enter Product Size') }}" value="{{ $dt }}" required="">
-													</div>
-													@endforeach
-												</div>
-												<a href="javascript:;" id="tsize-btn" class="add-more mt-4 mb-3"><i class="fas fa-plus"></i>{{ __('Add More Size') }} </a>
-											</div>
-										</div>
-										@else
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">
-														{{ __('Product Size') }}*
-													</h4>
-													<p class="sub-heading">
-														{{ __('(eg. S,M,L,XL,XXL,3XL,4XL)') }}
-													</p>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<div class="select-input-tsize" id="tsize-section">
-													<div class="tsize-area">
-														<span class="remove tsize-remove"><i class="fas fa-times"></i></span>
-														<input type="text" name="size_all[]" class="input-field tsize" placeholder="{{ __('Enter Product Size') }}">
-
-													</div>
-												</div>
-												<a href="javascript:;" id="tsize-btn" class="add-more mt-4 mb-3"><i class="fas fa-plus"></i>{{ __('Add More Size') }} </a>
-											</div>
-										</div>
-										@endif
-									</div>
-
-
-
-
-									<div class="{{ $data->measure == null ? 'showbox' : '' }}">
-										<div class="row">
-											<div class="col-lg-6">
-												<div class="left-area">
-													<h4 class="heading">{{ __('Product Measurement') }}*</h4>
-												</div>
-											</div>
-											<div class="col-lg-6">
-												<select id="product_measure">
-													<option value="" {{$data->measure == null ? 'selected':''}}>{{ __('None') }}</option>
-													<option value="Gram" {{$data->measure == 'Gram' ? 'selected':''}}>{{ __('Gram') }}</option>
-													<option value="Kilogram" {{$data->measure == 'Kilogram' ? 'selected':''}}>{{ __('Kilogram') }}</option>
-													<option value="Litre" {{$data->measure == 'Litre' ? 'selected':''}}>{{ __('Litre') }}</option>
-													<option value="Pound" {{$data->measure == 'Pound' ? 'selected':''}}>{{ __('Pound') }}</option>
-													<option value="Custom" {{ in_array($data->measure,explode(',', 'Gram,Kilogram,Litre,Pound')) ? '' : 'selected' }}>{{ __('Custom') }}</option>
-												</select>
-											</div>
-											{{-- <div class="col-lg-1"></div> --}}
-											<div class="col-lg-6 {{ in_array($data->measure,explode(',', 'Gram,Kilogram,Litre,Pound')) ? 'hidden' : '' }}" id="measure">
-												<input name="measure" type="text" id="measurement" class="input-field" placeholder="Enter Unit" value="{{$data->measure}}">
-											</div>
-										</div>
-									</div>
-
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input name="stock_check" class="stock-check" type="checkbox" id="size-check" value="1" {{ !empty($data->size) ? "checked":"" }}>
-													<label for="size-check" class="stock-text">{{ __('Manage Stock') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-									<div class="row {{ !empty($data->size) ? "d-none":"" }}" id="default_stock">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Product Stock') }}*</h4>
-												<p class="sub-heading">{{ __('(Leave Empty will Show Always Available)') }}</p>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input name="stock" type="number" class="input-field" placeholder="e.g 20" value="{{$data->stock}}" min="0">
-										</div>
-									</div>
-
-
-
-
-
-
-
-									<div class="{{ !empty($data->size) ? "":"showbox" }}" id="size-display">
-										<div class="row">
-											<div class="col-lg-12">
-											</div>
-											<div class="col-lg-12">
-												<div class="product-size-details" id="size-section">
-													@if(!empty($data->size))
-													@foreach($data->size as $key => $data1)
-													<div class="size-area">
-														<span class="remove size-remove"><i class="fas fa-times"></i></span>
-														<div class="row">
-															<div class="col-md-2 col-sm-6">
-																<label>
-																	{{ __('Size Name') }} :
-																	<span>
-																		{{ __('(eg. S,M,L,XL,3XL,4XL)') }}
-																	</span>
-																</label>
-																<select name="size[]" class="input-field size-name">
-																	@foreach($data->size as $dt)
-																	<option value="{{ $dt }}" {{ $dt == $data1 ? 'selected' : '' }}>{{ $dt }}</option>
-																	@endforeach
-																</select>
-															</div>
-															<div class="col-md-2 col-sm-6">
-																<label>
-																	{{ __('Size Qty') }} :
-																	<span>
-																		{{ __('(Quantity of this size)') }}
-																	</span>
-																</label>
-																<input type="number" name="size_qty[]" required class="input-field" placeholder="{{ __('Size Qty') }}" value="{{ $data->size_qty[$key] }}" min="1">
-															</div>
-															<div class="col-md-2 col-sm-6">
-																<label>
-																	{{ __('Size Price') }} :
-																	<span>
-																		{{ __('(Added with base price)') }}
-																	</span>
-																</label>
-																<input type="number" name="size_price[]" required class="input-field" placeholder="{{ __('Size Price') }}" value="{{ round($data->size_price[$key] * $sign->value , 2) }}" min="0">
-															</div>
-															<div class="col-md-2 col-sm-6">
-																<label>
-																	{{ __('Size Color') }} :
-																	<span>
-																		{{ __('(Select color of this size)') }}
-																	</span>
-																</label>
-																<select name="color[]" class="input-field color-name">
-																	@foreach($data->color as $ct)
-																	<option value="{{ $ct }}" style="background-color:{{ $ct }}" {{ $ct == $data->color[$key] ? 'selected' : '' }}></option>
-																	@endforeach
-																</select>
-															</div>
-															<div class="col-md-4 col-sm-6">
-																<label>
-																	{{ __(' Image') }} :
-																	<span>
-																		{{ __('(Select image of this size & color)') }}
-																	</span>
-																</label>
-																//display image
-																<img src="{{ asset('assets/images/variant_products/'.$data->image[$key]) }}" alt="Product Image" style="width: 50px; height: 50px;">
-
-																<input type="file" name="image[]" required class="input-field" placeholder="{{ __('Image') }}">
-															</div>
-
-														</div>
-													</div>
-
-													@endforeach
-
-													@else
-
-													<div class="size-area">
-														<span class="remove size-remove"><i class="fas fa-times"></i></span>
-														<div class="row">
-															<div class="col-md-3 col-sm-6">
-																<label>
-																	{{ __('Size Name') }} :
-																	<span>
-																		{{ __('(eg. S,M,L,XL,3XL,4XL)') }}
-																	</span>
-																</label>
-																<select name="size[]" class="input-field size-name"></select>
-															</div>
-															<div class="col-md-3 col-sm-6">
-																<label>
-																	{{ __('Size Qty') }} :
-																	<span>
-																		{{ __('(Quantity of this size)') }}
-																	</span>
-																</label>
-																<input type="number" name="size_qty[]" class="input-field" placeholder="{{ __('Size Qty') }}" value="1" min="1">
-															</div>
-															<div class="col-md-3 col-sm-6">
-																<label>
-																	{{ __('Size Price') }} :
-																	<span>
-																		{{ __('(Added with base price)') }}
-																	</span>
-																</label>
-																<input type="number" name="size_price[]" class="input-field" placeholder="{{ __('Size Price') }}" value="0" min="0">
-															</div>
-															<div class="col-md-3 col-sm-6">
-																<label>
-																	{{ __('Size Color') }} :
-																	<span>
-																		{{ __('(Select color of this size)') }}
-																	</span>
-																</label>
-																<select name="color[]" class="input-field color-name"></select>
-															</div>
-
-														</div>
-													</div>
-
-													@endif
-
-												</div>
-
-												<a href="javascript:;" id="size-btn" class="add-more"><i class="fas fa-plus"></i>{{ __('Add More') }} </a>
-											</div>
-										</div>
-									</div>
-
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul class="list">
-												<li>
-													<input class="checkclick1" name="whole_check" type="checkbox" id="whole_check" value="1" {{ !empty($data->whole_sell_qty) ? "checked":"" }}>
-													<label for="whole_check">{{ __('Allow Product Whole Sell') }}</label>
-												</li>
-											</ul>
-										</div>
-									</div>
-
-									<div class="{{ !empty($data->whole_sell_qty) ? "":"showbox" }}">
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<div class="featured-keyword-area">
-													<div class="feature-tag-top-filds" id="whole-section">
-														@if(!empty($data->whole_sell_qty))
-
-														@foreach($data->whole_sell_qty as $key => $data1)
-
-														<div class="feature-area">
-															<span class="remove whole-remove"><i class="fas fa-times"></i></span>
-															<div class="row">
-																<div class="col-lg-6">
-																	<input type="number" name="whole_sell_qty[]" class="input-field" placeholder="{{ __('Enter Quantity') }}" min="0" value="{{ $data->whole_sell_qty[$key] }}" required="">
-																</div>
-
-																<div class="col-lg-6">
-																	<input type="number" name="whole_sell_discount[]" class="input-field" placeholder="{{ __('Enter Price') }}" min="0" value="{{ $data->whole_sell_discount[$key] }}" required="">
-																</div>
-															</div>
-														</div>
-
-
-														@endforeach
-														@else
-
-
-														<div class="feature-area">
-															<span class="remove whole-remove"><i class="fas fa-times"></i></span>
-															<div class="row">
-																<div class="col-lg-6">
-																	<input type="number" name="whole_sell_qty[]" class="input-field" placeholder="{{ __('Enter Quantity') }}" min="0">
-																</div>
-
-																<div class="col-lg-6">
-																	<input type="number" name="whole_sell_discount[]" class="input-field" placeholder="{{ __('Enter Discount Percentage') }}" min="0" />
-																</div>
-															</div>
-														</div>
-
-														@endif
-													</div>
-
-													<a href="javascript:;" id="whole-btn" class="add-fild-btn"><i class="icofont-plus"></i> {{ __('Add More Field') }}</a>
-												</div>
-											</div>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">
-													{{ __('Product Description') }}*
-												</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<div class="text-editor">
-												<textarea name="details" class="nic-edit-p">{{$data->details}}</textarea>
-											</div>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">
-													{{ __('Product Buy/Return Policy') }}*
-												</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<div class="text-editor">
-												<textarea name="policy" class="nic-edit-p">{{$data->policy}}</textarea>
-											</div>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="checkbox-wrapper">
-												<input type="checkbox" name="seo_check" value="1" class="checkclick" id="allowProductSEO" {{ ($data->meta_tag != null || strip_tags($data->meta_description) != null) ? 'checked':'' }}>
-												<label for="allowProductSEO">{{ __('Allow Product SEO') }}</label>
-											</div>
-										</div>
-									</div>
-
-									<div class="{{ ($data->meta_tag == null && strip_tags($data->meta_description) == null) ? "showbox":"" }}">
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">{{ __('Meta Tags') }} *</h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<ul id="metatags" class="myTags">
-													@if(!empty($data->meta_tag))
-													@foreach ($data->meta_tag as $element)
-													<li>{{ $element }}</li>
-													@endforeach
-													@endif
-												</ul>
-											</div>
-										</div>
-
-										<div class="row">
-											<div class="col-lg-12">
-												<div class="left-area">
-													<h4 class="heading">
-														{{ __('Meta Description') }} *
-													</h4>
-												</div>
-											</div>
-											<div class="col-lg-12">
-												<div class="text-editor">
-													<textarea name="meta_description" class="input-field" placeholder="{{ __('Details') }}">{{ $data->meta_description }}</textarea>
-												</div>
-											</div>
-										</div>
-									</div>
-
+		<div class="card mb-3">
+			<div class="card-header">
+				<strong>{{ __('General setup') }}</strong>
+			</div>
+			<div class="card-body">
+				<div class="row p-3">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="productPrice">{{ __('Product Name') }}</label>
+							<input type="text" class="form-control" readonly class="input-field" placeholder="" id="product_name" name="name" required="">
+							<input type="hidden" value="1" name="language_id">
+							<input type="hidden" name="type" value="Physical">
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Product Sku') }}</label>
+							<input type="text" class="input-field" placeholder="{{ __('Enter Product Sku') }}" name="sku" required="" value="{{ Str::random(3).substr(time(), 6,8).Str::random(3) }}">
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Select Category') }}</label>
+							<select id="cat" class="form-control" name="category_id" required="">
+								<option value="">{{ __('Select Category') }}</option>
+								@foreach($cats as $cat)
+								<option value="{{ $cat->id }}">{{$cat->name}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Select Fit') }}</label>
+							<select name="fit" class="form-control" id="fit" required>
+								<option value="stretch">{{ __('Stretch Fit') }}</option>
+								<option value="adjustable">{{ __('Adjustable') }}</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Select Style') }}</label>
+							<select name="style" class="form-control" id="style" required>
+								<option value="structured">{{ __('Structured (Hard Front)') }}</option>
+								<option value="unstructured">{{ __('Unstructured(Floppy Front)') }}</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Select Bill') }}</label>
+							<select name="bill" class="form-control" id="bill" required>
+								<option value="curved">{{ __('Curved') }}</option>
+								<option value="flat">{{ __('Flat') }}</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-3">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Select Profile') }}</label>
+							<select name="profile" class="form-control" id="profile" required>
+								<option value="high">{{ __('High Profile') }}</option>
+								<option value="mid">{{ __('Mid Profile') }}</option>
+								<option value="low">{{ __('Low Profile') }}</option>
+								<option value="pro">{{ __('Pro Style') }}</option>
+							</select>
+						</div>
+					</div>
+
+					<div class="col-md-3">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Cap Closure') }}</label>
+							<select name="closure" class="form-control" id="closure" required>
+								<option value="snapback">{{ __('Snapback') }}</option>
+								<option value="buckle">{{ __('Buckle') }}</option>
+								<option value="velcro">{{ __('Velcro') }}</option>
+								<option value="n/a">{{ __('N/A') }}</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Panel') }}</label>
+							<select name="panel" class="form-control" id="panel" required>
+								<option value="5">{{ __('5 Panel') }}</option>
+								<option value="6">{{ __('6 Panel') }}</option>
+							</select>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Model Number') }}</label>
+							<select name="model_number" id="model_number" class="select2 form-control" required style="width: 100%;">
+
+								@foreach (App\Models\ModelNumber::all() as $model)
+								<option value="{{$model->id}}">{{$model->model_number}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<div class="form-group">
+							<label for="productDiscount">{{ __('Brand') }}</label>
+							<select name="brand_id" id="brand_id" class="select2 form-control" required style="width: 100%;">
+
+								@foreach (App\Models\Brand::all() as $brand)
+								<option value="{{$brand->id}}">{{$brand->brand}}</option>
+								@endforeach
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="card mb-3">
+			<div class="card-header ">
+				<strong>{{ __('Pricing & Others') }}</strong>
+			</div>
+			<div class="card-body">
+				<div class="row p-3">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label class="text-center" for="productPrice">{{ __('Product Price Range') }}</label>
+						</div>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="productPrice">{{ __('Minimum Price') }}</label>
+									<input type="number" class="form-control" placeholder="{{ __('Enter Minimum Price') }}" name="min_price" required="">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="productPrice">{{ __('Maximum Price') }}</label>
+									<input type="number" class="form-control" placeholder="{{ __('Enter Maximum Price') }}" name="max_price" required="">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label class="text-center" for="productPrice">{{ __('Others') }}</label>
+						</div>
+						<div class="row">
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="productPrice">{{ __('Blank Price') }}</label>
+									<input name="blank_price" type="number" class="input-field" placeholder="{{ __('e.g 20') }}">
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="productPrice">{{ __('Weight') }}</label>
+									<input name="weight" type="number" class="input-field" placeholder="{{ __('e.g 20') }}">
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="form-group">
+									<label for="productPrice">{{ __('Shipping Cost') }}</label>
+									<input name="shipping_cost" type="number" class="input-field" placeholder="{{ __('e.g 20') }}">
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="add-product-content">
-					<div class="row">
-						<div class="col-lg-12">
-							<div class="product-description">
-								<div class="body-area">
+			</div>
+		</div>
 
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Feature Image') }} *</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<div class="panel panel-body">
-												<div class="span4 cropme text-center" id="landscape" style="width: 100%; height: 285px; border: 1px dashed #ddd; background: #f1f1f1;">
-													<a href="javascript:;" id="crop-image" class="d-inline-block mybtn1">
-														<i class="icofont-upload-alt"></i> {{ __('Upload Image Here') }}
-													</a>
-												</div>
-											</div>
-										</div>
+
+		<div class="card mb-3">
+			<div class="card-header">
+				<strong>{{ __('Product variation setup') }}</strong>
+			</div>
+			<div class="card-body">
+				<div class="row p-3 social-links-area">
+					<div class="col-lg-12 d-flex justify-content-between">
+						<label class="control-label">{{ __('Allow Product Colors') }} *</label>
+						<label class="switch">
+							<input type="checkbox" data-type="color" class="checkclickc" name="color_check" id="check3" value="1">
+							<span class="slider round"></span>
+						</label>
+					</div>
+
+
+					<div class="showbox color-selector">
+						<div id="color-section">
+							<div class="row">
+
+								<div class="col-md-3">
+									<div class="form-group">
+
+										<label for="color_group">Color Group</label>
+										<input type="text" name="color_group[]" id="color_group_0" class="form-control " required>
 									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
 
-									<input type="hidden" id="feature_photo" name="photo" value="{{ $data->photo }}" accept="image/*">
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">
-													{{ __('Product Gallery Images') }} *
-												</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<a href="javascript" class="set-gallery" data-toggle="modal" data-target="#setgallery">
-												<input type="hidden" value="{{$data->id}}">
-												<i class="icofont-plus"></i> {{ __('Set Gallery') }}
-											</a>
-										</div>
+										<label for="color_name">Color Name</label>
+										<input type="text" name="color_name[]" id="color_name_0" class="form-control tcolor color_value" required>
 									</div>
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">
-													{{ __('Blank Prices') }}*
-												</h4>
-												<p class="sub-heading">
-													({{ __('In') }} {{$sign->name}})
-												</p>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input name="blank_price" type="text" class="input-field" placeholder="e.g 20"  min="0" value="{{round($data->blank_price * $sign->value , 2)}}" required="required">
-										</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+
+										<div id="preview_0" class="image-preview text-center"></div>
+										<label for="color_img">Color Image</label>
+										<input type="file" name="color_img[]" id="color_img_0" data-id="0" class="form-control" accept="image/*" required>
+
 									</div>
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">
-													{{ __('Weight (per cap)') }}*
-												</h4>
-												<p class="sub-heading">
-													({{ __('In (lbs)') }} )
-												</p>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input name="weight" type="text" class="input-field" placeholder="e.g 20"  min="0" value="{{ $data->weight }}" required="required">
-										</div>
-									</div>
+								</div>
+								<div class="col-md-3">
+									<div class="form-group">
+										<div id="product_preview_0" class="image-preview"></div>
 
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">
-													{{ __('Product Current Price') }}*
-												</h4>
-												<p class="sub-heading">
-													({{ __('In') }} {{$sign->name}})
-												</p>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input name="price" type="number" class="input-field" placeholder="e.g 20" step="0.1" min="0" value="{{round($data->price * $sign->value , 2)}}" required="">
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Product Discount Price') }}*</h4>
-												<p class="sub-heading">{{ __('(Optional)') }}</p>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input name="previous_price" step="0.1" type="number" class="input-field" placeholder="e.g 20" value="{{round($data->previous_price * $sign->value , 2)}}" min="0">
-										</div>
-									</div>
+										<label for="product_images">Product Images</label>
+										<input type="file" name="product_images[0][]" data-id="0" id="product_images_0" class="form-control" accept="image/*" multiple required>
 
 
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Youtube Video URL') }}*</h4>
-												<p class="sub-heading">{{ __('(Optional)') }}</p>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<input name="youtube" type="text" class="input-field" placeholder="Enter Youtube Video URL" value="{{$data->youtube}}">
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<div class="featured-keyword-area">
-												<div class="left-area">
-													<h4 class="title">{{ __('Feature Tags') }}</h4>
-												</div>
-
-												<div class="feature-tag-top-filds" id="feature-section">
-													@if(!empty($data->features))
-
-													@foreach($data->features as $key => $data1)
-
-													<div class="feature-area">
-														<span class="remove feature-remove"><i class="fas fa-times"></i></span>
-														<div class="row">
-															<div class="col-lg-6">
-																<input type="text" name="features[]" class="input-field" placeholder="{{ __('Enter Your Keyword') }}" value="{{ $data->features[$key] }}">
-															</div>
-
-															<div class="col-lg-6">
-																<div class="input-group colorpicker-component cp">
-																	<input type="text" name="colors[]" value="{{ $data->colors[$key] }}" class="input-field cp" />
-																	<span class="input-group-addon"><i></i></span>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													@endforeach
-													@else
-
-													<div class="feature-area">
-														<span class="remove feature-remove"><i class="fas fa-times"></i></span>
-														<div class="row">
-															<div class="col-lg-6">
-																<input type="text" name="features[]" class="input-field" placeholder="{{ __('Enter Your Keyword') }}">
-															</div>
-
-															<div class="col-lg-6">
-																<div class="input-group colorpicker-component cp">
-																	<input type="text" name="colors[]" value="#000000" class="input-field cp" />
-																	<span class="input-group-addon"><i></i></span>
-																</div>
-															</div>
-														</div>
-													</div>
-
-													@endif
-												</div>
-
-												<a href="javascript:;" id="feature-btn" class="add-fild-btn"><i class="icofont-plus"></i> {{ __('Add More Field') }}</a>
-											</div>
-										</div>
-									</div>
-
-									<div class="row">
-										<div class="col-lg-12">
-											<div class="left-area">
-												<h4 class="heading">{{ __('Tags') }} *</h4>
-											</div>
-										</div>
-										<div class="col-lg-12">
-											<ul id="tags" class="myTags">
-												@if(!empty($data->tags))
-												@foreach ($data->tags as $element)
-												<li>{{ $element }}</li>
-												@endforeach
-												@endif
-											</ul>
-										</div>
-									</div>
-
-									<div class="row text-center">
-										<div class="col-6 offset-3">
-											<button class="addProductSubmit-btn" type="submit">{{ __('Save') }}</button>
-										</div>
 									</div>
 								</div>
 							</div>
 						</div>
+						<a href="javascript:;" id="color-btn" class="add-more mt-4 mb-3"><i class="fas fa-plus"></i>{{ __('Add More Color') }} </a>
+
+					</div>
+
+					<div class="col-lg-12 d-flex justify-content-between">
+						<label class="control-label">{{ __('Allow Product Size') }} *</label>
+						<label class="switch">
+							<input type="checkbox" data-type="size" class="checkclickc" name="size_check" id="tcheck" value="1">
+							<span class="slider round"></span>
+						</label>
+					</div>
+
+
+					<div class="showbox size-selector col-md-12">
+						<div class="row">
+							<div class="col-lg-12">
+								<div class="form-group">
+
+									<label for="color_name">Size</label>
+									<div class="select-input-tsize" id="tsize-section">
+										<div class="tsize-area">
+											<div class="col-lg-12">
+												<ul id="tags" class="myTags">
+												</ul>
+											</div>
+
+										</div>
+									</div>
+								</div>
+
+							</div>
+
+							<div class="col-md-12 mt-2 mb-2">
+								<div class="form-group sku_combination" id="sku_combination"></div>
+							</div>
+
+						</div>
+
 					</div>
 				</div>
 
 			</div>
+		</div>
+
+		<div class="card mb-3">
+			<div class="card-header ">
+				<strong>{{ __('Details') }}</strong>
+			</div>
+			<div class="card-body">
+				<div class="row p-3">
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="productPrice">{{ __('Product Description') }}</label>
+							<textarea name="details" class="form-control nic-edit-p" id="details" rows="5"></textarea>
+						</div>
+					</div>
+					<div class="col-md-6">
+						<div class="form-group">
+							<label for="productPrice">{{ __('Meta Description') }}</label>
+							<textarea name="meta_description" class="form-control input-field" id="meta_description" rows="5"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+
+
+
+
+
+
+
+
+		<div class="row text-center">
+			<div class="col-6 offset-3">
+				<button class="addProductSubmit-btn" type="submit">{{ __('Save') }}</button>
+			</div>
+		</div>
+
+
 	</form>
 </div>
 

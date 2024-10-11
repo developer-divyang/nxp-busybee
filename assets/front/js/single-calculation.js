@@ -1,8 +1,9 @@
+
+
 function constantCalculation() {
-    // alert('gr:'+$('.g3').val());
     foreachInputFieldSetVariable();
 
-   
+
     var m3 = 'yes';
     var g5 = 'standard';
     var ab3 = 'no';
@@ -23,7 +24,7 @@ function constantCalculation() {
     //p3 =O3*30
     p3 = parseFloat(o3) * 30;
     // $('#p3').val(p3);
-    // alert(g3);
+
     //q3 =IF(G3="regular",B14,IF(G3="3D",B15))
     q3 = (g3 == 'regular') ? parseFloat(constant.b14) : parseFloat(constant.b15);
     // $('#q3').val(q3);
@@ -68,7 +69,7 @@ function constantCalculation() {
     //round to 2 decimal
     // z3 = z3.toFixed(4);
     // $('#y3').val(y3);
-// alert(g3);
+
 
 
     //t5 = IF(AND(I3 = "yes", K3 = "NO", OR(J3 = "right side", J3 = "left side"), OR(H3 = "front center", H3 = "front right panel", H3 = "front left panel")), B20, "0")
@@ -152,7 +153,7 @@ function constantCalculation() {
     // console.log('r3', r3);
     //n3
     // console.log('n3', n3);
-    //s3
+    // s3
     // console.log('s3', s3);
     //d3
     // console.log('d3', d3);
@@ -160,7 +161,7 @@ function constantCalculation() {
     // console.log('f3', f3);
     //ac3 =(AA3+R3+N3+S3+(D3*F3))/F3
 
-// alert(g3)
+
 
 
 
@@ -233,15 +234,25 @@ function constantCalculation() {
     //round with 2 decimal
     per_cap = per_cap.toFixed(2);
 
-    
+
     $('.price h3').html('$' + per_cap + ' per cap');
     $('.price').show();
 
-    
-    // alert(pid);
-    saveToLocalStorage(pid);
 
-    // loadFromLocalStorage(pid);
+    var productId = $('.select_color').first().data('product');
+    
+    // loadFromLocalStorage(productId);
+    // saveToLocalStorage(productId);
+
+
+
+    
+
+
+
+    
+
+    
 
 
 
@@ -250,251 +261,82 @@ function constantCalculation() {
 
 
 function saveToLocalStorage(productId) {
-    // alert(productId);
-    var g31 = $('.g3').val(); // Embroidery Type
-    var h31 = $('.h3').val(); // Front Embroidery
-    var i31 = $('.i3').val(); // Side Embroidery
-    var j31 = $('.j3').val(); // Side Embroidery Location (if visible)
-    var k31 = $('.k3').val(); // Back Embroidery
-    var l31 = $('.l3').val(); // Back Embroidery Location (if visible)
+    
+    var selectedColor = $('.select_color').find('.prod_color_active');
+    var selectedColorId = selectedColor.length ? selectedColor.closest('.select_color').data('id') : null;
+    // alert(selectedColorId);
+
+
+
+    // Collecting dropdown values
+    var g3 = $('#g3').val(); // Embroidery Type
+    var h3 = $('#h3').val(); // Front Embroidery
+    var i3 = $('#i3').val(); // Side Embroidery
+    var j3 = $('#j3').val(); // Side Embroidery Location (if visible)
+    var k3 = $('#k3').val(); // Back Embroidery
+    var l3 = $('#l3').val(); // Back Embroidery Location (if visible)
 
     var quantity = $('.quantity-input').val();
-    var itemsavedData = localStorage.getItem('product_items_' + productId);
-    // console.log(itemsavedData);
-    var color_ids = [];
-    if (itemsavedData) {
-        // alert('dfdfdfd');
-        savedData = JSON.parse(itemsavedData);
-        color_ids = savedData.color_id;
-    }
-    // alert(g3);
+
+
     var productData = {
-        color_id: color_ids,
-        embroidery_type: g31,
-        front_embroidery: h31,
-        side_embroidery: i31,
-        side_embroidery_location: j31,
-        back_embroidery: k31,
-        back_embroidery_location: l31,
-        quantity: quantity
+        color_id: selectedColorId,
+        embroidery_type: g3,
+        front_embroidery: h3,
+        side_embroidery: i3,
+        side_embroidery_location: j3,
+        back_embroidery: k3,
+        back_embroidery_location: l3,
+        quantity: quantity 
     };
 
-    // console.log(productData);
-
+    console.log(productData);
+    
 
     // Saving to local storage
-    localStorage.setItem('product_items_' + productId, JSON.stringify(productData));
+    localStorage.setItem('product_' + productId, JSON.stringify(productData));
    
 
 }
 
 
-
 function loadFromLocalStorage(productId) {
-    // alert('dfd');
-    // alert(productId);
-    var itemsavedData = localStorage.getItem('product_items_' + productId);
-    // console.log(itemsavedData);
     
-    if (itemsavedData){
-        // alert('dfdfdfd');
-        savedData = JSON.parse(itemsavedData);
-        
-        console.log(savedData)
+    var savedData = localStorage.getItem('product_' + productId);
+    
+    if (savedData) {
+        savedData = JSON.parse(savedData);
+        console.log(savedData);
+
+        // Set color
+        if (savedData.color_id) {
+            $('.select_color[data-id="' + savedData.color_id + '"]').find('img').addClass('prod_color_active');
+        }
+
         // Set dropdown values
-        $('.g3').val(savedData.embroidery_type || '');
-        $('.h3').val(savedData.front_embroidery || '');
-        $('.i3').val(savedData.side_embroidery || '');
-        $('.j3').val(savedData.side_embroidery_location || '');
-        $('.k3').val(savedData.back_embroidery || '');
-        $('.l3').val(savedData.back_embroidery_location || '');
-
-
-        var savedEmbroideryType = savedData.embroidery_type;
-
-        $('.embBox').each(function () {
-            // alert(savedEmbroideryType);
-            if ($(this).data('value') === savedEmbroideryType) {
-                $(this).addClass('embroselected');
-                $(this).find('.checkbox').addClass('embroselected');
-
-            } else {
-                $(this).removeClass('embroselected'); // Optionally remove the class if it doesn't match
-                $(this).find('.checkbox').removeClass('embroselected');
-
-            }
-        });
-
-        var savedFrontEmbroidery = savedData.front_embroidery;
-
-        $('.LogoBox').each(function () {
-            if ($(this).data('value') === savedFrontEmbroidery) {
-                $(this).addClass('logoPlaceSelected');
-                $(this).find('.checkbox').addClass('logoPlaceSelected');
-            } else {
-                $(this).removeClass('logoPlaceSelected'); // Optionally remove the class if it doesn't match
-                $(this).find('.checkbox').removeClass('logoPlaceSelected');
-            }
-        });
-
-        // var savedFrontEmbroidery = savedData.front_embroidery;
-
-        $('.LogoBox').each(function () {
-            var dataValue = $(this).data('value');
-            // alert(dataValue);
-            // alert(savedData.side_embroidery_location);
-            // alert(savedData.side_embroidery_location);
-            // alert(savedData.side_embroidery_location);
-            if (dataValue === savedData.side_embroidery_location || dataValue === savedData.back_embroidery_location) {
-                // alert('fdf');
-                $(this).addClass('logoselected');
-                $(this).find('.checkbox').addClass('logoselected');
-            } else if(savedData.side_embroidery_location === 'both'){
-                document.querySelector('.LogoBox[data-id="logo1"]').classList.add('logoselected')
-                $('.LogoBox[data-id="logo3"]').find('.checkbox').addClass('logoselected');
-                document.querySelector('.LogoBox[data-id="logo3"]').classList.add('logoselected')
-                $('.LogoBox[data-id="logo1"]').find('.checkbox').addClass('logoselected');
-
-                
-            }else{
-                $(this).removeClass('logoselected'); // Optionally remove the class if it doesn't match
-                $(this).find('.checkbox').removeClass('logoselected');
-            }
-        });
-
+        $('#g3').val(savedData.embroidery_type || '');
+        $('#h3').val(savedData.front_embroidery || '');
+        $('#i3').val(savedData.side_embroidery || '');
+        $('#j3').val(savedData.side_embroidery_location || '');
+        $('#k3').val(savedData.back_embroidery || '');
+        $('#l3').val(savedData.back_embroidery_location || '');
 
         // Set quantity
         $('.quantity-input').val(savedData.quantity || 1);
 
         if (savedData.side_embroidery == 'yes') {
-            $('.side_location').show();
+            $('#side_location').show();
         } else {
-            $('.j3').val('');
-            $('.side_location').hide();
+            $('#side_location').hide();
         }
 
         if (savedData.back_embroidery == 'yes') {
-            $('.back_location').show();
+            $('#back_location').show();
         } else {
-            $('.l3').val('');
-            $('.back_location').hide();
+            $('#back_location').hide();
         }
-
-        var colors = savedData.color_id;
-        var qty = savedData.quantity;
-        // alert(colors);
-        getallItems(colors,qty,token);
-
-    }else{
-    var savedDataa = localStorage.getItem('product_' + productId);
-    // alert('gf')
-        var colorIdArray = [];
-    if (savedDataa) {
-        savedDataa = JSON.parse(savedDataa);
-        // console.log(savedDataa);
-
-        // Set color
-        if (savedDataa.color_id) {
-            colorIdArray.push(savedDataa.color_id);
-        }
-
-        // Set dropdown values
-        $('.g3').val(savedDataa.embroidery_type || '');
-        $('.h3').val(savedDataa.front_embroidery || '');
-        $('.i3').val(savedDataa.side_embroidery || '');
-        $('.j3').val(savedDataa.side_embroidery_location || '');
-        $('.k3').val(savedDataa.back_embroidery || '');
-        $('.l3').val(savedDataa.back_embroidery_location || '');
-
-        // Set quantity
-        $('.quantity-input').val(savedDataa.quantity || 1);
-
-        if (savedDataa.side_embroidery == 'yes') {
-            $('.side_location').show();
-        } else {
-            $('.j3').val('');
-            $('.side_location').hide();
-        }
-
-        if (savedDataa.back_embroidery == 'yes') {
-            $('.back_location').show();
-        } else {
-            $('.l3').val('');
-            $('.back_location').hide();
-        }
-
-
-        var productData = {
-            color_id: colorIdArray,
-            embroidery_type: savedDataa.embroidery_type,
-            front_embroidery: savedDataa.front_embroidery,
-            side_embroidery: savedDataa.side_embroidery,
-            side_embroidery_location: savedDataa.side_embroidery_location,
-            back_embroidery: savedDataa.back_embroidery,
-            back_embroidery_location: savedDataa.back_embroidery_location,
-            quantity: savedDataa.quantity
-        };
-
-        // console.log(productData);
-
-
-        // Saving to local storage
-        localStorage.setItem('product_items_' + productId, JSON.stringify(productData));
-
     }
 }
-    // console.log('Color IDs found in local storage:', colorIdArray);
-
-}
-
-function updatecolorIds(productId, colorId,qty,token) {
-    // Get the existing product data from localStorage
-    var storedData = localStorage.getItem('product_items_' + productId);
-    var productData = storedData ? JSON.parse(storedData) : {};
-
-    var colorIdArray = productData.color_id || []; // Retrieve colorIdArray or initialize as empty
-
-    var index = colorIdArray.indexOf(colorId);
-    if (index === -1) {
-        // If it doesn't exist, push it to the array
-        colorIdArray.push(colorId);
-    } else {
-
-        $('.color_' + colorId).each(function () {
-            var allZero = true;  // Flag to check if all quantities are 0
-
-            $(this).find('.quantity-input').each(function () {
-                if ($(this).val() !== '0') {
-                    allZero = false;  // If any value is not 0, set the flag to false
-                }
-            });
-
-            
-            if (allZero) {
-                var index = colorIdArray.indexOf(colorId);
-                if (index !== -1) {
-                    colorIdArray.splice(index, 1);
-                }
-            }
-        });
-    
-        }
-    
-    productData.colorIdArray = colorIdArray; // Update the colorIdArray
-
-    // Save the updated product data back to localStorage
-    localStorage.setItem('product_items_' + productId, JSON.stringify(productData));
-
-    //settime out for getallitems
-
-    setTimeout(() => {
-    getallItems(colorIdArray, qty,token)
-    }, 500);
-}
- 
-
-
-
 
 function getvalue(id) {
     return parseFloat($('#' + id).val());
@@ -521,9 +363,7 @@ function foreachInputFieldSetVariable() {
 
     //select field value
     $('select').each(function () {
-        var id = $(this).attr('name');
+        var id = $(this).attr('id');
         window[id] = $(this).val();
-        $('.' + id).val(window[id]);
-        
     });
 }

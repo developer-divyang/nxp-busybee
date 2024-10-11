@@ -12,7 +12,13 @@
                         <span class="quantity-label">Quantity</span>
                         <div class="quantity-controls">
                             <button class="quantity-btn minus-btn">−</button>
-                            <input type="text" class="quantity-input qty" name="f3" id="f3" value="1" readonly>
+                            @php
+                            $quantity = 1;
+                            if(isset($products)){
+                            $quantity = ($products->totalQty)?? 0;
+                            }
+                            @endphp
+                            <input type="text" class="quantity-input qty" name="f3" id="f3" value="{{ $quantity }}" readonly>
                             <button class="quantity-btn plus-btn">+</button>
                         </div>
                         <input type="hidden" id="d3" name="d3" class="d3" value="{{ ($productt->blank_price)? $productt->blank_price : 0 }}">
@@ -34,7 +40,7 @@
                 <div class=" side_location" style="display:none">
                     <p style="font-size: 12px; margin-bottom: 4px;">Select side Embroidery Location</p>
                     <div class="custom-select ">
-                        <select id="j3" name="j3" class="j3" onchange="constantCalculation()">
+                        <select id="j3" name="j3" class="j3" >
                             <option value="">Select Side Embroidery Locations </option>
                             <option value="right">Right</option>
                             <option value="left">Left</option>
@@ -47,7 +53,7 @@
                 <div>
                     <p style="font-size: 12px; margin-bottom: 4px;">Select Embroidery Type</p>
                     <div class="custom-select">
-                        <select id="g3" name="g3" class="g3" onchange="constantCalculation()">
+                        <select id="g3" name="g3" class="g3" >
                             <option value="">Select Embroidery Type</option>
                             <option selected value="regular">Regular</option>
                             <option value="3D">3D</option>
@@ -61,7 +67,7 @@
                     <div>
                         <p style="font-size: 12px; margin-bottom: 4px;">Select front Embroidery</p>
                         <div class="custom-select">
-                            <select id="h3" name="h3" class="h3" onchange="constantCalculation()">
+                            <select id="h3" name="h3" class="h3">
                                 <option value="">Select Front Embroidery</option>
                                 <option selected value="front-center">Front Center</option>
                                 <option value="front-left">Front Left Panel</option>
@@ -84,12 +90,9 @@
                     <div class=" back_location" style="display:none">
                         <p style="font-size: 12px; margin-bottom: 4px;">Select back Embroidery Location</p>
                         <div class="custom-select">
-                            <select id="l3" name="l3" class="l3" onchange="constantCalculation()">
+                            <select id="l3" name="l3" class="l3" >
                                 <option value="">Select Back Embroidery Locations </option>
                                 <option value="center">Center</option>
-                                <option value="left">Left</option>
-                                <option value="right">Right</option>
-                                <option value="na">NA (No back embroidery)</option>
                             </select>
                         </div>
                     </div>

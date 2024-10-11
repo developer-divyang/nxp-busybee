@@ -458,8 +458,7 @@ class ProductController extends AdminBaseController
 
 
         //save constant from defualt_constant json file as json
-        $defaultConstant = json_decode(file_get_contents(public_path('assets/default_constant.json')), true);
-        $input['constant'] = json_encode($defaultConstant);
+        
 
         // Save Data
         $data->fill($input)->save();
@@ -472,7 +471,13 @@ class ProductController extends AdminBaseController
             $prod->slug = Str::slug($data->name, '-') . '-' . strtolower($data->sku);
         }
 
+        $defaultConstant = json_decode(file_get_contents(public_path('assets/default_constant.json')), true);
+        $prod->constant = json_encode($defaultConstant);
+
         $prod->update();
+
+
+
 
         // dd('done');
 
@@ -528,7 +533,7 @@ class ProductController extends AdminBaseController
 
 
         $combinations = $this->getCombinations($this->getOptions($request));
-        // dd($combinations);
+        dd($combinations);
         foreach ($combinations as $comb) {
 
             $color_id = Color::where('color_name', $comb[0])->first()->id;

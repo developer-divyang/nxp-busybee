@@ -2235,6 +2235,7 @@ input[type="password"] {
 .form-container .row {
     display: flex;
     margin-bottom: 0px;
+    gap: 8px;
 }
 
 .form-group {
@@ -2390,6 +2391,7 @@ button.btn-place-order:hover {
         font-size: 16px;
         padding: 10px;
     }
+
 }
 
 /* -------------------- checkout ----------------------- */
@@ -2787,6 +2789,7 @@ button.btn-place-order:hover {
         background-color: #fff;
     }
 
+
     .x-scroll {
         height: 100%;
         width: 100%;
@@ -2801,6 +2804,19 @@ button.btn-place-order:hover {
         width: 100%;
         max-width: 1000px;
         border-radius: 8px;
+    }
+        .form-container .row {
+            gap: 0px;
+    
+        }
+
+    .form-group select {
+        margin-bottom: 0px !important;
+    }
+
+    .form-group {
+        gap: 0px;
+        margin-bottom: 10px
     }
 
     .uploadTop {
@@ -3087,6 +3103,20 @@ button.btn-place-order:hover {
         background-color: #fff;
     }
 
+        .form-container .row {
+            gap: 0px;
+    
+        }
+    
+        .form-group select {
+            margin-bottom: 0px !important;
+        }
+    
+        .form-group {
+            gap: 0px;
+            margin-bottom: 10px
+        }
+
     .embBox {
         width: 100%;
     }
@@ -3177,6 +3207,9 @@ button.btn-place-order:hover {
         padding: 5px 14px;
         width: 100%;
     }
+        .form-container {
+            width: 100%;
+        }
 
     .estPrice h3 {
         font-size: 22px;

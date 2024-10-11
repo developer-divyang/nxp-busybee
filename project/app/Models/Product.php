@@ -40,6 +40,11 @@ class Product extends Model
         return $this->belongsTo('App\Models\User')->withDefault();
     }
 
+    public function modelNumber()
+    {
+        return $this->belongsTo('App\Models\ModelNumber','model_number');
+    }
+
 
 
     public function wishlist()

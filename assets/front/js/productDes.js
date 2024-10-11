@@ -103,16 +103,16 @@ for (i = 0; i < acc.length; i++) {
 
 // -----------------increment and decrement ------------------
 
-document.querySelector('.decrement').addEventListener('click', function() {
-    let value = parseInt(document.querySelector('.counter-value').textContent);
-    if (value > 0) {
-        document.querySelector('.counter-value').textContent = value - 1;
-    }
-});
+// document.querySelector('.decrement').addEventListener('click', function() {
+//     let value = parseInt(document.querySelector('.counter-value').textContent);
+//     if (value > 0) {
+//         document.querySelector('.counter-value').textContent = value - 1;
+//     }
+// });
 
-document.querySelector('.increment').addEventListener('click', function() {
-    let value = parseInt(document.querySelector('.counter-value').textContent);
-    document.querySelector('.counter-value').textContent = value + 1;
-});
+// document.querySelector('.increment').addEventListener('click', function() {
+//     let value = parseInt(document.querySelector('.counter-value').textContent);
+//     document.querySelector('.counter-value').textContent = value + 1;
+// });
 
 

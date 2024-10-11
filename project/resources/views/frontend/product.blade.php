@@ -73,8 +73,8 @@
             <div class="optFilter">
 
                 <!--<div style="display: flex;flex-wrap: wrap; gap:8px;">-->
-                    <div style="width: 100%;" >
-                        <p style="font-size: 12px; margin-bottom: 4px;">Select Quantity</p>
+                <div style="width: 100%;">
+                    <p style="font-size: 12px; margin-bottom: 4px;">Select Quantity</p>
                     <div class="quantity-container QuanCont">
                         <span class="quantity-label">Quantity</span>
                         <div class="quantity-controls">
@@ -108,8 +108,8 @@
                     </div>
                 </div>
                 <!--<div style="display: flex;flex-wrap: wrap; gap:8px">-->
-                    <div style="width: 100%;">
-                        <p style="font-size: 12px; margin-bottom: 4px;">Select side Embroidery</p>
+                <div style="width: 100%;">
+                    <p style="font-size: 12px; margin-bottom: 4px;">Select side Embroidery</p>
                     <div class="custom-select">
                         <select id="i3" name="i3" class="i3">
                             <option value="">Select Side Embroidery </option>
@@ -118,18 +118,18 @@
                         </select>
                     </div>
                     <div class="side_location" id="side_location" style="display: none;">
-                    <p style="font-size: 12px; margin-bottom: 4px;">Select side Embroidery Type</p>
+                        <p style="font-size: 12px; margin-bottom: 4px;">Select side Embroidery Type</p>
                         <div class="custom-select ">
-                        <select id="j3" name="j3" class="j3" onchange="constantCalculation()">
-                            <option value="">Select Side Embroidery Locations </option>
-                            <option value="right">Right</option>
-                            <option value="left">Left</option>
-                            <option value="both">Both</option>
-                            <option value="na">NA (No side embroidery)</option>
-                        </select>
+                            <select id="j3" name="j3" class="j3" onchange="constantCalculation()">
+                                <option value="">Select Side Embroidery Locations </option>
+                                <option value="right">Right</option>
+                                <option value="left">Left</option>
+                                <option value="both">Both</option>
+                                <option value="na">NA (No side embroidery)</option>
+                            </select>
+                        </div>
                     </div>
-                    </div>
-                    
+
                     <!-- ----------------------- -->
                     <p style="font-size: 12px; margin-bottom: 4px;">Select back Embroidery</p>
                     <div class="custom-select">
@@ -139,25 +139,22 @@
                             <option selected value="no">No</option>
                         </select>
                     </div>
-                    
+
 
                     <!-- ----------------------- -->
                     <div class="back_location" id="back_location" style="display: none;">
                         <p style="font-size: 12px; margin-bottom: 4px;">Select back Embroidery location</p>
                         <div class="custom-select">
-                        <select id="l3" name="l3" class="l3" onchange="constantCalculation()">
-                            <option class='options' value="">Select Back Embroidery Locations </option>
-                            <option class='options' value="center">Center</option>
-                            <option class='options' value="left">Left</option>
-                            <option class='options' value="right">Right</option>
-                            <option class='options' value="na">NA (No back embroidery)</option>
-                        </select>
+                            <select id="l3" name="l3" class="l3" onchange="constantCalculation()">
+                                <option class='options' value="">Select Back Embroidery Locations </option>
+                                <option class='options' value="center">Center</option>
+                            </select>
+                        </div>
                     </div>
-                    </div>
-                    
+
                 </div>
                 <!--<div style="display: flex;flex-wrap: wrap; gap:8px">-->
-                    
+
                 <!--</div>-->
             </div>
 
@@ -279,25 +276,18 @@ $const = $productt->constant;
     @endphp;
     $(document).ready(function() {
         constantCalculation();
+        var productId = $('.select_color').first().data('product');
+        loadFromLocalStorage(productId);
+        // saveToLocalStorage(productId);
 
     });
 
-    //onload get selected color data-id and set it to local storage in array bcz there is multple product color 
-
-    // var selectedColorArray = [];
-    // setTimeout(() => {
-
-    var selectedColor = $('.prod_color_active').parent().data('id');
-    // alert(selectedColor);
-    // selectedColorArray.push(selectedColor);
-
-    localStorage.setItem('selected_color', selectedColor);
-    // }, 5000);
-
-    //create array and set in local storage
 
 
-    //var selectedColor = $('.select_color.prod_color_active').data('id');
+    $('#g3, #h3, #i3, #j3, #k3, #l3').on('change', function() {
+        var productId = $('.select_color').first().data('product');
+        saveToLocalStorage(productId);
+    });
 
 
 
@@ -305,9 +295,7 @@ $const = $productt->constant;
         var selectedColorArray = [];
         var colorId = $(this).data('id');
         //set local storage color_id
-        selectedColorArray.push(colorId);
-        console.log(selectedColorArray);
-        localStorage.setItem('selected_color', JSON.stringify(selectedColorArray));
+
         var productId = $(this).data('product');
         $.ajax({
             url: "{{ route('front.product.colorImages') }}",
@@ -330,9 +318,14 @@ $const = $productt->constant;
                         swiperWrapper.append(imgElement);
                     });
 
+
                     $(this).addClass('selected').siblings().removeClass('selected');
-                    //set local storage color_id
-                    localStorage.setItem('selected_color', colorId);
+
+                    saveToLocalStorage(productId);
+
+
+
+
 
 
                 } else {
@@ -395,7 +388,8 @@ $const = $productt->constant;
         var currentValue = parseInt(quantityInput.val());
         if (!isNaN(currentValue)) {
             quantityInput.val(currentValue + 1);
-
+            var productId = $('.select_color').first().data('product');
+            saveToLocalStorage(productId);
             constantCalculation();
         }
     });
@@ -405,6 +399,8 @@ $const = $productt->constant;
         var currentValue = parseInt(quantityInput.val());
         if (!isNaN(currentValue) && currentValue > 1) {
             quantityInput.val(currentValue - 1);
+            var productId = $('.select_color').first().data('product');
+            saveToLocalStorage(productId);
             constantCalculation();
         }
     });
@@ -440,8 +436,10 @@ $const = $productt->constant;
 
         if ($(this).val() == 'yes') {
             $('#side_location').show();
+            $('#j3').val('');
         } else {
             $('#side_location').hide();
+            $('#j3').val('');
         }
         constantCalculation();
     });
@@ -454,8 +452,10 @@ $const = $productt->constant;
 
         if ($(this).val() == 'yes') {
             $('#back_location').show();
+            $('#l3').val('');
         } else {
             $('#back_location').hide();
+            $('#l3').val('');
         }
         constantCalculation();
     });
@@ -466,7 +466,7 @@ $const = $productt->constant;
 
 <script src="{{ asset('assets/front/js/jquery.elevatezoom.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="{{ asset('assets/front/js/calculation.js') }}"></script>
+<script src="{{ asset('assets/front/js/single-calculation.js') }}"></script>
 <script src="{{ asset('assets/front/js/productDes.js') }}"></script>
 
 

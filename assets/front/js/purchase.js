@@ -312,9 +312,9 @@ function selectlogoBox(selectedBox) {
     const textareaID = `textarea-${id}`;
 
     const headings = {
-        logo1: 'Left Side',
-        logo2: 'Back Side',
-        logo3: 'Right Side'
+        logo1: 'right_logo',
+        logo2: 'back_logo',
+        logo3: 'left_logo'
     };
 
     if (selectedBox.classList.contains('logoselected')) {
@@ -324,26 +324,27 @@ function selectlogoBox(selectedBox) {
         const textareaToRemove = document.getElementById(textareaID);
         if (textareaToRemove) {
             textareaToRemove.remove();
-            var back_type = $(selectedBox).data('value');
-            $('.k3').val('no');
-            $('.k3').trigger('change');
-            $('.l3').val('');
-            constantCalculation();
+            // Reset related fields
+            if (id === 'logo2') {
+                // If the "Back" logo is unselected
+                // $('.k3').val('no');
+                // $('.k3').trigger('change');
+                // $('.l3').val(''); // Reset back embroidery location
+            }
+            // constantCalculation();
         }
     } else {
         selectedBox.classList.add('logoselected');
         selectedBox.querySelector('.checkbox').classList.add('logoselected');
 
-        var back_type = $(selectedBox).data('value');
-        $('.k3').val('yes');
-        $('.k3').trigger('change');
-        $('.l3').val(back_type);
+        if (id === 'logo2') {
+            // If the "Back" logo is selected
+            // $('.k3').val('yes');
+            // $('.k3').trigger('change');
+            // $('.l3').val('center'); // Set the back embroidery location to center
+        }
 
-        $('.i3').val('yes');
-        $('.i3').trigger('change');
-        $('.j3').val(back_type);
-        
-        constantCalculation();
+        // constantCalculation();
 
         if (!document.getElementById(textareaID)) {
             const newTextareaDiv = document.createElement('div');
@@ -351,17 +352,23 @@ function selectlogoBox(selectedBox) {
             newTextareaDiv.id = textareaID;
 
             const heading = headings[id] || 'Notes';
+            let formattedHeading = heading
+                .toLowerCase()
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, function (char) {
+                    return char.toUpperCase();
+                });
 
             newTextareaDiv.innerHTML = `
-                <h4>${heading}</h4>
+                <h4>${formattedHeading}</h4>
                 <div style="width: 100%; min-height: 40px; flex-wrap: wrap; display: flex; align-items: center; gap: 10px;">
-                    <textarea class="Additionaltextareamain" placeholder="Placement and Size Notes"></textarea>
+                    <textarea class="Additionaltextareamain" name="${heading}_note" placeholder="Placement and Size Notes"></textarea>
                     <div class="upload-container">
                         <div class="upload-btn-wrapper">
                             <button class="btn">Upload Your Logo</button>
-                            <input type="file" id="fileInput" onchange="showFileName()">
+                            <input type="file" name="${heading}" id="fileInput" onchange="showFileName()">
                         </div>
-                        <span class="file-name" id="fileName">No File Selected</span>
+                        <span class="file-name"  id="fileName">No File Selected</span>
                     </div>
                 </div>
             `;
@@ -369,7 +376,41 @@ function selectlogoBox(selectedBox) {
             container.appendChild(newTextareaDiv);
         }
     }
+
+    // Logic to check and set "both" value for left and right selections
+    const leftSelected = document.querySelector('.LogoBox[data-id="logo1"]').classList.contains('logoselected');
+    const rightSelected = document.querySelector('.LogoBox[data-id="logo3"]').classList.contains('logoselected');
+
+    if (leftSelected && rightSelected) {
+        
+        $('.j3').val('both');
+        $('.i3').val('yes');  // Set side embroidery to "yes" when both sides are selected
+    } else if (leftSelected || rightSelected) {
+        $('.j3').val(leftSelected ? 'right' : 'left');
+        $('.i3').val('yes');  // Set side embroidery to "yes" if either side is selected
+    } else {
+        $('.j3').val('na'); // No side embroidery selected
+        $('.i3').val('no');  // Set side embroidery to "no"
+    }
+
+    // $('.j3').trigger('change');
+    // $('.i3').trigger('change');
+
+    // Logic to manage the back logo selection (id === 'logo2')
+    const backSelected = document.querySelector('.LogoBox[data-id="logo2"]').classList.contains('logoselected');
+    if (backSelected) {
+        $('.k3').val('yes'); // Set back embroidery to "yes"
+        $('.l3').val('center'); // Set back embroidery location to center
+    } else {
+        $('.k3').val('no'); // Set back embroidery to "no"
+        $('.l3').val(''); // Clear the back location field
+    }
+    // $('.i3').trigger('change');
+    // $('.k3').trigger('change');
+
+    constantCalculation();
 }
+
 
 
 
