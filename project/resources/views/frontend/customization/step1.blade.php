@@ -62,9 +62,9 @@
             <input type="hidden" name="_token" id="token" value="{{ csrf_token() }}">
             <ul class="tabs">
                 <li class="tab active" data-target="select-type">Select Type</li>
-                <li class="tab" data-target="items">Items</li>
-                <li class="tab" data-target="artwork">Artwork</li>
-                <li class="tab" data-target="checkout">Checkout</li>
+                <li class="tab disabled" data-target="items">Items</li>
+                <li class="tab disabled" data-target="artwork">Artwork</li>
+                <li class="tab disabled" data-target="checkout">Checkout</li>
             </ul>
             <div class="tab-content">
                 <div id="select-type" class="content active">
@@ -97,7 +97,7 @@
 
                     </div>
                     <div class="" style="display: flex; gap: 15px; max-width: 300px; margin: 0 auto;">
-                        <button style="margin: 0 auto; margin-top: 10px; white-space: nowrap; display:none" onclick="nextTab()" id="next">NEXT</button>
+                        <button class="next" style="margin: 0 auto; margin-top: 10px; white-space: nowrap; display:none"  id="next" class="next">NEXT</button>
 
                     </div>
                 </div>
@@ -139,8 +139,8 @@
 
                     </div>
                     <div class="" style="display: flex; gap: 15px; max-width: 300px; margin: 0 auto;">
-                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;" onclick="backTab()" id="next">BACK</button>
-                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;" onclick="nextTab()" id="next">NEXT</button>
+                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;"  id="next" class="next">BACK</button>
+                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;"  id="next" class="next">NEXT</button>
 
                     </div>
 
@@ -525,8 +525,8 @@
                         </div>
 
                         <div class="" style="display: flex; gap: 15px; max-width: 300px; margin: 0 auto;    margin-bottom: 10px;">
-                            <button type="submit" style="margin: 0 auto; margin-top: 20px; white-space: nowrap;" id="next">ADD TO CART</button>
-                            <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;  background-color: #DD9F44;" id="next">CHECKOUT</button>
+                            <button type="submit" style="margin: 0 auto; margin-top: 20px; white-space: nowrap;" id="next" class="next">ADD TO CART</button>
+                            <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;  background-color: #DD9F44;" id="next" class="next">CHECKOUT</button>
                         </div>
                     </form>
                 </div>

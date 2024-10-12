@@ -105,6 +105,54 @@ class CartController extends FrontBaseController
                 // dd($itemKey);
                 if (isset($cart->items[$itemKey])) {
 
+                if($request->file('front_logo')){
+                    $image = $request->file('front_logo');
+                    $imageName = time() . '.' . $image->getClientOriginalExtension();
+                    $destinationPath = public_path('/uploads/products');
+                    $image->move($destinationPath, $imageName);
+                    $front_logo = $imageName;
+                }
+
+                //uploade right logo
+                if($request->file('right_logo')){
+                    $image = $request->file('right_logo');
+                    $imageName = time() . '.' . $image->getClientOriginalExtension();
+                    $destinationPath = public_path('/uploads/products');    
+                    $image->move($destinationPath, $imageName);
+                    $right_logo = $imageName;
+                }
+                    
+                //uploade left logo
+                if($request->file('left_logo')){
+                    $image = $request->file('left_logo');
+                    $imageName = time() . '.' . $image->getClientOriginalExtension();
+                    $destinationPath = public_path('/uploads/products');    
+                    $image->move($destinationPath, $imageName);
+                        $left_logo = $imageName;
+                }
+
+                //uploade back logo
+                if($request->file('back_logo')){
+                    $image = $request->file('back_logo');
+                    $imageName = time() . '.' . $image->getClientOriginalExtension();
+                    $destinationPath = public_path('/uploads/products');
+                    $image->move($destinationPath, $imageName);
+                    $back_logo = $imageName;
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                     // Update quantity if item already exists in cart
                     // $currentQty = $cart->items[$itemKey]['qty'];
                     // $newQty = $currentQty  = $request->f3; // Increase quantity by 1
@@ -120,7 +168,27 @@ class CartController extends FrontBaseController
                     // Update the cart item quantity
                     $cart->items[$itemKey]['order_type'] = $request->order;
                     //upload pending
-                    $cart->items[$itemKey]['fornt_logo'] = $request->fornt_logo;
+                    if($request->file('front_logo')){
+                        $cart->items[$itemKey]['front_logo'] = $front_logo;
+                    }
+
+                    if($request->file('right_logo')){
+                        $cart->items[$itemKey]['right_logo'] = $right_logo;
+                    }
+
+                    if($request->file('back_logo')){
+                        $cart->items[$itemKey]['back_logo'] = $back_logo;
+                    }
+
+                    if($request->file('left_logo')){
+                        $cart->items[$itemKey]['left_logo'] = $left_logo;
+                    }
+                    
+
+
+
+                    
+                    
                     $cart->items[$itemKey]['side'] = $request->i3;
                     $cart->items[$itemKey]['side_location'] = $request->j3;
                     $cart->items[$itemKey]['back'] = $request->k3;
@@ -131,9 +199,9 @@ class CartController extends FrontBaseController
                     $cart->items[$itemKey]['front_logo_note'] = $request->front_logo_note;
                     $cart->items[$itemKey]['thread_color_note'] = $request->thread_color_note;
                     $cart->items[$itemKey]['right_logo_note'] = $request->right_logo_note;
-                    $cart->items[$itemKey]['right_logo'] = $request->right_logo;
+                    // $cart->items[$itemKey]['right_logo'] = $request->right_logo;
                     $cart->items[$itemKey]['back_logo_note'] = $request->back_logo_note;
-                    $cart->items[$itemKey]['back_logo'] = $request->back_logo;
+                    // $cart->items[$itemKey]['back_logo'] = $request->back_logo;
                     $cart->items[$itemKey]['order_note'] = $request->order_note;
                 } else {
                     $keys = '';

@@ -46,41 +46,99 @@ function initializeSliders() {
 // ----------------related Slider ------------------- 
 
 
+// document.addEventListener("DOMContentLoaded", function () {
+//     const tabs = document.querySelectorAll(".tab");
+//     const contents = document.querySelectorAll(".content");
+
+//     // Check if an active tab is saved in localStorage and activate both tab and content
+//     tabs.forEach(tab => tab.classList.remove("active"));
+//     contents.forEach(content => content.classList.remove("active"));
+//     const savedTab = localStorage.getItem('activeTab');
+//     // alert(savedTab);
+//     if (savedTab) {
+//         // Activate the saved tab
+//         document.querySelector(`.tab[data-target="${savedTab}"]`).classList.add("active");
+//         // Activate the corresponding content
+//         document.getElementById(savedTab).classList.add("active");
+//     } else {
+//         // If no saved tab, activate the first tab and its content by default
+//         tabs[0].classList.add("active");
+//         contents[0].classList.add("active");
+//     }
+
+//     tabs.forEach(tab => {
+//         tab.addEventListener("click", function () {
+//             // Remove the active class from all tabs and contents
+//             tabs.forEach(tab => tab.classList.remove("active"));
+//             contents.forEach(content => content.classList.remove("active"));
+
+//             // Add active class to the clicked tab
+//             tab.classList.add("active");
+
+//             // Add active class to the corresponding content
+//             const target = tab.getAttribute("data-target");
+//             document.getElementById(target).classList.add("active");
+
+//             // Save the currently active tab to localStorage
+//             localStorage.setItem('activeTab', target);
+//         });
+//     });
+// });
+
+
 document.addEventListener("DOMContentLoaded", function () {
     const tabs = document.querySelectorAll(".tab");
     const contents = document.querySelectorAll(".content");
+    let currentIndex = localStorage.getItem('currentTabIndex') ? parseInt(localStorage.getItem('currentTabIndex')) : 0;
+    let visitedTabs = new Set();
 
-    // Check if an active tab is saved in localStorage and activate both tab and content
-    tabs.forEach(tab => tab.classList.remove("active"));
-    contents.forEach(content => content.classList.remove("active"));
-    const savedTab = localStorage.getItem('activeTab');
-    // alert(savedTab);
-    if (savedTab) {
-        // Activate the saved tab
-        document.querySelector(`.tab[data-target="${savedTab}"]`).classList.add("active");
-        // Activate the corresponding content
-        document.getElementById(savedTab).classList.add("active");
-    } else {
-        // If no saved tab, activate the first tab and its content by default
-        tabs[0].classList.add("active");
-        contents[0].classList.add("active");
+    tabs.forEach((tab, index) => {
+        if (index !== 0) {
+            tab.classList.add("disabled");
+        } else {
+            visitedTabs.add(index);
+        }
+    });
+
+    function activateTab(index) {
+        tabs.forEach((tab, i) => {
+            if (i <= index || visitedTabs.has(i)) {
+                tab.classList.remove("disabled");
+            } else {
+                tab.classList.add("disabled");
+            }
+            tab.classList.toggle("active", i === index);
+        });
+
+        contents.forEach((content, i) => {
+            content.classList.toggle("active", i === index);
+        });
+
+        localStorage.setItem('currentTabIndex', index);
     }
+
+    activateTab(currentIndex);
+
+    function activateNextTab() {
+        if (currentIndex < tabs.length - 1) {
+            currentIndex++;
+            visitedTabs.add(currentIndex);
+            activateTab(currentIndex);
+        }
+    }
+
+    const nextButtons = document.querySelectorAll(".next");
+    nextButtons.forEach(button => {
+        button.addEventListener("click", activateNextTab);
+    });
 
     tabs.forEach(tab => {
         tab.addEventListener("click", function () {
-            // Remove the active class from all tabs and contents
-            tabs.forEach(tab => tab.classList.remove("active"));
-            contents.forEach(content => content.classList.remove("active"));
-
-            // Add active class to the clicked tab
-            tab.classList.add("active");
-
-            // Add active class to the corresponding content
-            const target = tab.getAttribute("data-target");
-            document.getElementById(target).classList.add("active");
-
-            // Save the currently active tab to localStorage
-            localStorage.setItem('activeTab', target);
+            const tabIndex = Array.from(tabs).indexOf(tab);
+            if (!tab.classList.contains("disabled")) {
+                currentIndex = tabIndex;
+                activateTab(currentIndex);
+            }
         });
     });
 });
@@ -361,14 +419,14 @@ function selectlogoBox(selectedBox) {
 
             newTextareaDiv.innerHTML = `
                 <h4>${formattedHeading}</h4>
-                <div style="width: 100%; min-height: 40px; flex-wrap: wrap; display: flex; align-items: center; gap: 10px;">
-                    <textarea class="Additionaltextareamain" name="${heading}_note" placeholder="Placement and Size Notes"></textarea>
+               <div style="width: 100%; min-height: 40px; flex-wrap: wrap; display: flex; align-items: center; gap: 10px;">
+                    <textarea class="Additionaltextareamain" placeholder="Placement and Size Notes"></textarea>
                     <div class="upload-container">
                         <div class="upload-btn-wrapper">
-                            <button class="btn">Upload Your Logo</button>
-                            <input type="file" name="${heading}" id="fileInput" onchange="showFileName()">
+                            <button class="btn" onclick="handleButtonClick(event);">Upload Your Logo</button>
+                            <input type="file" id="fileInput" onchange="showFileName()">
                         </div>
-                        <span class="file-name"  id="fileName">No File Selected</span>
+                        <span class="file-name" id="fileName">No File Selected</span>
                     </div>
                 </div>
             `;
@@ -411,6 +469,14 @@ function selectlogoBox(selectedBox) {
     constantCalculation();
 }
 
+
+function handleButtonClick(event) {
+    // Prevent default button behavior
+    event.preventDefault();
+
+    // Trigger file input click
+    document.getElementById('fileInput').click();
+}
 
 
 
@@ -708,6 +774,9 @@ function decreaseQty(index) {
         qty--;
         qtyInput.value = qty;
         updateSubTotal(index);
+
+
+
     }
 }
 
