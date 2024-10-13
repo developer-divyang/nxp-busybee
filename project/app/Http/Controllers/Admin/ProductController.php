@@ -533,7 +533,7 @@ class ProductController extends AdminBaseController
 
 
         $combinations = $this->getCombinations($this->getOptions($request));
-        dd($combinations);
+        // dd($combinations);
         foreach ($combinations as $comb) {
 
             $color_id = Color::where('color_name', $comb[0])->first()->id;
@@ -809,10 +809,9 @@ class ProductController extends AdminBaseController
     public function edit($id)
     {
         $cats = Category::all();
-        $data = Product::findOrFail($id);
+        $data = Product::with('getColorImages.color')->findOrFail($id);
         $sign = $this->curr;
-
-
+        // dd($data, $data->type, $data->getColorImages[0]->color->color_name);
         if ($data->type == 'Digital')
             return view('admin.product.edit.digital', compact('cats', 'data', 'sign'));
         elseif ($data->type == 'License')
@@ -972,13 +971,13 @@ class ProductController extends AdminBaseController
             // Check Color
             if (empty($request->color_check)) {
                 $input['color_all'] = null;
-            } else {
+            } else if ($request->color_all) {
                 $input['color_all'] = implode(',', $request->color_all);
             }
             // Check Size
             if (empty($request->size_check)) {
                 $input['size_all'] = null;
-            } else {
+            } else if ($request->size_all) {
                 $input['size_all'] = implode(',', $request->size_all);
             }
 
@@ -1035,21 +1034,6 @@ class ProductController extends AdminBaseController
                 }
             }
         }
-        // Check Features
-        if (!in_array(null, $request->features) && !in_array(null, $request->colors)) {
-            $input['features'] = implode(',', str_replace(',', ' ', $request->features));
-            $input['colors'] = implode(',', str_replace(',', ' ', $request->colors));
-        } else {
-            if (in_array(null, $request->features) || in_array(null, $request->colors)) {
-                $input['features'] = null;
-                $input['colors'] = null;
-            } else {
-                $features = explode(',', $data->features);
-                $colors = explode(',', $data->colors);
-                $input['features'] = implode(',', $features);
-                $input['colors'] = implode(',', $colors);
-            }
-        }
 
         //Product Tags
         if (!empty($request->tags)) {
@@ -1059,9 +1043,9 @@ class ProductController extends AdminBaseController
             $input['tags'] = null;
         }
 
-        $input['price'] = $input['price'] / $sign->value;
-        $input['blank_price'] = $input['blank_price'] / $sign->value;
-        $input['previous_price'] = $input['previous_price'] / $sign->value;
+        // $input['price'] = $input['price'] / $sign->value;
+        // $input['blank_price'] = $input['blank_price'] / $sign->value;
+        // $input['previous_price'] = $input['previous_price'] / $sign->value;
 
         // store filtering attributes for physical product
         $attrArr = [];
@@ -1129,6 +1113,74 @@ class ProductController extends AdminBaseController
 
         $data->update($input);
         //-- Logic Section Ends
+
+        if ($request->has('size_check') && $request->has('tags')) {
+
+            foreach ($request->tags as $key => $tag) {
+
+                $size = Size::where('size_name', $tag)->first();
+                if (!$size) {
+                    $size = Size::firstOrCreate(['size_name' => $tag]);
+                }
+            }
+        }
+
+        if ($request->has('color_check') && $request->has('color_name') && count($request['color_name']) > 0) {
+            // dd('color');
+            ProductColorImage::where('product_id', $id)->delete();
+            foreach ($request->color_name as $key => $color_name) {
+                $color_image = $request->color_img[$key];
+                $color_group = $request->color_group[$key];
+
+
+                $color = Color::where('color_name', $color_name)->where('color_group', $color_group)->first();
+                if (!$color) {
+                    $image_name = time() . Str::random(8) . '.' . $color_image->getClientOriginalExtension();
+                    $color_image = Storage::disk('public')->put($image_name, file_get_contents($color_image));
+
+                    $color = Color::create([
+                        'color_name' => $color_name,
+                        'color_group' => $color_group,
+                        'color_image' => $image_name,
+                    ]);
+                }
+
+                if ($request->has('product_images') && isset($request->product_images[$key])) {
+                    $all_p_images = [];
+                    foreach ($request->product_images[$key] as $image) {
+                        //upload image to storage
+                        $product_image_name = time() . Str::random(8) . '.' . $image->getClientOriginalExtension();
+                        $product_img_path = Storage::disk('public')->put($product_image_name, file_get_contents($image));
+                        $all_p_images[] = $product_image_name;
+                    }
+                    $imageData = [
+                        'product_id' => $data->id,
+                        'color_id' => $color->id,
+                        'image_path' => json_encode($all_p_images), // save the image name or path
+                    ];
+                    ProductColorImage::create($imageData);
+                }
+            }
+        }
+
+
+
+
+        $combinations = $this->getCombinations($this->getOptions($request));
+        dd($combinations);
+        ProductSizeColor::where('product_id', $id)->delete();
+        foreach ($combinations as $comb) {
+
+            $color_id = Color::where('color_name', $comb[0])->first()->id;
+            // $size_id = Size::where('size_name', $comb[1])->first()->id;
+
+            $productSizeColor = new ProductSizeColor();
+            $productSizeColor->product_id = $id;
+            $productSizeColor->color_id = $color_id;
+            // $productSizeColor->size_id = $size_id;
+            $productSizeColor->stock = 1;
+            $productSizeColor->save();
+        }
 
         //--- Redirect Section
         $msg = __("Product Updated Successfully.") . '<a href="' . route('admin-prod-index') . '">' . __("View Product Lists.") . '</a>';
