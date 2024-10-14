@@ -95,7 +95,7 @@ class ProductDetailsController extends FrontBaseController
 
                 $colorIds = $request->input('selected_color');
                 $quantity = $request->input('quantity');
-                // dd($colorId, $sizeId, $quantity);
+                // dd($colorIds);
                 // $color = Color::find($colorId);
                 
                 // Session::forget('cart');
@@ -104,7 +104,9 @@ class ProductDetailsController extends FrontBaseController
                 $cart = new Cart($oldCart);
                 $products = $cart->items;
 
-                // dd($products);
+               
+            //    dd($products['3OSFMKelly']['qty']);
+
                 // dd($products[$productt->id. $color->color_name. $size->size_name]);
             
 

@@ -21,6 +21,7 @@ class UserController extends UserBaseController
 
     public function index()
     {
+        // dd('User Dashboard');
         $user = $this->user;
         return view('user.dashboard',compact('user'));
     }
@@ -68,6 +69,19 @@ class UserController extends UserBaseController
                 }
             $input['photo'] = $name;
             }
+
+            if($request->old_password){
+                if(Hash::check($request->old_password, $data->password)){
+                    if($request->password == $request->password_confirmation){
+                        $input['password'] = Hash::make($request->password);
+                    }else{
+                        return response()->json(array('errors' => [ 0 => __('Confirm password does not match.') ]));
+                    }
+                }else{
+                    return response()->json(array('errors' => [ 0 => __('Current password Does not match.') ]));
+                }
+            }
+
         $data->update($input);
         $msg = __('Successfully updated your profile');
         return response()->json($msg);

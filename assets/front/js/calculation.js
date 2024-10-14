@@ -1,7 +1,19 @@
-function constantCalculation() {
+function constantCalculation(qty = 0,p_id = 0,key = '') {
     // alert('gr:'+$('.g3').val());
     foreachInputFieldSetVariable();
 
+    if(qty > 0){
+        f3 = qty;
+    }
+
+    
+
+    if(p_id > 0){
+        pid = p_id;
+    }
+
+    
+        
    
     var m3 = 'yes';
     var g5 = 'standard';
@@ -233,9 +245,26 @@ function constantCalculation() {
     //round with 2 decimal
     per_cap = per_cap.toFixed(2);
 
+if(key != ''){
+
+    $('#price-'+key).html('$' + per_cap);
+    $('#subtotal-' + key).html('$' + al3);
+    $('#subtotal-' + key).data('value',al3);
+    var total = 0;
+    $('.subtotal').each(function () {
+        total += parseFloat($(this).data('value'));
+    });
+    $('#total').html('$' + total.toFixed(2));
+
+
     
+
+}else{
+
     $('.price h3').html('$' + per_cap + ' per cap');
     $('.price').show();
+}
+
 
     
     // alert(pid);

@@ -21,9 +21,10 @@
                 <div class="signin-container">
                     <h1>Welcome Back!</h1>
                     <p>Login to your account using below details</p>
-                    <form class="signin-form">
-                        <input type="email" placeholder="Email Address" required>
-                        <input type="password" placeholder="Password" required>
+                    <form id="loginform" class="signin-form" action="{{ route('user.login.submit') }}" method="POST">
+                        @csrf
+                        <input type="email" name="email" placeholder="Email Address" required>
+                        <input type="password" name="password" placeholder="Password" required>
                         <p class="forgot-password"><a href="#">Forgot Password?</a></p>
                         <button type="submit" class="login-btn">LOG IN</button>
                     </form>
@@ -97,7 +98,7 @@
 
                     </div>
                     <div class="" style="display: flex; gap: 15px; max-width: 300px; margin: 0 auto;">
-                        <button class="next" style="margin: 0 auto; margin-top: 10px; white-space: nowrap; display:none"  id="next" class="next">NEXT</button>
+                        <button class="next" style="margin: 0 auto; margin-top: 10px; white-space: nowrap; display:none" id="next" class="next">NEXT</button>
 
                     </div>
                 </div>
@@ -139,14 +140,14 @@
 
                     </div>
                     <div class="" style="display: flex; gap: 15px; max-width: 300px; margin: 0 auto;">
-                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;"  id="next" class="next">BACK</button>
-                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;"  id="next" class="next">NEXT</button>
+                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;" id="next" class="next">BACK</button>
+                        <button style="margin: 0 auto; margin-top: 20px; white-space: nowrap;" id="next" class="next">NEXT</button>
 
                     </div>
 
                 </div>
                 <div id="artwork" class="content">
-                    <form id="cartform" action="{{ route('product.cart.add',$productt->id) }}" method="POST">
+                    <form id="cartform" action="{{ route('product.cart.add',$productt->id) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <button class="accordion-toggle">
                             <h4><img src="{{ asset('assets/front/images/uploadImg.png') }}" alt="uploadImg">Upload <span>Your Logo</span></h4>
@@ -221,7 +222,7 @@
                                             <span class="drag-text">Drag and drop here</span>
                                         </div>
                                         <label class="file-upload-button">
-                                            <input type="file" name="fornt_logo" id="logo-upload" hidden>
+                                            <input type="file" name="front_logo" id="logo-upload" hidden>
                                             UPLOAD YOUR LOGO
                                         </label>
                                         <span class="file-name">No File Selected</span>
@@ -535,9 +536,15 @@
 
 
             <div id="checkout" class="content">
+
                 <button class="accordion-toggle">
+                    @if($products)
                     <h4><img src="{{ asset('assets/front/images/orderSum.png') }}" alt=""> Order <span>Summary</span></h4>
+                    @else
+                    <h4 class="text-center"><img src="{{ asset('assets/front/images/orderSum.png') }}" alt="">{{ __('Cart is Empty!! Add some products in your Cart') }}</h4>
+                    @endif
                 </button>
+                @if($products)
                 <div class="accordion-content">
                     <div class="order-summary">
                         <div class="accorTop">
@@ -555,11 +562,14 @@
                                     </thead>
                                     <tbody>
                                         @if($products)
-                                        @foreach($products as $product)
-                                        @php
 
+                                        @foreach($products as $key => $product)
+                                        @php
+                                        
                                         $productData = App\Models\Product::find($product['item']->id);
                                         $color = App\Models\Color::where('color_name',$product['color'])->first()?->id;
+                                        $size = App\Models\Size::where('size_name',$product['size'])->first()?->id;
+                                        $pkey = $productData->id.'_'.$color.'_'.$size;
                                         $productColorImages = App\Models\ProductColorImage::where('color_id',$color)->where('product_id',$productData->id)->first()?->image_path;
                                         $images = json_decode($productColorImages);
 
@@ -588,15 +598,15 @@
                                             <td>{{ $product['size'] }}</td>
                                             <td>
                                                 <div class="qty-control">
-                                                    <button onclick="decreaseQty(0)">−</button>
-                                                    <input type="text" value="{{ $product['qty'] }}" id="qty-0" readonly>
-                                                    <button onclick="increaseQty(0)">+</button>
+                                                    <button onclick="decreaseQty('{{ $pkey }}')">−</button>
+                                                    <input type="text" class="item-qty" data-id="{{ $pkey }}" data-color-id="{{ $product['color'] }}" data-size-id="{{ $product['size'] }}" data-product-id="{{ $productData->id }}" value="{{ $product['qty'] }}" readonly>
+                                                    <button onclick="increaseQty('{{ $pkey }}')">+</button>
                                                 </div>
                                             </td>
-                                            <td>$24.00</td>
-                                            <td id="subtotal-0">$240.00</td>
+                                            <td id="price-{{ $pkey }}">$24.00</td>
+                                            <td class="subtotal" data-value="240.00" id="subtotal-{{ $pkey }}">$240.00</td>
                                             <td>
-                                                <button class="cancel-btn" onclick="removeItem(2)">&#x2715;</button>
+                                                <button data-color-id="{{ $color }}" data-size-id="{{ $size }}" class="cancel-btn" onclick="removeItem(2)">&#x2715;</button>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -613,7 +623,7 @@
                         </div>
                     </div>
                 </div>
-
+                @if (Auth::check())
                 <button class="accordion-toggle">
                     <h4><img src="{{ asset('assets/front/images/haveAcc.png') }}" alt=""> Have an <span>Account?</span></h4>
                 </button>
@@ -623,12 +633,24 @@
                             <div class="auth-container">
                                 <div class="login-section">
                                     <h2>Login to Your Account</h2>
-                                    <form class="login-form">
+                                    <div class="alert alert-info validation" style="display: none;">
+                                        <p class="text-left"></p>
+                                    </div>
+                                    <div class="alert alert-success validation" style="display: none;">
+                                        <button type="button" class="close alert-close"><span>×</span></button>
+                                        <p class="text-left"></p>
+                                    </div>
+                                    <div class="alert alert-danger validation" style="display: none;">
+                                        <button type="button" class="close alert-close"><span>×</span></button>
+                                        <p class="text-left"></p>
+                                    </div>
+                                    <form id="loginform1" class="login-form" action="{{ route('user.login.submit') }}" method="POST">
+                                        @csrf
                                         <div class="form-group">
-                                            <input type="email" placeholder="Email Address" required>
+                                            <input type="email" name="email" placeholder="Email Address" required>
                                         </div>
                                         <div class="form-group">
-                                            <input type="password" placeholder="Password" required>
+                                            <input type="password" name="password" placeholder="Password" required>
                                         </div>
                                         <button type="submit" class="haveAnAccountBtn">Login</button>
                                     </form>
@@ -641,64 +663,65 @@
                                 <div class="register-section">
                                     <h2>Register New Account</h2>
                                     <p>You don't have an account with Busy Bee Embroidery?<br> Create a new account using the button below.</p>
-                                    <button class="haveAnAccountBtn">Register</button>
+                                    <a href="{{ route('user.register') }}" class="haveAnAccountBtn">Register</a>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                @endif
 
 
-                <button class="accordion-toggle">
-                    <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Billing <span>Address</span></h4>
-                </button>
-                <div class="accordion-content">
-                    <div class="billingSection">
-                        <div class="accorTop">
-                            <div class="form-container">
-                                <form>
+                <form id="" action="{{ route('front.cod.submit') }}" method="POST" class="checkoutform">
+                    @csrf
+                    @include('includes.form-success')
+                    @include('includes.form-error')
+
+                    <button class="accordion-toggle">
+                        <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Billing <span>Address</span></h4>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="billingSection">
+                            <div class="accorTop">
+                                <div class="form-container">
+
                                     <div class="row">
                                         <div class="form-group">
-                                            <input type="text" id="first-name" placeholder="First Name">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" id="last-name" placeholder="Last Name">
+                                            <input type="text" id="billing_name" name="billing_name" placeholder="Full Name">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="form-group full-width">
-                                            <input type="text" id="address-line-1" placeholder="Address Line 1">
+                                            <input type="text" id="billing_address1" name="billing_address1" placeholder="Address Line 1">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="form-group full-width">
-                                            <input type="text" id="address-line-2" placeholder="Address Line 2">
+                                            <input type="text" id="billing__address2" name="billing_address2" placeholder="Address Line 2">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="form-group">
-                                            <select id="country">
-                                                <option>Select Country</option>
-                                                <!-- Add country options here -->
+                                            <select class="form-control" id="billing_country" name="billing_country" required="">
+                                                @include('includes.countries')
                                             </select>
                                         </div>
-                                        <div class="form-group">
-                                            <select id="state">
-                                                <option>Select State</option>
-                                                <!-- Add state options here -->
+                                        <div class="form-group d-none select_state">
+                                            <select class="form-control " id="billing_state" name="billing_state">
+
                                             </select>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="form-group">
-                                            <input type="text" id="city" placeholder="Suburb/City">
+                                            <input type="text" name="billing_city" id="billing_city" placeholder="Suburb/City">
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" id="postcode" placeholder="Postcode">
+                                            <input type="text" name="billing_postcode" id="billing_postcode" placeholder="Postcode">
                                         </div>
                                     </div>
 
@@ -706,127 +729,134 @@
                                         <input type="checkbox" id="same-address">
                                         <label for="same-address">Shipping and Billing address are same</label>
                                     </div>
-                                </form>
+
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <button class="accordion-toggle">
-                    <h4><img src="{{ asset('assets/front/images/shippingAdd.png') }}" alt=""> Shipping <span>Address</span></h4>
-                </button>
-                <div class="accordion-content">
-                    <div class="billingSection">
-                        <div class="accorTop">
-                            <div class="form-container">
-                                <form>
+                    <button class="accordion-toggle">
+                        <h4><img src="{{ asset('assets/front/images/shippingAdd.png') }}" alt=""> Shipping <span>Address</span></h4>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="billingSection">
+                            <div class="accorTop">
+                                <div class="form-container">
+
                                     <div class="row">
                                         <div class="form-group">
-                                            <input type="text" id="first-name" placeholder="First Name">
+                                            <input type="text" id="shipping_name" placeholder="Full Name" name="shipping_name">
                                         </div>
-                                        <div class="form-group">
-                                            <input type="text" id="last-name" placeholder="Last Name">
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group full-width">
+                                            <input type="text" id="shipping_address1" name="shipping_address1" placeholder="Address Line 1">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="form-group full-width">
-                                            <input type="text" id="address-line-1" placeholder="Address Line 1">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group full-width">
-                                            <input type="text" id="address-line-2" placeholder="Address Line 2">
+                                            <input type="text" id="shipping_address2" name="shipping_address2" placeholder="Address Line 2">
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="form-group">
-                                            <select id="country">
-                                                <option>Select Country</option>
-                                                <!-- Add country options here -->
+                                            <select class="form-control" id="shipping_country" name="shipping__country" required="">
+                                                @include('includes.countries')
                                             </select>
                                         </div>
-                                        <div class="form-group">
-                                            <select id="state">
-                                                <option>Select State</option>
-                                                <!-- Add state options here -->
+                                        <div class="form-group d-none select_state">
+                                            <select class="form-control " id="shipping_state" name="shipping__state">
+
                                             </select>
                                         </div>
                                     </div>
 
                                     <div class="row">
                                         <div class="form-group">
-                                            <input type="text" id="city" placeholder="Suburb/City">
+                                            <input type="text" name="shipping_city" id="shipping_city" placeholder="Suburb/City">
                                         </div>
                                         <div class="form-group">
-                                            <input type="text" id="postcode" placeholder="Postcode">
+                                            <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
                                         </div>
                                     </div>
 
-                                    <div class="row checkbox-group">
-                                        <input type="checkbox" id="same-address">
-                                        <label for="same-address">Shipping and Billing address are same</label>
-                                    </div>
-                                </form>
+
+
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <button class="accordion-toggle">
-                    <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Make a <span>Payment</span></h4>
-                </button>
-                <div class="accordion-content">
-                    <div class="makeAPayment">
-                        <div class="accorTop">
-                            <div class="payment-form-container">
-                                <form>
-                                    <!-- Payment Options -->
-                                    <div class="payment-options">
-                                        <label>
-                                            <input type="radio" name="payment-method" value="card" checked>
-                                            <span>Credit/Debit Card</span>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="payment-method" value="paypal">
-                                            <span>Paypal</span>
-                                        </label>
-                                        <label>
-                                            <input type="radio" name="payment-method" value="squarespace">
-                                            <span>Squarespace</span>
-                                        </label>
-                                    </div>
+                    <button class="accordion-toggle">
+                        <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Make a <span>Payment</span></h4>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="makeAPayment">
+                            <div class="accorTop">
+                                <div class="payment-form-container">
+                                    <form>
+                                        <!-- Payment Options -->
+                                        <div class="payment-options">
+                                            <label>
+                                                <input type="radio" name="payment-type" value="full" checked>
+                                                <span>Make Full Payment</span>
+                                            </label>
+                                            <label>
+                                                <input type="radio" name="payment-type" value="half">
+                                                <span>Place a $30 deposit to secure your order</span>
+                                            </label>
 
-                                    <!-- Card Details -->
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="card-number" placeholder="Card Number">
                                         </div>
-                                        <div class="form-group">
-                                            <input type="text" id="card-name" placeholder="Name on Card">
-                                        </div>
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="expiry-date" placeholder="MM/YY">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" id="cvv" placeholder="CVV">
-                                        </div>
-                                    </div>
 
-                                    <!-- Place Order Button -->
-                                    <div class="row">
-                                        <button type="submit" class="btn-place-order">Place Order</button>
-                                    </div>
-                                </form>
+                                        <!-- Card Details -->
+                                        <div class="row">
+
+                                            <div class="form-group">
+                                                <input type="text" id="card-number" placeholder="Card Number">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" id="card-name" placeholder="Name on Card">
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <input type="text" id="expiry-date" placeholder="MM/YY">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" id="cvv" placeholder="CVV">
+                                            </div>
+                                        </div>
+
+                                        <!-- Place Order Button -->
+                                        <div class="row">
+                                            <p><strong>You will receive a mockup from one of our professional digital graphic designers to ensure your custom apparel order is exactly what you want it before production begins. We will make as many edits as it takes to get it right. If you are still not satisfied with the result at the end of the mockup approval, we will issue a 100% refund.</strong></p>
+                                        </div>
+                                        <br>
+                                        <br>
+                                        <div class="row">
+                                            <input type="hidden" id="shipping-cost" name="shipping_cost" value="0">
+                                            <input type="hidden" id="packing-cost" name="packing_cost" value="0">
+                                            <input type="hidden" id="shipping-title" name="shipping_title" value="0">
+                                            <input type="hidden" id="packing-title" name="packing_title" value="0">
+                                            <input type="hidden" id="input_tax" name="tax" value="">
+                                            <input type="hidden" id="input_tax_type" name="tax_type" value="">
+                                            <input type="hidden" name="currency_sign" value="{{ $curr->sign }}">
+                                            <input type="hidden" name="currency_name" value="{{ $curr->name }}">
+                                            <input type="hidden" name="currency_value" value="{{ $curr->value }}">
+                                            <button type="submit" class="btn-place-order">Place Order</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                    @endif
             </div>
         </div>
 
@@ -916,6 +946,140 @@ $const = $productt->constant;
         loadFromLocalStorage(pid);
         constantCalculation();
 
+        $('.qty-control').each(function() {
+            var qty = $(this).find('.item-qty').val();
+
+            let pid = $(this).find('.item-qty').data('product-id');
+            let index = $(this).find('.item-qty').data('id');
+
+            constantCalculation(qty, pid, index);
+
+        });
+
+
+
+        $(document).on('change', '#same-address', function() {
+            if ($(this).is(':checked')) {
+                $('#shipping_name').val($('#billing_name').val());
+                $('#shipping_address1').val($('#billing_address1').val());
+                $('#shipping_address2').val($('#billing_address2').val());
+                $('#shipping_country').val($('#billing_country').val()).trigger('change');
+                $('#shipping_state').val($('#billing_state').val());
+                $('#shipping_city').val($('#billing_city').val());
+                $('#shipping_postcode').val($('#billing_postcode').val());
+            } else {
+                $('#shipping_name').val('');
+                $('#shipping_address1').val('');
+                $('#shipping_address2').val('');
+                $('#shipping_country').val('').trigger('change');
+                $('#shipping_state').val('');
+                $('#shipping_city').val('');
+                $('#shipping_postcode').val('');
+            }
+        });
+
+
+        let original_tax = 0;
+
+        // var mship = $('.shipping').length > 0 ? $('.shipping').first().val() : 0;
+        // var mpack = $('.packing').length > 0 ? $('.packing').first().val() : 0;
+
+
+        // var ship_title = $('.shipping').length > 0 ? $('.shipping').first().attr('data-form') : '';
+        // var pack_title = $('.packing').length > 0 ? $('.packing').first().attr('data-form') : '';
+
+
+        // mship = parseFloat(mship);
+        // mpack = parseFloat(mpack);
+
+        // $(document).on('change', '#select_country', function() {
+
+        //     $(this).attr('data-href');
+        //     let state_id = 0;
+        //     let country_id = $('#select_country option:selected').attr('data');
+        //     let is_state = $('option:selected', this).attr('rel');
+        //     let is_auth = $('option:selected', this).attr('rel1');
+        //     let is_user = $('option:selected', this).attr('rel5');
+        //     let state_url = $('option:selected', this).attr('data-href');
+        //     if (is_auth == 1 || is_state == 1) {
+        //         if (is_state == 1) {
+        //             $('.select_state').show();
+        //             $.get(state_url, function(response) {
+        //                 $('#show_state').html(response.data);
+        //                 // if (is_user == 1) {
+        //                 //     tax_submit(country_id, response.state);
+        //                 // } else {
+        //                 //     tax_submit(country_id, state_id);
+        //                 // }
+
+        //             });
+
+        //         } else {
+        //             tax_submit(country_id, state_id);
+        //             hide_state();
+        //         }
+
+        //     } else {
+
+        //         tax_submit(country_id, state_id);
+        //         hide_state();
+        //     }
+
+        // });
+        $(document).on('change', '#show_state', function() {
+            let state_id = $(this).val();
+            let country_id = $('#select_country option:selected').attr('data');
+            tax_submit(country_id, state_id);
+        });
+
+        function hide_state() {
+            $('.select_state').hide();
+        }
+
+
+        function tax_submit(country_id, state_id) {
+
+            $('.gocover').show();
+            var total = $("#total").val();
+            var ship = 0;
+            $.ajax({
+                type: "GET",
+                url: mainurl + "/country/tax/check",
+                data: {
+                    state_id: state_id,
+                    country_id: country_id,
+                    total: total,
+                    shipping_cost: ship
+                },
+                success: function(data) {
+
+                    $('#grandtotal').val(data[0]);
+                    $('#tgrandtotal').val(data[0]);
+                    $('#original_tax').val(data[1]);
+                    $('.tax_show').removeClass('d-none');
+                    $('#input_tax').val(data[11]);
+                    $('#input_tax_type').val(data[12]);
+                    $('.original_tax').html(parseFloat(data[1]).toFixed(2));
+                    var ttotal = parseFloat($('#grandtotal').val());
+                    var tttotal = parseFloat($('#grandtotal').val()) + (parseFloat(mship) + parseFloat(mpack));
+                    ttotal = parseFloat(ttotal).toFixed(2);
+                    tttotal = parseFloat(tttotal).toFixed(2);
+                    $('#grandtotal').val(data[0] + parseFloat(mship) + parseFloat(mpack));
+                    if (pos == 0) {
+
+                        $('#final-cost').html('{{ $curr->sign }}' + tttotal);
+                        $('.total-cost-dum #total-cost').html('{{ $curr->sign }}' + ttotal);
+                    } else {
+
+                        $('#total-cost').html('');
+                        $('#final-cost').html(tttotal + '{{ $curr->sign }}');
+                        $('.total-cost-dum #total-cost').html(ttotal + '{{ $curr->sign }}');
+                    }
+                    $('.gocover').hide();
+                }
+            });
+        }
+
 
         $('#logo-upload').on('change', function(e) {
             var file = e.target.files[0];
@@ -941,8 +1105,12 @@ $const = $productt->constant;
     });
 
 
-    function removeCart(size, color) {
-        var pid = '{{ $productt->id }}';
+    function removeCart(size, color, p_id = 0) {
+        if (p_id != 0) {
+            var pid = p_id;
+        } else {
+            var pid = '{{ $productt->id }}';
+        }
 
         var itemid = pid + size + color;
         var size_qty = '';
@@ -1124,14 +1292,19 @@ $const = $productt->constant;
     });
 
     function totalQty() {
-        var sum = 0;
-        $('.color-quantity').each(function() {
-            var value = parseInt($(this).val());
-            if (!isNaN(value)) {
-                sum += parseInt(value);
-            }
-        });
-        $('.qty').val(sum);
+        setTimeout(() => {
+
+
+            var sum = 0;
+            $('.color-quantity').each(function() {
+                var value = parseInt($(this).val());
+                if (!isNaN(value)) {
+                    sum += parseInt(value);
+                }
+            });
+            // alert(sum);
+            $('.qty').val(sum);
+        }, 500);
     }
 
 

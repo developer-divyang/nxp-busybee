@@ -66,6 +66,8 @@
     <link rel="stylesheet" href="{{ asset('assets/front/css/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/front/webfonts/flaticon/flaticon.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/front/webfonts/flaticon/flaticon.css') }}">
+    
+    <link rel="stylesheet" href="{{ asset('assets/front/css/toastr.min.css') }}">
 
     @if ($default_font->font_family)
     <link rel="stylesheet" id="colorr" href="{{ asset('assets/front/css/font.php?font_familly='.$default_font->font_family) }}">

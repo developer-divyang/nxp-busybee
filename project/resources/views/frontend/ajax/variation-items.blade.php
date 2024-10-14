@@ -4,7 +4,7 @@
     <!---------------- before line selected product --------------->
     @if($productt->getColorImages)
     @foreach($productt->getColorImages as $pcolor)
-    <!-- @if (in_array($pcolor->id, $colorIds)) -->
+    @if (in_array($pcolor->color_id, $colorIds))
 
 
 
@@ -73,6 +73,7 @@
         </div>
     </div>
     @endif
+    
 
     @endforeach
     @endif
@@ -95,7 +96,7 @@
 
 @if($productt->getColorImages)
 @foreach($productt->getColorImages as $pcolor)
-@if(!in_array($pcolor->id, $colorIds))
+@if(!in_array($pcolor->color_id, $colorIds))
 <div style="min-height:5px; padding:5px; display:flex; justify-content:center; width:100%;margin-bottom:30px;">
     <div class="search-container">
         <input type="text" placeholder="Search..." class="search-input">

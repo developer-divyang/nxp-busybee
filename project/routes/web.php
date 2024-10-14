@@ -1438,6 +1438,7 @@ Route::post('/item/report', 'Front\CatalogController@report')->name('product.rep
 
     Route::get('/', 'Front\FrontendController@index')->name('front.index');
     Route::get('/view','Front\CartController@view_cart')->name('front.cart-view');
+    Route::get('/cart','Front\CartController@viewCart')->name('front.cartview');
     Route::get('/extras', 'Front\FrontendController@extraIndex')->name('front.extraIndex');
     Route::get('/currency/{id}', 'Front\FrontendController@currency')->name('front.currency');
     Route::get('/language/{id}', 'Front\FrontendController@language')->name('front.language');

@@ -1,4 +1,4 @@
-    <!-- <li>
+     <li>
         <a href="#order" class="accordion-toggle wave-effect" data-toggle="collapse" aria-expanded="false"><i class="fas fa-hand-holding-usd"></i>{{ __('Orders') }}</a>
         <ul class="collapse list-unstyled" id="order" data-parent="#accordion" >
             <li>
@@ -18,7 +18,7 @@
             </li>
 
         </ul>
-    </li> -->
+    </li> 
 
     <!-- <li>
         <a href="#menu1" class="accordion-toggle wave-effect" data-toggle="collapse" aria-expanded="false">

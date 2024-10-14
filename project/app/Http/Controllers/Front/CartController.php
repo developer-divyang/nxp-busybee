@@ -13,8 +13,12 @@ use App\Models\Generalsetting;
 use App\Models\Size;
 use App\Models\State;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use PhpParser\Node\Stmt\Foreach_;
 use Session;
+use Illuminate\{
+    Support\Str
+};
 
 class CartController extends FrontBaseController
 {
@@ -85,6 +89,34 @@ class CartController extends FrontBaseController
     }
 
 
+    public function viewCart()
+    {
+        if (!Session::has('cart')) {
+            return view('frontend.empty_cart');
+        }
+        if (Session::has('already')) {
+            Session::forget('already');
+        }
+        if (Session::has('coupon')) {
+            Session::forget('coupon');
+        }
+        if (Session::has('coupon_total')) {
+            Session::forget('coupon_total');
+        }
+        if (Session::has('coupon_total1')) {
+            Session::forget('coupon_total1');
+        }
+        if (Session::has('coupon_percentage')) {
+            Session::forget('coupon_percentage');
+        }
+        $oldCart = Session::get('cart');
+        $cart = new Cart($oldCart);
+        $products = $cart->items;
+        $totalPrice = $cart->totalPrice;
+        $mainTotal = $totalPrice;
+        return view('frontend.cart_view', compact('products', 'totalPrice', 'mainTotal'));
+    }
+
     public function addcart(Request $request, $id)
     {
         // dd($request->all());
@@ -105,40 +137,38 @@ class CartController extends FrontBaseController
                 // dd($itemKey);
                 if (isset($cart->items[$itemKey])) {
 
-                if($request->file('front_logo')){
-                    $image = $request->file('front_logo');
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $destinationPath = public_path('/uploads/products');
-                    $image->move($destinationPath, $imageName);
-                    $front_logo = $imageName;
-                }
+                    if ($request->file('front_logo')) {
 
-                //uploade right logo
-                if($request->file('right_logo')){
-                    $image = $request->file('right_logo');
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $destinationPath = public_path('/uploads/products');    
-                    $image->move($destinationPath, $imageName);
-                    $right_logo = $imageName;
-                }
-                    
-                //uploade left logo
-                if($request->file('left_logo')){
-                    $image = $request->file('left_logo');
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $destinationPath = public_path('/uploads/products');    
-                    $image->move($destinationPath, $imageName);
+                        $image = $request->file('front_logo');
+                        $imageName = time() . Str::random(8) . '.' . $image->getClientOriginalExtension();
+                        $color_image = Storage::disk('public')->put($imageName, file_get_contents($image));
+                        $front_logo = $imageName;
+                    }
+                    // dd($front_logo);
+
+                    //uploade right logo
+                    if ($request->file('right_logo')) {
+                        $image = $request->file('right_logo');
+                        $imageName = time() . Str::random(8) . '.' . $image->getClientOriginalExtension();
+                        $color_image = Storage::disk('public')->put($imageName, file_get_contents($image));
+                        $right_logo = $imageName;
+                    }
+
+                    //uploade left logo
+                    if ($request->file('left_logo')) {
+                        $image = $request->file('left_logo');
+                        $imageName = time() . Str::random(8) . '.' . $image->getClientOriginalExtension();
+                        $color_image = Storage::disk('public')->put($imageName, file_get_contents($image));
                         $left_logo = $imageName;
-                }
+                    }
 
-                //uploade back logo
-                if($request->file('back_logo')){
-                    $image = $request->file('back_logo');
-                    $imageName = time() . '.' . $image->getClientOriginalExtension();
-                    $destinationPath = public_path('/uploads/products');
-                    $image->move($destinationPath, $imageName);
-                    $back_logo = $imageName;
-                }
+                    //uploade back logo
+                    if ($request->file('back_logo')) {
+                        $image = $request->file('back_logo');
+                        $imageName = time() . Str::random(8) . '.' . $image->getClientOriginalExtension();
+                        $color_image = Storage::disk('public')->put($imageName, file_get_contents($image));
+                        $back_logo = $imageName;
+                    }
 
 
 
@@ -168,27 +198,27 @@ class CartController extends FrontBaseController
                     // Update the cart item quantity
                     $cart->items[$itemKey]['order_type'] = $request->order;
                     //upload pending
-                    if($request->file('front_logo')){
+                    if ($request->file('front_logo')) {
                         $cart->items[$itemKey]['front_logo'] = $front_logo;
                     }
 
-                    if($request->file('right_logo')){
+                    if ($request->file('right_logo')) {
                         $cart->items[$itemKey]['right_logo'] = $right_logo;
                     }
 
-                    if($request->file('back_logo')){
+                    if ($request->file('back_logo')) {
                         $cart->items[$itemKey]['back_logo'] = $back_logo;
                     }
 
-                    if($request->file('left_logo')){
+                    if ($request->file('left_logo')) {
                         $cart->items[$itemKey]['left_logo'] = $left_logo;
                     }
-                    
 
 
 
-                    
-                    
+
+
+
                     $cart->items[$itemKey]['side'] = $request->i3;
                     $cart->items[$itemKey]['side_location'] = $request->j3;
                     $cart->items[$itemKey]['back'] = $request->k3;

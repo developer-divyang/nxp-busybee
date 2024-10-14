@@ -94,7 +94,11 @@
         <div id="toggle" style="display: flex; justify-content: space-between; gap: 40px;">
             <div class="nav-end">
                 <img src="{{ asset('assets/front/images/heart.png') }}" alt="">
-                <img src="{{ asset('assets/front/images/user.png') }}" alt="">
+                @if (Auth::check())
+                <a href="{{ route('user-dashboard') }}"><img src="{{ asset('assets/front/images/user.png') }}" alt="" /></a>
+                @else
+                <a href="{{ route('user.login') }}"><img src="{{ asset('assets/front/images/user.png') }}" alt="" /></a>
+                @endif
                 <img src="{{ asset('assets/front/images/shopping-cart.png') }}" alt="">
             </div>
             <img src="{{ asset('assets/front/images/ham.png') }}" alt="" class="ham">

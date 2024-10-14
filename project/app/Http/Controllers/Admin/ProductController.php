@@ -824,6 +824,9 @@ class ProductController extends AdminBaseController
     {
         $cats = Category::all();
         $data = Product::findOrFail($id);
+        $defaultConstant = json_decode(file_get_contents(public_path('assets/default_constant.json')), true);
+        // $data->constant = json_encode($defaultConstant);
+        // $data->update();
         // dd($data->constant);
         $constant = json_decode($data->constant);
 

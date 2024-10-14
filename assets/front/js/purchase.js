@@ -424,7 +424,7 @@ function selectlogoBox(selectedBox) {
                     <div class="upload-container">
                         <div class="upload-btn-wrapper">
                             <button class="btn" onclick="handleButtonClick(event);">Upload Your Logo</button>
-                            <input type="file" id="fileInput" onchange="showFileName()">
+                            <input type="file" name="${heading}" id="fileInput" onchange="showFileName()">
                         </div>
                         <span class="file-name" id="fileName">No File Selected</span>
                     </div>
@@ -745,7 +745,7 @@ const prices = [24.00, 24.00, 24.00];
 const quantities = [10, 12, 8];
 
 function updateSubTotal(index) {
-    const qty = parseInt(document.getElementById(`qty-${index}`).value);
+    const qty = parseInt(document.querySelector(`input[data-id="${index}"]`).value);
     const subtotal = prices[index] * qty;
     document.getElementById(`subtotal-${index}`).textContent = `$${subtotal.toFixed(2)}`;
     updateTotal();
@@ -760,25 +760,63 @@ function updateTotal() {
 }
 
 function increaseQty(index) {
-    const qtyInput = document.getElementById(`qty-${index}`);
+
+    
+    const qtyInput = document.querySelector(`input[data-id="${index}"]`);
     let qty = parseInt(qtyInput.value);
+    // alert(index);
     qty++;
     qtyInput.value = qty;
-    updateSubTotal(index);
+    // updateSubTotal (index);
+    let color = $(qtyInput).data('color-id');
+    let size = $(qtyInput).data('size-id');
+    let pid = $(qtyInput).data('product-id');
+    saveToLocalStorage(pid);
+    // let size = $(quantityInput).data('size-id');
+    qty = $(qtyInput).val();
+    addCart(1, size, color);
+
+
+    // alert(qty);
+    constantCalculation(qty, pid, index);
+
 }
+
 
 function decreaseQty(index) {
-    const qtyInput = document.getElementById(`qty-${index}`);
+
+
+    const qtyInput = document.querySelector(`input[data-id="${index}"]`);
     let qty = parseInt(qtyInput.value);
     if (qty > 1) {
-        qty--;
-        qtyInput.value = qty;
-        updateSubTotal(index);
+    qty--;
+    qtyInput.value = qty;
+    // updateSubTotal (index);
+    let color = $(qtyInput).data('color-id');
+    let size = $(qtyInput).data('size-id');
+    let pid = $(qtyInput).data('product-id');
+    saveToLocalStorage(pid);
+    // let size = $(quantityInput).data('size-id');
+    qty = $(qtyInput).val();
+    removeCart(size, color, pid);
 
 
-
+    // alert(qty);
+    constantCalculation(qty, pid, index);
     }
+
 }
+
+// function decreaseQty(index) {
+//     const qtyInput = document.getElementById(`qty-${index}`);
+//     let qty = parseInt(qtyInput.value);
+//     if (qty > 1) {
+//         qty--;
+//         qtyInput.value = qty;
+//         updateSubTotal(index);
+
+//     }
+// }
 
 
 // ------------------ payment section  -----------------------

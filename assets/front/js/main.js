@@ -177,7 +177,7 @@
 		$("#loginform").on("submit", function (e) {
 			var $this = $(this).parent();
 			e.preventDefault();
-			$this.find("button.submit-btn").prop("disabled", true);
+			$this.find(".login-btn").prop("disabled", true);
 			$this.find(".alert-info").show();
 			$this.find(".alert-info p").html($("#authdata").val());
 			$.ajax({
@@ -210,7 +210,49 @@
 							window.location = data;
 						}
 					}
-					$this.find("button.submit-btn").prop("disabled", false);
+					$this.find(".login-btn").prop("disabled", false);
+				},
+			});
+		});
+
+
+		$("#loginform1").on("submit", function (e) {
+			e.preventDefault();
+			var $this = $(this).parent();
+			$this.find(".haveAnAccountBtn").prop("disabled", true);
+			$this.find(".alert-info").show();
+			$this.find(".alert-info p").html($("#authdata").val());
+			$.ajax({
+				method: "POST",
+				url: $(this).prop("action"),
+				data: new FormData(this),
+				dataType: "JSON",
+				contentType: false,
+				cache: false,
+				processData: false,
+				success: function (data) {
+					if (data.errors) {
+						$this.find(".alert-success").hide();
+						$this.find(".alert-info").hide();
+						$this.find(".alert-danger").addClass("d-flex");
+						$this.find(".alert-danger").show();
+						$this.find(".alert-danger ul").html("");
+						for (var error in data.errors) {
+							$this.find(".alert-danger p").html(data.errors[error]);
+						}
+					} else {
+						$this.find(".alert-info").hide();
+						$this.find(".alert-danger").hide();
+						$this.find(".alert-success").addClass("d-flex");
+						$this.find(".alert-success").show();
+						$this.find(".alert-success p").html("Success !");
+						if (data == 1) {
+							location.reload();
+						} else {
+							window.location = data;
+						}
+					}
+					$this.find(".haveAnAccountBtn").prop("disabled", false);
 				},
 			});
 		});
@@ -825,7 +867,7 @@
 		$(document).on("submit", "#userform", function (e) {
 			e.preventDefault();
 			$(".gocover").show();
-			$("button.submit-btn").prop("disabled", true);
+			$("button.btn-save").prop("disabled", true);
 			$.ajax({
 				method: "POST",
 				url: $(this).prop("action"),
@@ -843,7 +885,7 @@
 					}
 					$(window).scrollTop(-1);
 					$(".gocover").hide();
-					$("button.submit-btn").prop("disabled", false);
+					$("button.btn-save").prop("disabled", false);
 				},
 			});
 		});

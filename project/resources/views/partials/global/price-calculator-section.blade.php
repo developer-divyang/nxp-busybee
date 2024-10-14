@@ -15,7 +15,7 @@
                             @php
                             $quantity = 1;
                             if(isset($products)){
-                            $quantity = ($products->totalQty)?? 0;
+                            $quantity = ($products->totalQty)?? 1;
                             }
                             @endphp
                             <input type="text" class="quantity-input qty" name="f3" id="f3" value="{{ $quantity }}" readonly>

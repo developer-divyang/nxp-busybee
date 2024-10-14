@@ -78,27 +78,27 @@ class RegisterController extends Controller
 			  }
 			  
 			$user->fill($input)->save();
-			dd($gs->is_verification_email);
-	        if($gs->is_verification_email == 1)
-	        {
-	        $to = $request->email;
-	        $subject = 'Verify your email address.';
-	        $msg = "Dear Customer,<br>We noticed that you need to verify your email address.<br>Simply click the link below to verify. <a href=".url('user/register/verify/'.$token).">".url('user/register/verify/'.$token)."</a>";
-	        //Sending Email To Customer
+			// dd($gs->is_verification_email);
+	        // if($gs->is_verification_email == 1)
+	        // {
+	        // $to = $request->email;
+	        // $subject = 'Verify your email address.';
+	        // $msg = "Dear Customer,<br>We noticed that you need to verify your email address.<br>Simply click the link below to verify. <a href=".url('user/register/verify/'.$token).">".url('user/register/verify/'.$token)."</a>";
+	        // //Sending Email To Customer
 
-	        $data = [
-	            'to' => $to,
-	            'subject' => $subject,
-	            'body' => $msg,
-	        ];
+	        // $data = [
+	        //     'to' => $to,
+	        //     'subject' => $subject,
+	        //     'body' => $msg,
+	        // ];
 
-	        $mailer = new GeniusMailer();
-	        $mailer->sendCustomMail($data);
+	        // $mailer = new GeniusMailer();
+	        // $mailer->sendCustomMail($data);
 	        
 
-          	return response()->json('We need to verify your email address. We have sent an email to '.$to.' to verify your email address. Please click link in that email to continue.');
-	        }
-	        else {
+          	// return response()->json('We need to verify your email address. We have sent an email to '.$to.' to verify your email address. Please click link in that email to continue.');
+	        // }
+	        // else {
 
             $user->email_verified = 'Yes';
             $user->update();
@@ -123,7 +123,7 @@ class RegisterController extends Controller
 
             Auth::login($user); 
           	return response()->json(1);
-	        }
+	        // }
 
     }
 

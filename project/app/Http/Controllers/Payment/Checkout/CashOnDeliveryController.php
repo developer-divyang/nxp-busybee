@@ -20,9 +20,11 @@ class CashOnDeliveryController extends CheckoutBaseControlller
 {
     public function store(Request $request)
     {
+        // dd('here');
         $input = $request->all();
         if($request->pass_check) {
             $auth = OrderHelper::auth_check($input); // For Authentication Checking
+            
             if(!$auth['auth_success']){
                 return redirect()->back()->with('unsuccess',$auth['error_message']);
             }
@@ -34,7 +36,8 @@ class CashOnDeliveryController extends CheckoutBaseControlller
 
         $oldCart = Session::get('cart');
         $cart = new Cart($oldCart);
-        OrderHelper::license_check($cart); // For License Checking
+        // OrderHelper::license_check($cart); // For License Checking
+        // dd($cart);
         $t_oldCart = Session::get('cart');
         $t_cart = new Cart($t_oldCart);
         $new_cart = [];
@@ -46,20 +49,20 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         $affilate_users = $temp_affilate_users == null ? null : json_encode($temp_affilate_users);
 
         $order = new Order;
-        $success_url = route('front.payment.return');
+        
         $input['user_id'] = Auth::check() ? Auth::user()->id : NULL;
         $input['cart'] = $new_cart;
         $input['affilate_users'] = $affilate_users;
         $input['pay_amount'] = $request->total / $this->curr->value;
         $input['order_number'] = Str::random(4).time();
         $input['wallet_price'] = $request->wallet_price / $this->curr->value;
-        if($input['tax_type'] == 'state_tax'){
-            $input['tax_location'] = State::findOrFail($input['tax'])->state;
-        }else{
-            $input['tax_location'] = Country::findOrFail($input['tax'])->country_name;
-        }
+        // if($input['tax_type'] == 'state_tax'){
+        //     $input['tax_location'] = State::findOrFail($input['tax'])->state;
+        // }else{
+        //     $input['tax_location'] = Country::findOrFail($input['tax'])->country_name;
+        // }
         $input['tax'] = Session::get('current_tax');
-
+        // dd($input);
         if (Session::has('affilate')) {
             $val = $request->total / $this->curr->value;
             $val = $val / 100;
@@ -81,11 +84,13 @@ class CashOnDeliveryController extends CheckoutBaseControlller
 
         $order->fill($input)->save();
         $order->tracks()->create(['title' => 'Pending', 'text' => 'You have successfully placed your order.' ]);
+        // dd($order);
+        $success_url = route('user-order', $order->id);
         $order->notifications()->create();
 
-        if($input['coupon_id'] != "") {
-            OrderHelper::coupon_check($input['coupon_id']); // For Coupon Checking
-        }
+        // if($input['coupon_id'] != "") {
+        //     OrderHelper::coupon_check($input['coupon_id']); // For Coupon Checking
+        // }
 
         if(Auth::check()){
             if($this->gs->is_reward == 1){
@@ -100,10 +105,11 @@ class CashOnDeliveryController extends CheckoutBaseControlller
                 Auth::user()->update(['reward' => (Auth::user()->reward + $final_reword->reward)]);
             }
         }
+        // dd($order);
 
         OrderHelper::size_qty_check($cart); // For Size Quantiy Checking
         OrderHelper::stock_check($cart); // For Stock Checking
-        OrderHelper::vendor_order_check($cart,$order); // For Vendor Order Checking
+        // OrderHelper::vendor_order_check($cart,$order); // For Vendor Order Checking
 
         Session::put('temporder',$order);
         Session::put('tempcart',$cart);
@@ -114,9 +120,9 @@ class CashOnDeliveryController extends CheckoutBaseControlller
         Session::forget('coupon_total1');
         Session::forget('coupon_percentage');
 
-        if ($order->user_id != 0 && $order->wallet_price != 0) {
-            OrderHelper::add_to_transaction($order,$order->wallet_price); // Store To Transactions
-        }
+        // if ($order->user_id != 0 && $order->wallet_price != 0) {
+        //     OrderHelper::add_to_transaction($order,$order->wallet_price); // Store To Transactions
+        // }
 
         //Sending Email To Buyer
         $data = [
@@ -130,8 +136,8 @@ class CashOnDeliveryController extends CheckoutBaseControlller
             'onumber' => $order->order_number,
         ];
 
-        $mailer = new GeniusMailer();
-        $mailer->sendAutoOrderMail($data,$order->id);
+        // $mailer = new GeniusMailer();
+        // $mailer->sendAutoOrderMail($data,$order->id);
 
         //Sending Email To Admin
         $data = [
@@ -139,9 +145,9 @@ class CashOnDeliveryController extends CheckoutBaseControlller
             'subject' => "New Order Recieved!!",
             'body' => "Hello Admin!<br>Your store has received a new order.<br>Order Number is ".$order->order_number.".Please login to your panel to check. <br>Thank you.",
         ];
-        $mailer = new GeniusMailer();
-        $mailer->sendCustomMail($data);
-
+        // $mailer = new GeniusMailer();
+        // $mailer->sendCustomMail($data);
+        // dd($success_url);
         return redirect($success_url);
     }
 }
