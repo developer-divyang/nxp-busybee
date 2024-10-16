@@ -287,8 +287,8 @@
                            <td>
                               {{ $item['qty'] }}
                            </td>
-                           <td id="price-{{ $pkey }}">$ 24.00</td>
-                           <td id="subtotal-{{ $pkey }}">$240.00</td>
+                           <td id="price-{{ $pkey }}">$ {{ $item['price'] }}</td>
+                           <td id="subtotal-{{ $pkey }}">$ {{ $item['sub_total'] }}</td>
                         </tr>
                         @endforeach
 
@@ -300,7 +300,7 @@
                      <div class="total-container-wrapper">
                         <div class="totals-row">
                            <p>Sub Total</p>
-                           <p>$720.00</p>
+                           <p>$ {{ $order->pay_amount }}</p>
                         </div>
                         <div class="totals-row">
                            <p>Shipping</p>
@@ -308,18 +308,19 @@
                         </div>
                         <div class="totals-row">
                            <p>Tax Amount</p>
-                           <p>$72.00</p>
+                           <p>$0.00</p>
                         </div>
                         <div class="totals-row total-row">
                            <p>Total</p>
-                           <p id="total">$792.00</p>
+                           <p id="total">$ {{ $order->pay_amount }}</p>
                         </div>
                      </div>
                   </div>
 
                </div>
 
-               <div class="mockups-container">
+
+               <div class="mockups-container" data-id="{{ $order->id }}">
                   <div class="header">
                      <h1><strong>Mockups</strong> Files</h1>
                      <a href="#" class="refresh">
@@ -327,82 +328,25 @@
                      </a>
                   </div>
 
-                  <div class="file-item">
-                     <div class="file-info">
-                        <div class="img-file-info">
-                           <span class="files-icon">
-                              <img src="{{ asset('assets/front/images/file.png') }}" alt="file icon">
-                           </span>
-                           <span class="file-name">File Name goes here.jpg</span>
-                        </div>
-                        <button class="download-icon">
-                           <img src="{{ asset('assets/front/images/backBtn.png') }}" alt="file icon">
-                        </button>
-                     </div>
-                     <div class="file-meta">
-                        <span>22/08/2024 11:05PM</span> |
-                        <span>Admin</span>
-                     </div>
-                     <a href="#" class="download-btn"><img src="{{ asset('assets/front/images/downloadIcon.png' )}}" alt="donwload icon"> Download your mock up</a>
+                  <div id="chat-container{{ $order->id }}">
+                     <!-- Chat messages will be appended here -->
                   </div>
 
-                  <div class="comment-item">
-                     <div class="comment-info">
-                        <span class="comment-icon">
-                           <img src="images/comment.png" alt="comment icon">
-                        </span>
-                        <span class="comment-text">Please move logo little upside</span>
-                     </div>
-                     <div class="comment-meta">
-                        <span>22/08/2024 11:32PM</span> |
-                        <span>You</span>
-                     </div>
-                  </div>
-
-                  <div class="file-item">
-                     <div class="file-info">
-                        <div class="img-file-info">
-                           <span class="files-icon">
-                              <img src="{{ asset('assets/front/images/file.png' )}}" alt="file icon">
-                           </span>
-                           <span class="file-name">File Name goes here2.jpg</span>
-                        </div>
-
-                        <button class="download-icon">
-                           <img src="{{ asset('assets/front/images/backBtn.png') }}" alt="file icon">
-                        </button>
-
-                     </div>
-                     <div class="file-meta">
-                        <span>22/08/2024 03:05PM</span> |
-                        <span>Admin</span>
-                     </div>
-                     <a href="#" class="download-btn"><img src="{{ asset('assets/front/images/downloadIcon.png' )}}" alt="donwload icon"> Download your mock up</a>
-                  </div>
-
-                  <div class="comment-item">
-                     <div class="comment-info">
-                        <span class="comment-icon">
-                           <img src="{{ asset('assets/front/images/comment.png') }}" alt="comment icon">
-                        </span>
-                        <span class="comment-text">Please use logo slightly zoom</span>
-                     </div>
-                     <div class="comment-meta">
-                        <span>22/08/2024 04:57PM</span> |
-                        <span>You</span>
-                     </div>
-                  </div>
-
-                  <div class="comment-input">
+                  <div class="comment-input{{ $order->id }}">
                      <div class="comment-wrapper">
-                        <input type="text" placeholder="Enter Your Comments" />
-                        <button class="comment-send-btn"><img src="{{ asset('assets/front/images/sendArrow.png') }}" alt="">Send</button>
+                        <input type="text" id="comment-text{{ $order->id }}" placeholder="Enter Your Comments">
+                        <input type="file" id="file-upload{{ $order->id }}">
+                        <button class="comment-send-btn" data-id="{{ $order->id }}" id="send-comment{{ $order->id }}"><img src="http://localhost/nxp-busybee/assets/front/images/sendArrow.png" alt="">Send</button>
                      </div>
                   </div>
                </div>
 
+
+
+
             </div>
          </div>
+
 
          @endforeach
          @endif
@@ -638,6 +582,77 @@
 @section('script')
 <script>
    $(document).ready(function() {
+
+      $.ajaxSetup({
+         headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+         }
+      });
+
+      function loadChat(orderId) {
+         $.ajax({
+            url: mainurl + "/user/load-chat/" + orderId, // Endpoint to fetch chat for the specific order
+            type: 'GET',
+            success: function(response) {
+               $(`#chat-container${orderId}`).html(response.html); // Append chat messages to the correct container
+            }
+         });
+      }
+
+      function checkAndLoadChat(orderId) {
+         var orderDetailsElement = $(`.order_details_${orderId}`);
+         if (orderDetailsElement.css('display') === 'flex') {
+            loadChat(orderId);
+         }
+      }
+
+      // Handle the send button click
+      $('.comment-send-btn').click(function(e) {
+         e.preventDefault();
+
+         var orderId = $(this).data('id'); // Get order ID from data attribute
+         var comment = $(`#comment-text${orderId}`).val();
+         var fileData = $(`#file-upload${orderId}`)[0].files[0];
+
+         if (comment == '' && !fileData) {
+            toastr.error('Please enter a comment or select a file');
+            return;
+         }
+         var formData = new FormData();
+
+         formData.append('comment', comment);
+         formData.append('user_type', 'user');
+
+         formData.append('order_id', orderId); // Include the order ID in the form data
+         if (fileData) {
+            formData.append('file', fileData); // If a file is selected, append it
+         }
+
+         $.ajax({
+            url: mainurl + '/user/send-chat',
+            type: 'POST',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+               if (response.success) {
+                  $(`#comment-text${orderId}`).val(''); // Clear the comment input
+                  $(`#file-upload${orderId}`).val(''); // Clear the file input
+                  checkAndLoadChat(orderId); // Reload chat messages after sending
+               }
+            }
+         });
+      });
+
+      // Optionally, refresh chat messages every 5 seconds
+      setInterval(function() {
+         $('.mockups-container').each(function() {
+            var orderId = $(this).data('id'); // Extract order ID from the data-id attribute
+            checkAndLoadChat(orderId);
+         });
+      }, 5000);
+
+
       function counttotalQty() {
          var totalQty = 0;
          $('.item-qty').each(function() {

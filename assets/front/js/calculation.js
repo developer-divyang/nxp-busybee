@@ -247,14 +247,18 @@ function constantCalculation(qty = 0,p_id = 0,key = '') {
 
 if(key != ''){
 
-    $('#price-'+key).html('$' + per_cap);
-    $('#subtotal-' + key).html('$' + al3);
-    $('#subtotal-' + key).data('value',al3);
+    $('#price-'+key).html('$' + per_cap+'<input type="hidden" id="price-input-'+key+'" value="'+per_cap+'" name="price['+key+']">');
+    
+    $('#subtotal-' + key).html('$' + al3+'<input type="hidden" id="subtotal-input-'+key+'" value="'+al3+'" name="subtotal['+key+']">');
+    $('#subtotal-' + key).attr('data-value',al3);
+    
+
     var total = 0;
     $('.subtotal').each(function () {
-        total += parseFloat($(this).data('value'));
+        total += parseFloat($(this).attr('data-value'));
     });
     $('#total').html('$' + total.toFixed(2));
+    $('#total_amount').val(total.toFixed(2));
 
 
     

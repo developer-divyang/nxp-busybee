@@ -4,6 +4,7 @@
 // ************************************ ADMIN SECTION **********************************************
 
 use App\Http\Controllers\Front\CatalogController;
+use App\Http\Controllers\User\UserController;
 
 Route::prefix('admin')->group(function() {
 
@@ -57,6 +58,8 @@ Route::prefix('admin')->group(function() {
 
   //------------ ADMIN DASHBOARD & PROFILE SECTION ------------
   Route::get('/', 'Admin\DashboardController@index')->name('admin.dashboard');
+  Route::get('/load-chat/{orderId}', 'Admin\DashboardController@loadChat')->name('order-chat');
+  Route::post('/send-chat', 'Admin\DashboardController@sendChat')->name('order-send-chat');
   Route::get('/profile', 'Admin\DashboardController@profile')->name('admin.profile');
   Route::post('/profile/update', 'Admin\DashboardController@profileupdate')->name('admin.profile.update');
   Route::get('/password', 'Admin\DashboardController@passwordreset')->name('admin.password');
@@ -1229,6 +1232,9 @@ Route::get('/forgot','Auth\User\ForgotController@index')->name('user.forgot');
 
     // User Dashboard
     Route::get('/dashboard', 'User\UserController@index')->name('user-dashboard');
+    Route::get('/load-chat/{orderId}', 'User\UserController@loadChat')->name('order-chat');
+    Route::post('/send-chat', 'User\UserController@sendChat')->name('order-send-chat');
+    
 
     // User Reset
     Route::get('/reset', 'User\UserController@resetform')->name('user-reset');
@@ -1550,7 +1556,7 @@ Route::post('/item/report', 'Front\CatalogController@report')->name('product.rep
     Route::get('/checkout/payment/paypal-notify', 'Payment\Checkout\PaypalController@notify')->name('front.paypal.notify');
 
     // Stripe
-    Route::post('/checkout/payment/stripe-submit', 'Payment\Checkout\StripeController@store')->name('front.stripe.submit');
+    Route::post('/checkout/payment/stripe-submit', 'Payment\Checkout\StripeController@processPayment')->name('front.stripe.submit');
 
     // Instamojo
     Route::post('/checkout/payment/instamojo-submit', 'Payment\Checkout\InstamojoController@store')->name('front.instamojo.submit');

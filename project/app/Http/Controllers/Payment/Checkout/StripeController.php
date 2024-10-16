@@ -11,11 +11,16 @@ use App\{
 use App\Models\Country;
 use App\Models\State;
 use Illuminate\Http\Request;
-use Cartalyst\Stripe\Laravel\Facades\Stripe;
+
 use Illuminate\Support\Facades\Auth;
 use Session;
 use OrderHelper;
 use Illuminate\Support\Str;
+use Stripe\Charge;
+use Stripe\Customer;
+use Stripe\PaymentIntent;
+use Stripe\Stripe;
+
 
 class StripeController extends CheckoutBaseControlller
 {
@@ -26,6 +31,57 @@ class StripeController extends CheckoutBaseControlller
         $paydata = $data->convertAutoData();
         \Config::set('services.stripe.key', $paydata['key']);
         \Config::set('services.stripe.secret', $paydata['secret']);
+    }
+
+
+    public function processPayment(Request $request)
+    {
+        $amount = $request->payment_type === 'full' ? 10000 : 3000; // Full payment = $100, Partial = $30
+        Stripe::setApiKey(\Config::get('services.stripe.secret'));
+        
+
+        // Step 3: Create a PaymentIntent with the partial amount ($30)
+
+
+        
+        // Charge the customer with the selected amount
+        try {
+            $amount = $request->input('amount');
+            $token = $request->input('token');
+            $amountInCents = $amount * 100;
+            $customer = Customer::create([
+                'name' => auth()->user()->name,
+                'email' => auth()->user()->email,
+                'address' => [
+                    'line1' => '510 Townsend St',
+                    'postal_code' => '98140',
+                    'city' => 'San Francisco',
+                    'state' => 'CA',
+                    'country' => 'US',
+                ],
+            ]);
+            
+           $source =  Customer::createSource(
+                $customer->id,
+                ['source' => $request->token]
+            );
+            dd($source);
+
+            $charge = Charge::create([
+                "customer" => $customer->id,
+                "amount" => $amountInCents,
+                "source" => $token,
+                "currency" => 'usd',
+                "description" => 'Example charge',
+
+            ]);
+
+            // You can store payment information or handle post-payment logic here
+
+            return response()->json(['error' => false, 'message' => 'Payment successful']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => true, 'message' => $e->getMessage()]);
+        }
     }
 
     public function store(Request $request)

@@ -10,7 +10,6 @@
         "authorizenet/authorizenet": "^2.0",
         "barryvdh/laravel-dompdf": "^0.8.6",
         "brian2694/laravel-toastr": "^5.56",
-        "cartalyst/stripe-laravel": "13.0.*",
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^2.0",
         "guzzlehttp/guzzle": "^7.0.1",
@@ -26,6 +25,7 @@
         "paypal/rest-api-sdk-php": "^1.14",
         "phpmailer/phpmailer": "^6.1",
         "razorpay/razorpay": "^2.5",
+        "stripe/stripe-php": "*",
         "yajra/laravel-datatables-oracle": "^9.10"
     },
     "require-dev": {

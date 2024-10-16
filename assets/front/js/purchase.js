@@ -783,6 +783,20 @@ function increaseQty(index) {
 }
 
 
+
+
+function removeItem(index) {
+    
+    $(`#cart-${index}`).remove();
+    // constantCalculation();
+    var total = 0;
+    $('.subtotal').each(function () {
+        total += parseFloat($(this).data('value'));
+    });
+    $('#total').html('$' + total.toFixed(2));
+}
+
+
 function decreaseQty(index) {
 
 

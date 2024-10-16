@@ -763,7 +763,7 @@ class CartController extends FrontBaseController
             $size = str_replace(' ', '-', $size);
         }
 
-        if ($size_qty == '0') {
+        if ($size_qty == '0') { 
             return redirect()->route('front.cart')->with('unsuccess', __('Out Of Stock.'));
         }
 

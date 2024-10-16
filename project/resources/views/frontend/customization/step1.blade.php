@@ -536,146 +536,150 @@
 
 
             <div id="checkout" class="content">
-
-                <button class="accordion-toggle">
-                    @if($products)
-                    <h4><img src="{{ asset('assets/front/images/orderSum.png') }}" alt=""> Order <span>Summary</span></h4>
-                    @else
-                    <h4 class="text-center"><img src="{{ asset('assets/front/images/orderSum.png') }}" alt="">{{ __('Cart is Empty!! Add some products in your Cart') }}</h4>
-                    @endif
-                </button>
-                @if($products)
-                <div class="accordion-content">
-                    <div class="order-summary">
-                        <div class="accorTop">
-                            <div class="order-container">
-                                <table class="order-table">
-                                    <thead>
-                                        <tr>
-                                            <th>Your Order Items</th>
-                                            <th>Logo File</th>
-                                            <th>Size</th>
-                                            <th>Qty</th>
-                                            <th>Item Price</th>
-                                            <th>Sub Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @if($products)
-
-                                        @foreach($products as $key => $product)
-                                        @php
-                                        
-                                        $productData = App\Models\Product::find($product['item']->id);
-                                        $color = App\Models\Color::where('color_name',$product['color'])->first()?->id;
-                                        $size = App\Models\Size::where('size_name',$product['size'])->first()?->id;
-                                        $pkey = $productData->id.'_'.$color.'_'.$size;
-                                        $productColorImages = App\Models\ProductColorImage::where('color_id',$color)->where('product_id',$productData->id)->first()?->image_path;
-                                        $images = json_decode($productColorImages);
-
-                                        @endphp
-                                        <!-- First Row -->
-                                        <tr>
-                                            <td>
-                                                <div class="item-details">
-                                                    <div class="img">
-                                                        <img src="{{ (isset($images[0]))?Storage::url($images[0]): asset('assets/front/images/frost.png') }}" alt="Olive Hat" class="item-img">
-                                                    </div>
-                                                    <div class="item-info">
-                                                        <p>{{ $productData->modelNumber->model_number }}</p>
-                                                        <p>{{ $product['color'] }}</p>
-                                                        <p>Logo Placement: {{ ($product['front_location'])??'' }}</p>
-                                                        <p>Embroidery: {{ ($product['embroidery_type'])??'' }}</p>
-                                                        <p>Back & Side Stitching: {{ ($product['side_location'])??'' }}</p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td>
-                                                <div class="frostimg">
-                                                    <img src="{{ asset('assets/front/images/frost.png') }}" alt="Logo" class="logo-file">
-                                                </div>
-                                            </td>
-                                            <td>{{ $product['size'] }}</td>
-                                            <td>
-                                                <div class="qty-control">
-                                                    <button onclick="decreaseQty('{{ $pkey }}')">−</button>
-                                                    <input type="text" class="item-qty" data-id="{{ $pkey }}" data-color-id="{{ $product['color'] }}" data-size-id="{{ $product['size'] }}" data-product-id="{{ $productData->id }}" value="{{ $product['qty'] }}" readonly>
-                                                    <button onclick="increaseQty('{{ $pkey }}')">+</button>
-                                                </div>
-                                            </td>
-                                            <td id="price-{{ $pkey }}">$24.00</td>
-                                            <td class="subtotal" data-value="240.00" id="subtotal-{{ $pkey }}">$240.00</td>
-                                            <td>
-                                                <button data-color-id="{{ $color }}" data-size-id="{{ $size }}" class="cancel-btn" onclick="removeItem(2)">&#x2715;</button>
-                                            </td>
-                                        </tr>
-                                        @endforeach
-                                        @endif
-                                        <!-- Second Row -->
-
-                                    </tbody>
-                                </table>
-
-                                <div class="total-container">
-                                    <p>Total: <span id="total">$720.00</span></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @if (Auth::check())
-                <button class="accordion-toggle">
-                    <h4><img src="{{ asset('assets/front/images/haveAcc.png') }}" alt=""> Have an <span>Account?</span></h4>
-                </button>
-                <div class="accordion-content">
-                    <div class="haveAnAccount">
-                        <div class="accorTop">
-                            <div class="auth-container">
-                                <div class="login-section">
-                                    <h2>Login to Your Account</h2>
-                                    <div class="alert alert-info validation" style="display: none;">
-                                        <p class="text-left"></p>
-                                    </div>
-                                    <div class="alert alert-success validation" style="display: none;">
-                                        <button type="button" class="close alert-close"><span>×</span></button>
-                                        <p class="text-left"></p>
-                                    </div>
-                                    <div class="alert alert-danger validation" style="display: none;">
-                                        <button type="button" class="close alert-close"><span>×</span></button>
-                                        <p class="text-left"></p>
-                                    </div>
-                                    <form id="loginform1" class="login-form" action="{{ route('user.login.submit') }}" method="POST">
-                                        @csrf
-                                        <div class="form-group">
-                                            <input type="email" name="email" placeholder="Email Address" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" name="password" placeholder="Password" required>
-                                        </div>
-                                        <button type="submit" class="haveAnAccountBtn">Login</button>
-                                    </form>
-                                </div>
-
-                                <div class="or-divider">
-                                    <span>or</span>
-                                </div>
-
-                                <div class="register-section">
-                                    <h2>Register New Account</h2>
-                                    <p>You don't have an account with Busy Bee Embroidery?<br> Create a new account using the button below.</p>
-                                    <a href="{{ route('user.register') }}" class="haveAnAccountBtn">Register</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                @endif
-
-
                 <form id="" action="{{ route('front.cod.submit') }}" method="POST" class="checkoutform">
                     @csrf
-                    @include('includes.form-success')
-                    @include('includes.form-error')
+                    <button class="accordion-toggle">
+                        @if($products)
+                        <h4><img src="{{ asset('assets/front/images/orderSum.png') }}" alt=""> Order <span>Summary</span></h4>
+                        @else
+                        <h4 class="text-center"><img src="{{ asset('assets/front/images/orderSum.png') }}" alt="">{{ __('Cart is Empty!! Add some products in your Cart') }}</h4>
+                        @endif
+                    </button>
+                    @if($products)
+                    <div class="accordion-content">
+                        <div class="order-summary">
+                            <div class="accorTop">
+                                <div class="order-container">
+                                    <table class="order-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Your Order Items</th>
+                                                <th>Logo File</th>
+                                                <th>Size</th>
+                                                <th>Qty</th>
+                                                <th>Item Price</th>
+                                                <th>Sub Total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if($products)
+
+                                            @foreach($products as $key => $product)
+                                            @php
+
+                                            $productData = App\Models\Product::find($product['item']->id);
+                                            $color = App\Models\Color::where('color_name',$product['color'])->first()?->id;
+                                            $size = App\Models\Size::where('size_name',$product['size'])->first()?->id;
+                                            $pkey = $productData->id.'_'.$color.'_'.$size;
+                                            $productColorImages = App\Models\ProductColorImage::where('color_id',$color)->where('product_id',$productData->id)->first()?->image_path;
+                                            $images = json_decode($productColorImages);
+
+                                            @endphp
+                                            <!-- First Row -->
+                                            <tr class="item-row" data-id="{{ $pkey }}" data-color-id="{{ $color }}" data-size-id="{{ $size }}" data-product-id="{{ $productData->id }}">
+                                                <td>
+                                                    <div class="item-details">
+                                                        <div class="img">
+                                                            <img src="{{ (isset($images[0]))?Storage::url($images[0]): asset('assets/front/images/frost.png') }}" alt="Olive Hat" class="item-img">
+                                                        </div>
+                                                        <div class="item-info">
+                                                            <p>{{ $productData->modelNumber->model_number }}</p>
+                                                            <p>{{ $product['color'] }}</p>
+                                                            <p>Logo Placement: {{ ($product['front_location'])??'' }}</p>
+                                                            <p>Embroidery: {{ ($product['embroidery_type'])??'' }}</p>
+                                                            <p>Back & Side Stitching: {{ ($product['side_location'])??'' }}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div class="frostimg">
+                                                        <img src="{{ asset('assets/front/images/frost.png') }}" alt="Logo" class="logo-file">
+                                                    </div>
+                                                </td>
+                                                <td>{{ $product['size'] }}</td>
+                                                <td>
+                                                    <div class="qty-control">
+                                                        <button type="button" onclick="decreaseQty('{{ $pkey }}')">−</button>
+                                                        <input type="text" class="item-qty" data-id="{{ $pkey }}" data-color-id="{{ $product['color'] }}" data-size-id="{{ $product['size'] }}" data-product-id="{{ $productData->id }}" value="{{ $product['qty'] }}" readonly name="qty[{{ $pkey }}]">
+                                                        <button type="button" onclick="increaseQty('{{ $pkey }}')">+</button>
+                                                    </div>
+                                                </td>
+                                                <td id="price-{{ $pkey }}">$24.00
+                                                    <input type="hidden" id="price-input-{{ $pkey }}" name="price[{{ $pkey }}]" value="24.00">
+                                                </td>
+                                                <td class="subtotal" data-value="240.00" id="subtotal-{{ $pkey }}">$240.00
+                                                    <input type="hidden" id="subtotal-input-{{ $pkey }}" name="subtotal[{{ $pkey }}]" value="240.00">
+                                                </td>
+
+                                                <td>
+                                                    <button data-color-id="{{ $color }}" data-size-id="{{ $size }}" class="cancel-btn" onclick="removeItem(2)">&#x2715;</button>
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                            @endif
+                                            <!-- Second Row -->
+
+                                        </tbody>
+                                    </table>
+
+                                    <div class="total-container">
+                                        <p>Total: <span id="total">$720.00</span></p>
+                                        <input type="hidden" name="total_amount" id="total_amount" value="720.00">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @if (!Auth::check())
+                    <button class="accordion-toggle">
+                        <h4><img src="{{ asset('assets/front/images/haveAcc.png') }}" alt=""> Have an <span>Account?</span></h4>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="haveAnAccount">
+                            <div class="accorTop">
+                                <div class="auth-container">
+                                    <div class="login-section">
+                                        <h2>Login to Your Account</h2>
+                                        <div class="alert alert-info validation" style="display: none;">
+                                            <p class="text-left"></p>
+                                        </div>
+                                        <div class="alert alert-success validation" style="display: none;">
+                                            <button type="button" class="close alert-close"><span>×</span></button>
+                                            <p class="text-left"></p>
+                                        </div>
+                                        <div class="alert alert-danger validation" style="display: none;">
+                                            <button type="button" class="close alert-close"><span>×</span></button>
+                                            <p class="text-left"></p>
+                                        </div>
+                                        <form id="loginform1" class="login-form" action="{{ route('user.login.submit') }}" method="POST">
+                                            @csrf
+                                            <div class="form-group">
+                                                <input type="email" name="email" placeholder="Email Address" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" name="password" placeholder="Password" required>
+                                            </div>
+                                            <button type="submit" class="haveAnAccountBtn">Login</button>
+                                        </form>
+                                    </div>
+
+                                    <div class="or-divider">
+                                        <span>or</span>
+                                    </div>
+
+                                    <div class="register-section">
+                                        <h2>Register New Account</h2>
+                                        <p>You don't have an account with Busy Bee Embroidery?<br> Create a new account using the button below.</p>
+                                        <a href="{{ route('user.register') }}" class="haveAnAccountBtn">Register</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+
+
 
                     <button class="accordion-toggle">
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Billing <span>Address</span></h4>
@@ -726,7 +730,7 @@
                                     </div>
 
                                     <div class="row checkbox-group">
-                                        <input type="checkbox" id="same-address">
+                                        <input type="checkbox" id="same-address" name="same_address">
                                         <label for="same-address">Shipping and Billing address are same</label>
                                     </div>
 
@@ -798,69 +802,72 @@
                         <div class="makeAPayment">
                             <div class="accorTop">
                                 <div class="payment-form-container">
-                                    <form>
-                                        <!-- Payment Options -->
-                                        <div class="payment-options">
-                                            <label>
-                                                <input type="radio" name="payment-type" value="full" checked>
-                                                <span>Make Full Payment</span>
-                                            </label>
-                                            <label>
-                                                <input type="radio" name="payment-type" value="half">
-                                                <span>Place a $30 deposit to secure your order</span>
-                                            </label>
 
-                                        </div>
+                                    <!-- Payment Options -->
+                                    <div class="payment-options">
+                                        <label>
+                                            <input type="radio" name="payment-type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                        <label>
+                                            <input type="radio" name="payment-type" value="half">
+                                            <span>Place a $30 deposit to secure your order</span>
+                                        </label>
+
+                                    </div>
 
 
-                                        <!-- Card Details -->
-                                        <div class="row">
 
-                                            <div class="form-group">
-                                                <input type="text" id="card-number" placeholder="Card Number">
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="text" id="card-name" placeholder="Name on Card">
-                                            </div>
-                                        </div>
+                                    <!-- Card Details -->
 
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <input type="text" id="expiry-date" placeholder="MM/YY">
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="text" id="cvv" placeholder="CVV">
-                                            </div>
-                                        </div>
 
-                                        <!-- Place Order Button -->
-                                        <div class="row">
-                                            <p><strong>You will receive a mockup from one of our professional digital graphic designers to ensure your custom apparel order is exactly what you want it before production begins. We will make as many edits as it takes to get it right. If you are still not satisfied with the result at the end of the mockup approval, we will issue a 100% refund.</strong></p>
-                                        </div>
-                                        <br>
-                                        <br>
-                                        <div class="row">
-                                            <input type="hidden" id="shipping-cost" name="shipping_cost" value="0">
-                                            <input type="hidden" id="packing-cost" name="packing_cost" value="0">
-                                            <input type="hidden" id="shipping-title" name="shipping_title" value="0">
-                                            <input type="hidden" id="packing-title" name="packing_title" value="0">
-                                            <input type="hidden" id="input_tax" name="tax" value="">
-                                            <input type="hidden" id="input_tax_type" name="tax_type" value="">
-                                            <input type="hidden" name="currency_sign" value="{{ $curr->sign }}">
-                                            <input type="hidden" name="currency_name" value="{{ $curr->name }}">
-                                            <input type="hidden" name="currency_value" value="{{ $curr->value }}">
-                                            <button type="submit" class="btn-place-order">Place Order</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
+
+
+                                    <!-- Place Order Button -->
+                                    <div class="row">
+                                        <p><strong>You will receive a mockup from one of our professional digital graphic designers to ensure your custom apparel order is exactly what you want it before production begins. We will make as many edits as it takes to get it right. If you are still not satisfied with the result at the end of the mockup approval, we will issue a 100% refund.</strong></p>
+                                    </div>
+                                    <br>
+                                    <br>
+                                    <div class="row">
+                                        <input type="hidden" id="shipping-cost" name="shipping_cost" value="0">
+                                        <input type="hidden" id="packing-cost" name="packing_cost" value="0">
+                                        <input type="hidden" id="shipping-title" name="shipping_title" value="0">
+                                        <input type="hidden" id="packing-title" name="packing_title" value="0">
+                                        <input type="hidden" id="input_tax" name="tax" value="">
+                                        <input type="hidden" id="input_tax_type" name="tax_type" value="">
+                                        <input type="hidden" name="currency_sign" value="{{ $curr->sign }}">
+                                        <input type="hidden" name="currency_name" value="{{ $curr->name }}">
+                                        <input type="hidden" name="currency_value" value="{{ $curr->value }}">
+                                        <!-- <button type="submit" class="btn-place-order">Place Order</button> -->
+                                    </div>
+                </form>
+
+                <form id="payment-form">
+                    <input type="hidden" name="amount" id="payment-amount" value="720.00"> <!-- Default to full amount -->
+
+                    <div id="card-element"><!-- Stripe card input element --></div>
+                    <br>
+                    <br>
+
+                    <div id="card-errors" role="alert"></div>
+                    <br>
+
+                    <br>
+
+                    <button id="submit" class="btn-place-order">Place Order</button>
+                </form>
+
+
             </div>
         </div>
-
     </div>
+</div>
+@endif
+</div>
+</div>
+
+</div>
 </div>
 
 <!-- <div class="relatedProd">
@@ -932,6 +939,7 @@
 @endsection
 
 @section('script')
+<script src="https://js.stripe.com/v3/"></script>
 
 @php
 $const = $productt->constant;
@@ -939,12 +947,90 @@ $const = $productt->constant;
 <script>
     var pid = '{{ $productt->id }}';
     var token = '{{ csrf_token() }}'
+    var stripe_key = '{{ \Config::get("services.stripe.key") }}';
+    // alert(stripe_key);
     var constant = @php echo $const;
     @endphp;
+
+
+    if (document.getElementById('card-element')) {
+
+
+
+
+        const stripe = Stripe(stripe_key);
+        const elements = stripe.elements();
+        const cardElement = elements.create('card');
+        cardElement.mount('#card-element');
+
+        // Get the total amount from the hidden input
+        const totalAmount = parseFloat(document.getElementById('total_amount').value);
+
+        // Update payment amount based on selected payment type
+        document.querySelectorAll('input[name="payment-type"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                let amount;
+                if (this.value === 'full') {
+                    amount = totalAmount; // Full payment
+                } else {
+                    amount = 30; // Deposit amount
+                }
+                document.getElementById('payment-amount').value = amount.toFixed(2);
+            });
+        });
+
+        const paymentForm = document.getElementById('payment-form');
+        paymentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Create a token using card details
+            
+            stripe.createToken(cardElement).then(function(result) {
+                if (result.error) {
+                    // Show error in #card-errors
+                    document.getElementById('card-errors').textContent = result.error.message;
+                } else {
+                    // Send the token to your server
+                    console.log(result.token);
+                    
+                    const token = result.token.id;
+                    const amount = parseFloat(document.getElementById('payment-amount').value);
+
+                    // Make a request to your server with the token and amount
+                    fetch(mainurl + '/checkout/payment/stripe-submit', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({
+                                token: token,
+                                amount: amount
+                            })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                // Handle server errors
+                                document.getElementById('card-errors').textContent = data.message;
+                            } else {
+                                // Payment was successful, handle success
+                                alert('Payment successful!');
+                            }
+                        })
+                        .catch(error => {
+                            document.getElementById('card-errors').textContent = error.message;
+                        });
+                }
+            });
+        });
+
+    }
     $(document).ready(function() {
         var pid = '{{ $productt->id }}';
         loadFromLocalStorage(pid);
         constantCalculation();
+
 
         $('.qty-control').each(function() {
             var qty = $(this).find('.item-qty').val();
@@ -1103,6 +1189,11 @@ $const = $productt->constant;
 
 
     });
+
+
+
+
+
 
 
     function removeCart(size, color, p_id = 0) {

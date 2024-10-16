@@ -9,6 +9,7 @@ use App\{
     Models\Product,
     Models\Counter
 };
+use App\Models\ChatMessage;
 use Illuminate\{
     Http\Request,
     Support\Facades\Hash
@@ -54,6 +55,40 @@ class DashboardController extends AdminBaseController
 
 
         return view('admin.dashboard',$data);
+    }
+
+
+    public function loadChat($orderId)
+    {
+        // dd('here');
+        $messages = ChatMessage::where('order_id', $orderId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $html = view('user.order.messages', compact('messages'))->render();
+
+        return response()->json(['html' => $html]);
+    }
+
+    public function sendChat(Request $request)
+    {
+        $message = new ChatMessage();
+        $message->comment = $request->comment;
+        $message->order_id = $request->order_id;
+        if ($request->user_type == 'user') {
+            $message->user_id = Auth::user()->id;
+        } else {
+            $message->user_id = Auth::guard('admin')->user()->id;
+        }
+
+        if ($request->hasFile('file')) {
+            $path = $request->file('file')->store('chat_files');
+            $message->file_path = $path;
+        }
+
+        $message->save();
+
+        return response()->json(['success' => true]);
     }
 
     public function profile()
