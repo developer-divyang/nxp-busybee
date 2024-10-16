@@ -36,7 +36,6 @@ return [
 
     'stripe' => [
         'key' => 'pk_test_51Q8nvQ06842rfI09e4R05zG8KzMt76H4bl9fuAvyx6r5j96wkvNdAR9Tk9UyGRJx7glvudfHtPIYpEDSCxMYE71a006ORr3Gaq',
-        'secret' => 'sk_test_51Q8nvQ06842rfI09yfqSwBVXBDuhmWJCj1Xriv8fObHn1jVs4cIIQbJ3TpInWNq1wPKBiXT6jZN0dwOFUONDTzEq00zgDJTo3z',
     ],
 
 ];
