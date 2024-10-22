@@ -1232,6 +1232,8 @@ Route::get('/forgot','Auth\User\ForgotController@index')->name('user.forgot');
 
     // User Dashboard
     Route::get('/dashboard', 'User\UserController@index')->name('user-dashboard');
+    Route::get('/load-notifications', 'User\UserController@loadNotifications')->name('order-notification');
+    Route::get('/show-notifications', 'User\UserController@showNotifications')->name('show-notification');
     Route::get('/load-chat/{orderId}', 'User\UserController@loadChat')->name('order-chat');
     Route::post('/send-chat', 'User\UserController@sendChat')->name('order-send-chat');
     
@@ -1491,6 +1493,8 @@ Route::post('/item/report', 'Front\CatalogController@report')->name('product.rep
     Route::get('/customization-step-1/{slug}','Front\ProductDetailsController@customization1')->name('customization-step-1');
     Route::get('/customization-step-2/{slug}','Front\ProductDetailsController@customization2')->name('customization-step-2');
     Route::post('/get-all-items','Front\ProductDetailsController@getAllItems')->name('front.product.variationItem');
+    Route::post('/update-product-session', 'Front\ProductDetailsController@updateProductSession')->name('front.product.session');
+    Route::post('/get-product-session', 'Front\ProductDetailsController@getProductSession')->name('get.product.session');
     Route::get('/afbuy/{slug}','Front\ProductDetailsController@affProductRedirect')->name('affiliate.product');
     Route::get('/item/quick/view/{id}/','Front\ProductDetailsController@quick')->name('product.quick');
     Route::post('/item/review','Front\ProductDetailsController@reviewsubmit')->name('front.review.submit');

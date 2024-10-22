@@ -4,7 +4,7 @@
     <!---------------- before line selected product --------------->
     @if($productt->getColorImages)
     @foreach($productt->getColorImages as $pcolor)
-    @if (in_array($pcolor->color_id, $colorIds))
+    @if (isset($colorIds) && in_array($pcolor->color_id, $colorIds))
 
 
 
@@ -73,7 +73,7 @@
         </div>
     </div>
     @endif
-    
+
 
     @endforeach
     @endif
@@ -104,7 +104,7 @@
     </div>
 </div>
 @foreach($productt->getColorImages as $pcolor)
-@if(!in_array($pcolor->color_id, $colorIds))
+@if(isset($colorIds) && !in_array($pcolor->color_id, $colorIds))
 
 
 

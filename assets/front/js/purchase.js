@@ -104,6 +104,12 @@ document.addEventListener("DOMContentLoaded", function () {
         tabs.forEach((tab, i) => {
             if (i <= index || visitedTabs.has(i)) {
                 tab.classList.remove("disabled");
+                // alert(index);
+                if (index == 2) {
+                    $('.quantity-btn').css('pointer-events', 'none');
+                }else{
+                    $('.quantity-btn').css('pointer-events', 'auto');
+                }
             } else {
                 tab.classList.add("disabled");
             }
@@ -115,6 +121,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         localStorage.setItem('currentTabIndex', index);
+        
     }
 
     activateTab(currentIndex);
@@ -769,6 +776,7 @@ function increaseQty(index) {
     qtyInput.value = qty;
     // updateSubTotal (index);
     let color = $(qtyInput).data('color-id');
+    let model = $(qtyInput).data('model-id');
     let size = $(qtyInput).data('size-id');
     let pid = $(qtyInput).data('product-id');
     saveToLocalStorage(pid);
@@ -776,9 +784,14 @@ function increaseQty(index) {
     qty = $(qtyInput).val();
     addCart(1, size, color);
 
+    let totalqty = 0;
+    $('.item_' + model).each(function () {
+        totalqty += parseFloat($(this).find('.item-qty').val());
+    });
 
-    // alert(qty);
-    constantCalculation(qty, pid, index);
+
+    
+    constantCalculation(totalqty, pid, index, model);
 
 }
 
@@ -806,17 +819,21 @@ function decreaseQty(index) {
     qty--;
     qtyInput.value = qty;
     // updateSubTotal (index);
-    let color = $(qtyInput).data('color-id');
+    let model = $(qtyInput).data('model-id');
     let size = $(qtyInput).data('size-id');
     let pid = $(qtyInput).data('product-id');
+    let color = $(qtyInput).data('color-id');
     saveToLocalStorage(pid);
     // let size = $(quantityInput).data('size-id');
     qty = $(qtyInput).val();
     removeCart(size, color, pid);
-
+        let totalqty = 0;
+        $('.item_' + model).each(function () {
+            totalqty += parseFloat($(this).find('.item-qty').val());
+        });
 
     // alert(qty);
-    constantCalculation(qty, pid, index);
+        constantCalculation(totalqty, pid, index, model);
     }
 
 }

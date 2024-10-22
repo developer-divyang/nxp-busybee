@@ -14,6 +14,7 @@ use App\{
 };
 
 use Auth;
+use Illuminate\Support\Facades\DB;
 use Session;
 use Illuminate\Support\Str;
 
@@ -52,6 +53,8 @@ class OrderHelper
 
         }
     }
+
+    
 
     public static function license_check($cart){
 

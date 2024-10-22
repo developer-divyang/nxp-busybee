@@ -2,7 +2,19 @@
 @foreach($prods as $product)
 <div class="prodBox">
 
-    <img class="wishlistImg" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image">
+    @if(Auth::check())
+    @if($product->wishlist->count() > 0)
+    <a class="wishlist-remove" href="javascript:;" data-href="{{ route('user-wishlist-remove',$product->id) }}">
+        <img class="wishlistImg remove" src="{{ asset('assets/front/images/heart-red.png') }}" alt="wishlist Image">
+    </a>
+    @else
+    <a class="new" href="javascript:;" data-href="{{ route('user-wishlist-add',$product->id) }}">
+        <img class="wishlistImg new" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image">
+    </a>
+    @endif
+    @else
+    <a href="{{ route('user.login') }}"><img class="wishlistImg" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image"></a>
+    @endif
     <div class="prod-image">
         <div class="swiper prodImageSlider">
             @if($product->getColorImages)

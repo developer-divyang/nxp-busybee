@@ -347,14 +347,15 @@ class CatalogController extends FrontBaseController
       $query->where('bill', $request->bill);
     }
 
-    if ($request->filled('size')) {
-      $productIds = Size::where('id', $request->size)->pluck('product_id');
-      $query->whereIn('id', $productIds);
-    }
+    // if ($request->filled('size')) {
+    //   $productIds = Size::where('id', $request->size)->pluck('product_id');
+    //   $query->whereIn('id', $productIds);
+    // }
 
     if ($request->filled('color')) {
-      $productIds = ProductColor::where('id', $request->color)->pluck('product_id');
-      $query->whereIn('id', $productIds);
+      $query->whereIn('id', function ($q) use ($request) {
+        $q->select('product_id')->from('product_size_colors')->where('color_id', $request->input('color'));
+      });
     }
 
     $prods = $query->get();

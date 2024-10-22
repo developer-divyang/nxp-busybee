@@ -536,7 +536,7 @@
 
 
             <div id="checkout" class="content">
-                <form id="" action="{{ route('front.cod.submit') }}" method="POST" class="checkoutform">
+                <form id="checkoutForm" action="{{ route('front.cod.submit') }}" method="POST" class="checkoutform">
                     @csrf
                     <button class="accordion-toggle">
                         @if($products)
@@ -576,7 +576,7 @@
 
                                             @endphp
                                             <!-- First Row -->
-                                            <tr class="item-row" data-id="{{ $pkey }}" data-color-id="{{ $color }}" data-size-id="{{ $size }}" data-product-id="{{ $productData->id }}">
+                                            <tr class="item-row item_{{ $productData->modelNumber->id }}" data-model-id="{{ $productData->modelNumber->id }}" data-id="{{ $pkey }}" data-color-id="{{ $color }}" data-size-id="{{ $size }}" data-product-id="{{ $productData->id }}">
                                                 <td>
                                                     <div class="item-details">
                                                         <div class="img">
@@ -600,14 +600,14 @@
                                                 <td>
                                                     <div class="qty-control">
                                                         <button type="button" onclick="decreaseQty('{{ $pkey }}')">−</button>
-                                                        <input type="text" class="item-qty" data-id="{{ $pkey }}" data-color-id="{{ $product['color'] }}" data-size-id="{{ $product['size'] }}" data-product-id="{{ $productData->id }}" value="{{ $product['qty'] }}" readonly name="qty[{{ $pkey }}]">
+                                                        <input type="text" class="item-qty" data-id="{{ $pkey }}" data-model-id="{{ $productData->modelNumber->id }}" data-color-id="{{ $product['color'] }}" data-size-id="{{ $product['size'] }}" data-product-id="{{ $productData->id }}" value="{{ $product['qty'] }}" readonly name="qty[{{ $pkey }}]">
                                                         <button type="button" onclick="increaseQty('{{ $pkey }}')">+</button>
                                                     </div>
                                                 </td>
-                                                <td id="price-{{ $pkey }}">$24.00
+                                                <td class="item_price_{{ $productData->modelNumber->id }}" id="price-{{ $pkey }}">$24.00
                                                     <input type="hidden" id="price-input-{{ $pkey }}" name="price[{{ $pkey }}]" value="24.00">
                                                 </td>
-                                                <td class="subtotal" data-value="240.00" id="subtotal-{{ $pkey }}">$240.00
+                                                <td class="subtotal sub_total_{{ $productData->modelNumber->id }}" data-value="240.00" id="subtotal-{{ $pkey }}">$240.00
                                                     <input type="hidden" id="subtotal-input-{{ $pkey }}" name="subtotal[{{ $pkey }}]" value="240.00">
                                                 </td>
 
@@ -806,11 +806,11 @@
                                     <!-- Payment Options -->
                                     <div class="payment-options">
                                         <label>
-                                            <input type="radio" name="payment-type" value="full" checked>
+                                            <input type="radio" name="payment_type" value="full" checked>
                                             <span>Make Full Payment</span>
                                         </label>
                                         <label>
-                                            <input type="radio" name="payment-type" value="half">
+                                            <input type="radio" name="payment_type" value="half">
                                             <span>Place a $30 deposit to secure your order</span>
                                         </label>
 
@@ -839,12 +839,14 @@
                                         <input type="hidden" name="currency_sign" value="{{ $curr->sign }}">
                                         <input type="hidden" name="currency_name" value="{{ $curr->name }}">
                                         <input type="hidden" name="currency_value" value="{{ $curr->value }}">
+                                        <input type="hidden" name="amount" id="payment-amount" value="1">
                                         <!-- <button type="submit" class="btn-place-order">Place Order</button> -->
                                     </div>
+
                 </form>
 
                 <form id="payment-form">
-                    <input type="hidden" name="amount" id="payment-amount" value="720.00"> <!-- Default to full amount -->
+
 
                     <div id="card-element"><!-- Stripe card input element --></div>
                     <br>
@@ -945,7 +947,7 @@
 $const = $productt->constant;
 @endphp
 <script>
-    var pid = '{{ $productt->id }}';
+    var pid = $('.customize_product_id').val();
     var token = '{{ csrf_token() }}'
     var stripe_key = '{{ \Config::get("services.stripe.key") }}';
     // alert(stripe_key);
@@ -955,25 +957,50 @@ $const = $productt->constant;
 
     if (document.getElementById('card-element')) {
 
-
-
-
         const stripe = Stripe(stripe_key);
-        const elements = stripe.elements();
-        const cardElement = elements.create('card');
-        cardElement.mount('#card-element');
-
+        var elements = stripe.elements();
+        var style = {
+            base: {
+                color: '#32325d',
+                lineHeight: '24px',
+                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                fontSmoothing: 'antialiased',
+                fontSize: '18px',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        };
+        // Create an instance of the card Element
+        card = elements.create('card', {
+            style: style
+        });
+        // Add an instance of the card Element into the `card-element` <div>
+        card.mount('#card-element');
+        // Handle real-time validation errors from the card Element.
+        card.addEventListener('change', function(event) {
+            var displayError = document.getElementById('card-errors');
+            if (event.error) {
+                displayError.textContent = event.error.message;
+            } else {
+                displayError.textContent = '';
+            }
+        });
         // Get the total amount from the hidden input
-        const totalAmount = parseFloat(document.getElementById('total_amount').value);
 
+        const totalAmount = parseFloat($('#total_amount').val());
         // Update payment amount based on selected payment type
-        document.querySelectorAll('input[name="payment-type"]').forEach(function(radio) {
+        document.querySelectorAll('input[name="payment_type"]').forEach(function(radio) {
             radio.addEventListener('change', function() {
                 let amount;
                 if (this.value === 'full') {
-                    amount = totalAmount; // Full payment
+                    totalAmount = totalAmount; // Full payment
                 } else {
-                    amount = 30; // Deposit amount
+                    totalAmount = 30; // Deposit amount
                 }
                 document.getElementById('payment-amount').value = amount.toFixed(2);
             });
@@ -983,64 +1010,154 @@ $const = $productt->constant;
         paymentForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
+            var formData = new FormData($('#checkoutForm')[0]);
             // Create a token using card details
-            
-            stripe.createToken(cardElement).then(function(result) {
-                if (result.error) {
-                    // Show error in #card-errors
-                    document.getElementById('card-errors').textContent = result.error.message;
-                } else {
-                    // Send the token to your server
-                    console.log(result.token);
-                    
-                    const token = result.token.id;
-                    const amount = parseFloat(document.getElementById('payment-amount').value);
 
-                    // Make a request to your server with the token and amount
-                    fetch(mainurl + '/checkout/payment/stripe-submit', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            },
-                            body: JSON.stringify({
-                                token: token,
-                                amount: amount
-                            })
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.error) {
-                                // Handle server errors
-                                document.getElementById('card-errors').textContent = data.message;
-                            } else {
-                                // Payment was successful, handle success
-                                alert('Payment successful!');
-                            }
-                        })
-                        .catch(error => {
-                            document.getElementById('card-errors').textContent = error.message;
-                        });
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    // Inform the user if there was an error
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    formData.append('stripeToken', result.token.id);
+                    //totalAmount
+                    formData.append('pay_amount', totalAmount);
+
                 }
+            }).then(function() {
+                $.ajax({
+                    type: "POST",
+                    url: mainurl + '/checkout/payment/stripe-submit',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+
+                        if (response.is_success) {
+                            toastr.success(response.message);
+                            window.location.href = response.url;
+                            // $('.card-body').html(
+                            //     '<div class="text-center gallery" id="success_loader"> <img src="{{ asset('
+                            //     assets / images / success.gif ') }}" class="" /><br><br><h2 class="w-100 ">' +
+                            //     response.message + '</h2></div>');
+                            // // alert('here');
+
+                            // $('#nextBtn').removeAttr('disabled');
+                            // $('#nextBtn').html(' Submit');
+                        } else {
+                            toastr.error(response.message);
+                            // $('#nextBtn').removeAttr('disabled');
+                            // $('#nextBtn').html(' Submit')
+                            // showTab(0);
+                        }
+                    },
+                    error: function(error) {
+                        toastr.error('Something went wrong');
+                    }
+                });
             });
+
+
         });
 
     }
-    $(document).ready(function() {
-        var pid = '{{ $productt->id }}';
-        loadFromLocalStorage(pid);
-        constantCalculation();
+
+    function getProductSession(productId) {
+
+        $.ajax({
+            url: mainurl + '/get-product-session', // Laravel route to handle session update
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                product_id: productId
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Product session retrieved');
+                    console.log(response.data);
+
+                    if (response.data) {
 
 
-        $('.qty-control').each(function() {
-            var qty = $(this).find('.item-qty').val();
+                        var product = response.data.product;
+                        var embroideryType = response.data.embroidery_type;
+                        var frontEmbroidery = response.data.front_embroidery;
+                        var sideEmbroidery = response.data.side_embroidery;
+                        var sideEmbroideryLocation = response.data.side_embroidery_location;
+                        var backEmbroidery = response.data.back_embroidery;
+                        var backEmbroideryLocation = response.data.back_embroidery_location;
+                        var quantity = response.data.quantity;
+                        var selected_colorIds = response.data.color_ids;
 
-            let pid = $(this).find('.item-qty').data('product-id');
-            let index = $(this).find('.item-qty').data('id');
+                        $('.qty').val(quantity);
+                        $('.g3').val(embroideryType);
+                        $('.h3').val(frontEmbroidery);
+                        $('.i3').val(sideEmbroidery);
+                        $('.j3').val(sideEmbroideryLocation);
+                        $('.k3').val(backEmbroidery);
+                        $('.l3').val(backEmbroideryLocation);
 
-            constantCalculation(qty, pid, index);
+                        // Set the selected colors in hidden input
+                        $('.selected-colors').val(selected_colorIds);
 
+                        getallItems(selected_colorIds);
+
+                        if (sideEmbroidery == 'yes') {
+                            $('.side_location').show();
+                        } else {
+                            $('.side_location').hide();
+                        }
+
+                        if (backEmbroidery == 'yes') {
+                            $('.back_location').show();
+                        } else {
+                            $('.back_location').hide();
+                        }
+                    }
+
+
+                    constantCalculation(productId);
+
+                }
+            }
         });
+    }
+
+    $(document).ready(function() {
+
+
+
+        var pid = $('.customize_product_id').val();
+        getProductSession(pid);
+
+        setTimeout(() => {
+
+
+            $('.item-row').each(function() {
+                var model = $(this).data('model-id');
+                var totalmodelqty = 0;
+                $('.item-row').each(function() {
+                    if ($(this).data('model-id') == model) {
+                        totalmodelqty += parseInt($(this).find('.item-qty').val());
+
+
+
+                    }
+                    let pid = $(this).find('.item-qty').data('product-id');
+                    let index = $(this).find('.item-qty').data('id');
+                    constantCalculation(totalmodelqty, pid, index, model);
+                });
+
+
+
+
+            });
+
+            const totalAmount = parseFloat($('#total_amount').val());
+
+            $('#payment-amount').val(totalAmount);
+
+        }, 500);
 
 
 
@@ -1112,59 +1229,7 @@ $const = $productt->constant;
         //     }
 
         // });
-        $(document).on('change', '#show_state', function() {
-            let state_id = $(this).val();
-            let country_id = $('#select_country option:selected').attr('data');
-            tax_submit(country_id, state_id);
-        });
 
-        function hide_state() {
-            $('.select_state').hide();
-        }
-
-
-        function tax_submit(country_id, state_id) {
-
-            $('.gocover').show();
-            var total = $("#total").val();
-            var ship = 0;
-            $.ajax({
-                type: "GET",
-                url: mainurl + "/country/tax/check",
-                data: {
-                    state_id: state_id,
-                    country_id: country_id,
-                    total: total,
-                    shipping_cost: ship
-                },
-                success: function(data) {
-
-                    $('#grandtotal').val(data[0]);
-                    $('#tgrandtotal').val(data[0]);
-                    $('#original_tax').val(data[1]);
-                    $('.tax_show').removeClass('d-none');
-                    $('#input_tax').val(data[11]);
-                    $('#input_tax_type').val(data[12]);
-                    $('.original_tax').html(parseFloat(data[1]).toFixed(2));
-                    var ttotal = parseFloat($('#grandtotal').val());
-                    var tttotal = parseFloat($('#grandtotal').val()) + (parseFloat(mship) + parseFloat(mpack));
-                    ttotal = parseFloat(ttotal).toFixed(2);
-                    tttotal = parseFloat(tttotal).toFixed(2);
-                    $('#grandtotal').val(data[0] + parseFloat(mship) + parseFloat(mpack));
-                    if (pos == 0) {
-
-                        $('#final-cost').html('{{ $curr->sign }}' + tttotal);
-                        $('.total-cost-dum #total-cost').html('{{ $curr->sign }}' + ttotal);
-                    } else {
-
-                        $('#total-cost').html('');
-                        $('#final-cost').html(tttotal + '{{ $curr->sign }}');
-                        $('.total-cost-dum #total-cost').html(ttotal + '{{ $curr->sign }}');
-                    }
-                    $('.gocover').hide();
-                }
-            });
-        }
 
 
         $('#logo-upload').on('change', function(e) {
@@ -1194,6 +1259,50 @@ $const = $productt->constant;
 
 
 
+    function updateProductSession(productId, selectedColorArray = []) {
+        // var productId = $('#product_id').val();
+        var quantity = $('.qty').val();
+        var embroideryType = $('.g3').val();
+        var frontEmbroidery = $('.h3').val();
+        var sideEmbroidery = $('.i3').val();
+        var sideEmbroideryLocation = $('.j3').val();
+        var backEmbroidery = $('.k3').val();
+        var backEmbroideryLocation = $('.l3').val();
+
+
+        //selectedColor push to array only sleected color
+
+
+
+        $('.select_color .prod_color_active').each(function() {
+            selectedColorArray.push($(this).closest('.color').data('id'));
+        });
+
+
+        $.ajax({
+            url: mainurl + '/update-product-session', // Laravel route to handle session update
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                product_id: productId,
+                quantity: quantity,
+                embroidery_type: embroideryType,
+                front_embroidery: frontEmbroidery,
+                side_embroidery: sideEmbroidery,
+                side_embroidery_location: sideEmbroideryLocation,
+                back_embroidery: backEmbroidery,
+                back_embroidery_location: backEmbroideryLocation,
+                color_ids: selectedColorArray
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Product session updated');
+
+                    constantCalculation(response.data.product_id, response.data.constant);
+                }
+            }
+        });
+    }
 
 
     function removeCart(size, color, p_id = 0) {
@@ -1312,45 +1421,7 @@ $const = $productt->constant;
 
 
 
-    $(document).on('click', '.related_select_color', function(e) {
 
-        var colorId = $(this).data('id');
-        var productId = $(this).data('product');
-        $.ajax({
-            url: "{{ route('front.product.colorImages') }}",
-            type: 'POST',
-            data: {
-                color_id: colorId,
-                product_id: productId,
-                _token: '{{ csrf_token() }}'
-
-            },
-            success: function(response) {
-                // Assuming the response contains an array of image URLs
-                if (response.success) {
-                    var images = response.images;
-                    var swiperWrapper = $('.img_slide_' + productId);
-                    swiperWrapper.html(''); // Clear existing images
-
-                    images.forEach(function(imageUrl, index) {
-                        var imgElement = '<div class="prod-image-slide' + (index === 0 ? ' active' : '') + '"><img src="' + imageUrl + '" alt="Product Image"></div>';
-                        swiperWrapper.append(imgElement);
-                    });
-
-                    initializeSliders();
-
-
-                } else {
-                    console.log('Error:', response);
-                }
-
-
-            },
-            error: function(xhr) {
-                console.log('Error:', xhr);
-            }
-        });
-    });
 
     var f3 = parseInt($('.qty').val()) || 0;
 
@@ -1366,35 +1437,56 @@ $const = $productt->constant;
             quantityInput.val(currentValue + 1);
             newqty = currentValue + 1
             f3 += 1;
-            totalQty();
+            // totalQty();
             // $('.qty').val(f3);
             var pid = '{{ $productt->id }}';
-            saveToLocalStorage(pid);
             let color = $(quantityInput).data('color-id');
             let size = $(quantityInput).data('size-id');
             qty = $(quantityInput).val();
             addCart(1, size, color);
+            alert(selected_colorIds);
+            let selectedColorId = $(this).closest('.accorBoxRight').find('input[name="color_id[]"]').val(); // Get the color ID
+            storeOrUpdateProduct(productId, selectedColorId);
+
+
+            let products = JSON.parse(localStorage.getItem('products')) || {};
+
+            // If product exists in localStorage, set form fields with saved values
+            if (products[pid]) {
+                let productDetails = products[pid];
+
+                var totalqty = productDetails.quantity;
+                var colors = productDetails.colorId;
+                getallItems(colors, totalqty, token);
+            }
+
+
 
 
             constantCalculation();
+
+
+
+
+
         }
-        let colorId = $(quantityInput).data('id');
-        updatecolorIds(pid, colorId, qty, token);
+        // let colorId = $(quantityInput).data('id');
+        // updatecolorIds(pid, colorId, qty, token);
     });
 
     function totalQty() {
         setTimeout(() => {
 
 
-            var sum = 0;
-            $('.color-quantity').each(function() {
-                var value = parseInt($(this).val());
-                if (!isNaN(value)) {
-                    sum += parseInt(value);
-                }
-            });
-            // alert(sum);
-            $('.qty').val(sum);
+            // var sum = 0;
+            // $('.color-quantity').each(function() {
+            //     var value = parseInt($(this).val());
+            //     if (!isNaN(value)) {
+            //         sum += parseInt(value);
+            //     }
+            // });
+            // // alert(sum);
+            // $('.qty').val(sum);
         }, 500);
     }
 
@@ -1421,7 +1513,7 @@ $const = $productt->constant;
 
                     $('#itemDetails').html(response.html);
 
-                    totalQty();
+                    // totalQty();
                     // console.log(itemsavedData);
 
 
@@ -1454,22 +1546,38 @@ $const = $productt->constant;
             quantityInput.val(currentValue - 1);
 
             f3 -= 1;
-            totalQty();
+            // totalQty();
             // $('.qty').val(f3);
             var pid = '{{ $productt->id }}';
-            saveToLocalStorage(pid);
+
             let color = $(quantityInput).data('color-id');
             let size = $(quantityInput).data('size-id');
             qty = $(quantityInput).val();
             removeCart(size, color);
+            let selectedColorId = $(this).closest('.accorBoxRight').find('input[name="color_id[]"]').val(); // Get the color ID
+            updateProductSession(productId, selectedColorId);
+
+            let products = JSON.parse(localStorage.getItem('products')) || {};
+
+            // If product exists in localStorage, set form fields with saved values
+            if (products[pid]) {
+                let productDetails = products[pid];
+
+                var totalqty = productDetails.quantity;
+                var colors = productDetails.colorId;
+                getallItems(colors, totalqty, token);
+            }
 
             constantCalculation();
         }
         let colorId = $(quantityInput).data('id');
-        updatecolorIds(pid, colorId, qty, token);
+        // updatecolorIds(pid, colorId, qty, token);
     });
     $(document).on('change', '.k3, .h3, .g3, .i3, .j3, .l3', function(e) {
         // alert($(this).val());
+        var pid = $('.customize_product_id').val();
+
+        storeOrUpdateProduct(pid);
         constantCalculation();
     });
 
@@ -1527,6 +1635,8 @@ $const = $productt->constant;
         }
         constantCalculation();
     });
+
+
 
 
 

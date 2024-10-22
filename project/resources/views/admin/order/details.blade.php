@@ -64,6 +64,8 @@
         flex-wrap: wrap;
         padding: 10px 15px;
         border-radius: 6px;
+        flex-direction: column;
+
     }
 
     .comment-info {
@@ -79,12 +81,21 @@
     .comment-info {
         display: flex;
         align-items: center;
+        width: 300px;
     }
 
     .files-icon,
     .comment-icon {
         margin-right: 15px;
         transform: scale(0.8);
+    }
+
+    .user_msg {
+        align-items: start;
+    }
+
+    .admin_msg {
+        align-items: end;
     }
 
     .download-icon {
@@ -139,10 +150,15 @@
     .comment-wrapper {
         display: flex;
         padding: 8px 15px;
-        max-width: 45%;
+        /* max-width: 45%; */
         background-color: #ffffff;
-        justify-content: space-between;
+        /* justify-content: space-between; */
+        gap: 10px;
         border-radius: 14px;
+        position: relative;
+        align-items: center;
+        min-height: 50px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
     }
 
     .comment-input input {
@@ -154,6 +170,12 @@
         outline: none;
     }
 
+    .comment-wrapper input:nth-child(1) {
+        border: none !important;
+        outline: none !important;
+        font-size: 16px;
+    }
+
     .comment-send-btn {
         display: flex;
         color: #bbb1a3;
@@ -163,6 +185,8 @@
         border-radius: 6px;
         cursor: pointer;
         gap: 8px;
+        position: absolute;
+        right: 0;
     }
 
     .comment-send-btn img {
@@ -528,14 +552,19 @@
                     <div class="mock" data-id="{{ $order->id }}">
 
 
-                        <div id="chat-container{{ $order->id }}">
+                        <div class="chat-container" style="min-height:300px;max-height:400px; overflow-y:scroll;border-right: 2px solid #00000040;border-left: 2px solid #00000040;display:none" id="chat-container{{ $order->id }}">
                             <!-- Chat messages will be appended here -->
+
                         </div>
 
                         <div class="comment-input{{ $order->id }}">
                             <div class="comment-wrapper">
                                 <input type="text" id="comment-text{{ $order->id }}" placeholder="Enter Your Comments">
-                                <input type="file" id="file-upload{{ $order->id }}">
+                                <input type="file" id="file-upload{{ $order->id }}" style="display: none;" onchange="updateFileName(this)">
+                                <div style="display:flex; gap:10px;align-item-center;">
+                                    <label for="file-upload{{ $order->id }}" class="file-upload-button"><img src="{{ asset('assets/front/images/upload1.png') }}" height="15px"> </label>
+                                    <span style="font-size:14px;" class="file-name" id="file-name{{ $order->id }}">No file chosen</span>
+                                </div>
                                 <button class="comment-send-btn" data-id="{{ $order->id }}" id="send-comment{{ $order->id }}"><img src="http://localhost/nxp-busybee/assets/front/images/sendArrow.png" alt="">Send</button>
                             </div>
                         </div>
@@ -942,6 +971,10 @@
                 type: 'GET',
                 success: function(response) {
                     $(`#chat-container${orderId}`).html(response.html); // Append chat messages to the correct container
+                    if (response.count > 0) {
+                        $(`#chat-container${orderId}`).show(); // Show the chat container if there are messages
+                        $(`#chat-container${orderId}`).scrollTop($(`#chat-container${orderId}`)[0].scrollHeight);
+                    }
                 }
             });
         }

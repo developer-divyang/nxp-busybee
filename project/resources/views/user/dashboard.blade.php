@@ -9,7 +9,7 @@
          <div class="dashtab " data-target="dashboard">DASHBOARD</div>
          <div class="dashtab" data-target="orders">MY ORDERS</div>
          <div class="dashtab" data-target="addresses">ADDRESSES</div>
-         <div class="dashtab" data-target="notification">NOTIFICATION <span class="notify-count">2</span></div>
+         <div class="dashtab notification_tab" onclick="showNotifications();" data-target="notification">NOTIFICATION </div>
          <div class="dashtab" data-target="logout">LOGOUT</div>
          <div class="underline"></div>
       </div>
@@ -72,7 +72,7 @@
                         $images = json_decode($productColorImages);
                         @endphp
                         <tr>
-                           <td> {{$order->order_number}} </td>
+                           <td> <a href="{{ route('user-order',$order->id) }}"> {{$order->order_number}} </a></td>
                            <td class="order-item">
                               <div class="orderImg">
                                  <img src="{{ Storage::url($images[0]) }}" alt="Olive Hat">
@@ -328,14 +328,19 @@
                      </a>
                   </div>
 
-                  <div id="chat-container{{ $order->id }}">
+                  <div class="chat-container" style="min-height:300px;max-height:400px; overflow-y:scroll;border-right: 2px solid #00000040;border-left: 2px solid #00000040;" id="chat-container{{ $order->id }}">
                      <!-- Chat messages will be appended here -->
+                               
                   </div>
 
                   <div class="comment-input{{ $order->id }}">
                      <div class="comment-wrapper">
                         <input type="text" id="comment-text{{ $order->id }}" placeholder="Enter Your Comments">
-                        <input type="file" id="file-upload{{ $order->id }}">
+                        <input type="file" id="file-upload{{ $order->id }}" style="display: none;" onchange="updateFileName(this)">
+                        <div style="display:flex; gap:10px;align-item-center;">
+                           <label for="file-upload{{ $order->id }}" class="file-upload-button"><img src="{{ asset('assets/front/images/upload1.png') }}" height="15px"> </label>
+                           <span style="font-size:14px;" class="file-name" id="file-name{{ $order->id }}">No file chosen</span>
+                        </div>
                         <button class="comment-send-btn" data-id="{{ $order->id }}" id="send-comment{{ $order->id }}"><img src="http://localhost/nxp-busybee/assets/front/images/sendArrow.png" alt="">Send</button>
                      </div>
                   </div>
@@ -497,76 +502,7 @@
          </div>
       </div>
       <div class="dashtab-content" id="notification">
-         <h2>My <span>Notification</span></h2>
-         <div class="noticationContainer">
-            <div class="notification-container">
-               <div class="notification">
-                  <div class="content">
-                     <div class="icon file-icon"><img src="{{ asset('assets/front/images/notify1.png') }}" alt="notifylist"></div>
-                     <div>
-                        <p class="message">File Name goes here.jpg uploaded</p>
-                        <p class="timestamp">22/08/2024 11:05PM | <span>#BBE1000058449</span></p>
-                     </div>
-                  </div>
-                  <div class="view-order"><img src="{{ asset('assets/front/images/notification-view.png') }}" alt="notifyViewBtn">View Order</div>
-               </div>
 
-               <div class="notification">
-                  <div class="content">
-                     <div class="icon message-icon"><img src="{{ asset('assets/front/images/notify2.png') }}" alt="notifylist"></div>
-                     <div>
-                        <p class="message">Can you please explain what you thinking</p>
-                        <p class="timestamp">22/08/2024 11:05PM | <span>#BBE1000058449</span></p>
-                     </div>
-                  </div>
-                  <div class="view-order"><img src="{{ asset('assets/front/images/notification-view.png') }}" alt="notifyViewBtn">View Order</div>
-               </div>
-
-               <div class="notification">
-                  <div class="content">
-                     <div class="icon preparing-icon"><img src="{{ asset('assets/front/images/notify3.png' )}}" alt="notifylist"></div>
-                     <div>
-                        <p class="message">We are preparing your order. Estimate delivered by today</p>
-                        <p class="timestamp">22/08/2024 11:05PM | <span>#BBE1000058449</span></p>
-                     </div>
-                  </div>
-                  <div class="view-order"><img src="{{ asset('assets/front/images/notification-view.png') }}" alt="notifyViewBtn">View Order</div>
-               </div>
-
-               <div class="notification">
-                  <div class="content">
-                     <div class="icon delivered-icon"><img src="{{ asset('assets/front/images/notify4.png') }}" alt="notifylist"></div>
-                     <div>
-                        <p class="message">Your order has been Delivered today</p>
-                        <p class="timestamp">22/08/2024 11:05PM | <span>#BBE1000058449</span></p>
-                     </div>
-                  </div>
-                  <div class="view-order"><img src="{{ asset('assets/front/images/notification-view.png' )}}" alt="notifyViewBtn">View Order</div>
-               </div>
-
-               <div class="notification">
-                  <div class="content">
-                     <div class="icon payment-icon"><img src="{{ asset('assets/front/images/notify5.png') }}" alt="notifylist"></div>
-                     <div>
-                        <p class="message">Pay $250.00 pending amount for future process</p>
-                        <p class="timestamp">22/08/2024 11:05PM | <span>#BBE1000058449</span></p>
-                     </div>
-                  </div>
-                  <div class="view-order"><img src="{{ asset('assets/front/images/notification-view.png' )}}" alt="notifyViewBtn">View Order</div>
-               </div>
-
-               <div class="notification">
-                  <div class="content">
-                     <div class="icon cancel-icon"><img src="{{ asset('assets/front/images/notify6.png') }}" alt="notifylist"></div>
-                     <div>
-                        <p class="message">Your order has been cancel by admin</p>
-                        <p class="timestamp">22/08/2024 11:05PM | <span>#BBE1000058449</span></p>
-                     </div>
-                  </div>
-                  <div class="view-order"><img src="{{ asset('assets/front/images/notification-view.png') }}" alt="notifyViewBtn">View Order</div>
-               </div>
-            </div>
-         </div>
       </div>
       <div class="dashtab-content" id="logout">
 
@@ -582,12 +518,30 @@
 @section('script')
 <script>
    $(document).ready(function() {
-
+      $('.chat-container').hide();
       $.ajaxSetup({
          headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
          }
       });
+
+
+      function loadNotifications() {
+         $.ajax({
+            url: mainurl + "/user/load-notifications", // Endpoint to fetch notifications
+            type: 'GET',
+            success: function(response) {
+               // $('#notification-area').html(response.html); // Append notifications to the correct container
+               if (response.count > 0) {
+                  $('.notification_tab').html('NOTIFICATION <span class="notify-count">' + response.count + '</span>');
+               } else {
+                  $('.notification_tab').html('NOTIFICATION');
+               }
+            }
+         });
+      }
+
+
 
       function loadChat(orderId) {
          $.ajax({
@@ -595,6 +549,10 @@
             type: 'GET',
             success: function(response) {
                $(`#chat-container${orderId}`).html(response.html); // Append chat messages to the correct container
+               if (response.count > 0) {
+                  $(`#chat-container${orderId}`).show();
+                  $(`#chat-container${orderId}`).scrollTop($(`#chat-container${orderId}`)[0].scrollHeight);
+               }
             }
          });
       }
@@ -650,6 +608,7 @@
             var orderId = $(this).data('id'); // Extract order ID from the data-id attribute
             checkAndLoadChat(orderId);
          });
+         loadNotifications();
       }, 5000);
 
 
@@ -661,7 +620,7 @@
          $('#totalQty').text(totalQty);
       }
    });
-   $('.view-wrapper').click(function() {
+   $('.view-wrapper, .view-order').click(function() {
       var id = $(this).data('id');
       $('.order_details_' + id).css('display', 'flex');
    });
@@ -670,6 +629,24 @@
       var id = $(this).data('id');
       $('.order_details_' + id).css('display', 'none');
    });
+
+   function showNotifications() {
+      $.ajax({
+         url: mainurl + "/user/show-notifications", // Endpoint to fetch notifications
+         type: 'GET',
+         success: function(response) {
+            $('#notification-area').html(response.html); // Append notifications to the correct container
+            if (response.count > 0) {
+               $('#notification').html(response.html);
+               $('.notification_tab').html('NOTIFICATION <span class="notify-count">' + response.count + '</span>');
+            } else {
+               $('#notification').html(response.html);
+               $('.notification_tab').html('NOTIFICATION');
+
+            }
+         }
+      });
+   }
 </script>
 <script src="{{ asset('assets/front/js/dashboard.js') }}"></script>
 @endsection

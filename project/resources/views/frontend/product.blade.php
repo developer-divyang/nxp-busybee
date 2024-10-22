@@ -84,6 +84,8 @@
                         </div>
                         <input type="hidden" id="d3" name="d3" class="d3" value="{{ ($productt->blank_price)? $productt->blank_price : 0 }}">
                         <input type="hidden" id="e3" name="e3" class="e3" value="{{ ($productt->weight)? $productt->weight : 0 }}">
+                        <input type="hidden" id="constant-{{ $productt->id }}" name="constant" class="constant" value="{{ ($productt->constant)? $productt->constant : '' }}">
+                        <input type="hidden" id="product_id" name="product_id" class="product_id" value="{{ $productt->id }}">
                     </div>
                     <!-- ----------------------- -->
                     <p style="font-size: 12px; margin-bottom: 4px;">Select Embroidery Type</p>
@@ -275,21 +277,12 @@ $const = $productt->constant;
     var constant = @php echo $const;
     @endphp;
     $(document).ready(function() {
-        constantCalculation();
-        var productId = $('.select_color').first().data('product');
-        loadFromLocalStorage(productId);
-        // saveToLocalStorage(productId);
-
+        getProductSession();
     });
-
-
-
-    $('#g3, #h3, #i3, #j3, #k3, #l3').on('change', function() {
-        var productId = $('.select_color').first().data('product');
-        saveToLocalStorage(productId);
+    // Event listener for changes on select boxes and quantity input
+    $('#g3, #h3, #i3, #j3, #k3, #l3, #f3').on('change', function() {
+        updateProductSession();
     });
-
-
 
     $(document).on('click', '.select_color', function(e) {
         var selectedColorArray = [];
@@ -318,15 +311,7 @@ $const = $productt->constant;
                         swiperWrapper.append(imgElement);
                     });
 
-
-                    $(this).addClass('selected').siblings().removeClass('selected');
-
-                    saveToLocalStorage(productId);
-
-
-
-
-
+                    updateProductSession();
 
                 } else {
                     console.log('Error:', response);
@@ -388,9 +373,8 @@ $const = $productt->constant;
         var currentValue = parseInt(quantityInput.val());
         if (!isNaN(currentValue)) {
             quantityInput.val(currentValue + 1);
-            var productId = $('.select_color').first().data('product');
-            saveToLocalStorage(productId);
-            constantCalculation();
+            var productId = $('#product_id').val();
+            updateProductSession();
         }
     });
 
@@ -399,9 +383,9 @@ $const = $productt->constant;
         var currentValue = parseInt(quantityInput.val());
         if (!isNaN(currentValue) && currentValue > 1) {
             quantityInput.val(currentValue - 1);
-            var productId = $('.select_color').first().data('product');
-            saveToLocalStorage(productId);
-            constantCalculation();
+            var productId = $('#product_id').val();
+            updateProductSession();
+
         }
     });
 
@@ -441,7 +425,7 @@ $const = $productt->constant;
             $('#side_location').hide();
             $('#j3').val('');
         }
-        constantCalculation();
+
     });
 
 
@@ -457,8 +441,113 @@ $const = $productt->constant;
             $('#back_location').hide();
             $('#l3').val('');
         }
-        constantCalculation();
+
     });
+
+    function getProductSession() {
+        var productId = $('#product_id').val();
+        $.ajax({
+            url: mainurl + '/get-product-session', // Laravel route to handle session update
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                product_id: productId
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Product session retrieved');
+                    console.log(response.data);
+
+                    if (response.data) {
+
+
+                        var product = response.data.product;
+                        var embroideryType = response.data.embroidery_type;
+                        var frontEmbroidery = response.data.front_embroidery;
+                        var sideEmbroidery = response.data.side_embroidery;
+                        var sideEmbroideryLocation = response.data.side_embroidery_location;
+                        var backEmbroidery = response.data.back_embroidery;
+                        var backEmbroideryLocation = response.data.back_embroidery_location;
+                        var quantity = response.data.quantity;
+                        var colorIds = response.data.color_ids;
+
+                        $('#f3').val(quantity);
+                        $('#g3').val(embroideryType);
+                        $('#h3').val(frontEmbroidery);
+                        $('#i3').val(sideEmbroidery);
+                        $('#j3').val(sideEmbroideryLocation);
+                        $('#k3').val(backEmbroidery);
+                        $('#l3').val(backEmbroideryLocation);
+
+                        // Set selected colors
+                        $('.select_color').removeClass('prod_color_active');
+                        colorIds.forEach(function(colorId) {
+                            $('.select_color[data-id="' + colorId + '"] img').addClass('prod_color_active');
+                        });
+
+
+                        if (sideEmbroidery == 'yes') {
+                            $('#side_location').show();
+                        } else {
+                            $('#side_location').hide();
+                        }
+
+                        if (backEmbroidery == 'yes') {
+                            $('#back_location').show();
+                        } else {
+                            $('#back_location').hide();
+                        }
+                    }
+
+                    constantCalculation(productId);
+
+                }
+            }
+        });
+    }
+
+    function updateProductSession() {
+        var productId = $('#product_id').val();
+        var quantity = $('#f3').val();
+        var embroideryType = $('#g3').val();
+        var frontEmbroidery = $('#h3').val();
+        var sideEmbroidery = $('#i3').val();
+        var sideEmbroideryLocation = $('#j3').val();
+        var backEmbroidery = $('#k3').val();
+        var backEmbroideryLocation = $('#l3').val();
+
+
+        //selectedColor push to array only sleected color
+        var selectedColorArray = [];
+        $('.select_color .prod_color_active').each(function() {
+            selectedColorArray.push($(this).closest('.color').data('id'));
+        });
+
+
+        $.ajax({
+            url: mainurl + '/update-product-session', // Laravel route to handle session update
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                product_id: productId,
+                quantity: quantity,
+                embroidery_type: embroideryType,
+                front_embroidery: frontEmbroidery,
+                side_embroidery: sideEmbroidery,
+                side_embroidery_location: sideEmbroideryLocation,
+                back_embroidery: backEmbroidery,
+                back_embroidery_location: backEmbroideryLocation,
+                color_ids: selectedColorArray
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Product session updated');
+
+                    constantCalculation(response.data.product_id, response.data.constant);
+                }
+            }
+        });
+    }
 
 
     // ----------------related Slider -------------------

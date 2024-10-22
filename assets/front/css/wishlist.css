@@ -1,0 +1,204 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', sans-serif;
+
+}
+::-webkit-scrollbar{
+    display: none;
+}
+a{
+  text-decoration: none;
+}
+a, li {
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+ul, li{
+    text-decoration: none;
+    list-style: none;
+}
+.navActive{
+  border: 1.5px solid #D07531;
+  padding: 5px 15px;
+  border-radius: 30px;
+}
+/* ------------ new----------------- */
+
+html, body{
+    height: 100%;
+    width: 100%;
+    min-width: 380px;
+}
+.mainPage{
+    background-color: #EAEAEA;
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 20px;
+    padding-bottom: 50px;
+}
+.wishlistContainer{
+    width: 90%;
+    height: 100%;
+    padding: 40px 0px 40px 2vw;
+    margin: 0 auto;
+    /* padding: 40px 5px; */
+    display: flex; 
+    flex-wrap: wrap; 
+    justify-content: start; 
+}
+.box {
+    flex: 1;
+    min-width: 240px;
+    max-width: 240px;
+    border-radius: 20px;
+    box-sizing: border-box;
+    border: 1.5px solid rgba(0, 0, 0, 0.336);
+    /* width: 200px;  */
+    height: 340px; 
+    background-color: white; 
+    margin: 10px; 
+    border: 1px solid #ccc; 
+    padding: 15px;
+}
+
+.box .image-box{
+    height: 60%;
+    width: 100%;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1.5px solid rgba(0, 0, 0, 0.123);
+}
+.box .image-box img{
+    height:100%;
+    width: 100%;
+    object-fit:cover;
+}
+.box .product-info{
+    height: 40%;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+}
+.product-name{
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    margin-bottom: 10px;
+    
+}
+.product-name a{
+    
+    text-align: center;
+    color: #000;
+        text-decoration: none;
+}
+
+.wishlist-page h2 {
+
+    font-size: 35px;
+
+    color: #303030;
+
+    margin-bottom: 5px;
+
+    font-weight: 600 !important;
+
+}
+
+
+
+.wishlist-page h2 span {
+
+    font-family: "Kaisei Decol", serif;
+
+    font-weight: 400;
+
+}
+
+
+.price {
+
+    display: flex;
+
+    gap: 8px;
+
+    font-size: 18px;
+
+    color: #764D2A;
+
+    align-items: center;
+    margin-bottom: 10px;
+
+}
+
+
+
+.price h5 {
+
+    font-size: 18px;
+
+    color: #764D2A;
+
+    position: relative;
+
+}
+
+.remove {
+    width: 100%;
+    padding: 12px;
+    background-color: #a32d2d;
+    color: #fff;
+    border: none;
+    border-radius: 30px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all ease 0.2s;
+}
+.remove:hover{
+    background-color: #ce3838;
+    transform: scale3d(0.95,0.95,0.95);
+    text-decoration: none !important;
+    color: white !important;
+}
+
+@media(max-width:480px){
+    .box {
+        flex: 1;
+        min-width: 240px;
+        max-width: 100%;
+        border-radius: 20px;
+        box-sizing: border-box;
+        border: 1.5px solid rgba(0, 0, 0, 0.336);
+        width: 100%; 
+        height: fit-content; 
+        background-color: white; 
+        margin: 10px; 
+        border: 1px solid #ccc; 
+        padding: 15px 5px 15px 15px;
+        display: flex;
+    }
+    .box .image-box{
+        height: 180px;
+        width: 50%;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1.5px solid rgba(0, 0, 0, 0.123);
+    }
+    .box .product-info{
+        height: 180px;
+        width: 50%;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        overflow: hidden;
+    }
+}

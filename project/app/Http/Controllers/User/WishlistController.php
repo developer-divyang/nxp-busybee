@@ -60,10 +60,14 @@ class WishlistController extends UserBaseController
     {
         $user = $this->user;
         $data[0] = 0;
-        $ck = Wishlist::where('user_id','=',$user->id)->where('product_id','=',$id)->get()->count();
-        if($ck > 0)
+        $ck = Wishlist::where('user_id','=',$user->id)->where('product_id','=',$id)->first();
+        if($ck)
         {
-            $data['error'] = __('Already Added To The Wishlist.');
+            $data[0] = 1;
+            $data['img'] = asset('assets/front/images/wishlist.png');
+            $data[1] = count($user->wishlists);
+            $ck->delete();
+            $data['success'] = __('Successfully Removed From Wishlist.');
             return response()->json($data);
         }
         $wish = new Wishlist();
@@ -71,7 +75,9 @@ class WishlistController extends UserBaseController
         $wish->product_id = $id;
         $wish->save();
         $data[0] = 1;
+        $data['img'] = asset('assets/front/images/heart-red.png');
         $data[1] = count($user->wishlists);
+        $data['url'] = route('user-wishlist-remove', $wish->id);
         $data['success'] = __('Successfully Added To The Wishlist.');
         return response()->json($data);
 
@@ -80,10 +86,24 @@ class WishlistController extends UserBaseController
     public function removewish($id)
     {
         $user = $this->user;
-        $wish = Wishlist::findOrFail($id);
-        $wish->delete();
+        $wish = Wishlist::where('user_id', '=', $user->id)->where('product_id', '=', $id)->first();
+        if(!$wish)
+        {
+            $wish = new Wishlist();
+            $wish->user_id = $user->id;
+            $wish->product_id = $id;
+            $wish->save();
+            $data[0] = 1;
+            $data['img'] = asset('assets/front/images/heart-red.png');
+            $data['success'] = __('Successfully Added To Wishlist.');
+            $data[1] = count($user->wishlists);
+            return response()->json($data);
+        }
         $data[0] = 1;
+        $data['url'] = route('user-wishlist-add',$wish->product_id);
+        $wish->delete();
         $data[1] = count($user->wishlists);
+        $data['img'] = asset('assets/front/images/wishlist.png');
         $data['success'] = __('Successfully Removed From Wishlist.');
         return response()->json($data);
 

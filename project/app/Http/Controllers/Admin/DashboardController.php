@@ -67,7 +67,7 @@ class DashboardController extends AdminBaseController
 
         $html = view('user.order.messages', compact('messages'))->render();
 
-        return response()->json(['html' => $html]);
+        return response()->json(['count' => count($messages), 'html' => $html]);
     }
 
     public function sendChat(Request $request)

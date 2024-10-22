@@ -26,11 +26,15 @@
 
         <h2 class="cat">Price Range</h2>
         <div class="range-slider" data-field="price">
-          <input type="range" min="50" max="100" value="50" id="minRange" />
-          <input type="range" min="50" max="100" value="100" id="maxRange" />
+          @php
+          $minPrice = App\Models\Product::min('min_price');
+          $maxPrice = App\Models\Product::max('max_price');
+          @endphp
+          <input type="range" min="{{$minPrice}}" max="{{$maxPrice}}" value="{{$minPrice}}" id="minRange" />
+          <input type="range" min="{{$minPrice}}" max="{{$maxPrice}}" value="{{$maxPrice}}" id="maxRange" />
           <div class="slider-track"></div>
           <div class="price-range">
-            <span id="rangeMinValue">$50.00</span> - <span id="rangeMaxValue">$100.00</span>
+            <span id="rangeMinValue">${{$minPrice}}</span> - <span id="rangeMaxValue">${{$maxPrice}}</span>
           </div>
         </div>
 
@@ -41,10 +45,10 @@
           </h2>
           <div class="accordion-content checks" data-field="profile">
             <ul>
-              <li><span><input type="checkbox" data-id="high" name="profile[]" id="highProfile">High Profile</span><span>1</span></li>
-              <li><span><input type="checkbox" data-id="low" name="profile[]" id="lowProfile">Low Profile</span><span>0</span></li>
-              <li><span><input type="checkbox" data-id="mid" name="profile[]" id="midProfile">Mid Profile</span><span>0</span></li>
-              <li><span><input type="checkbox" data-id="pro" name="profile[]" id="proStyle">Pro Style</span><span>0</span></li>
+              <li><span><input type="checkbox" data-id="high" name="profile[]" id="highProfile">High Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','high') }}</span></li>
+              <li><span><input type=" checkbox" data-id="low" name="profile[]" id="lowProfile">Low Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','low') }}</span></li>
+              <li><span><input type="checkbox" data-id="mid" name="profile[]" id="midProfile">Mid Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','mid') }}</span></li>
+              <li><span><input type="checkbox" data-id="pro" name="profile[]" id="proStyle">Pro Style</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','pro') }}</span></li>
             </ul>
           </div>
         </div>
@@ -63,7 +67,7 @@
               $count = 1;
               }
               @endphp
-              <li><span><input type="checkbox" data-id="{{ $color->id }}" name="color[]" id="{{ $color->id }}">{{ $color->color_group }}</span><span>1</span></li>
+              <li><span><input type="checkbox" data-id="{{ $color->id }}" name="color[]" id="{{ $color->id }}">{{ $color->color_group }}</span><span>{{ App\Helpers\ProductHelper::getProductCount('color_id',$color->id,'product_color_images') }}</span></li>
               @endforeach
             </ul>
           </div>
@@ -76,8 +80,8 @@
           </h2>
           <div class="accordion-content checks" data-field="fit">
             <ul>
-              <li><span><input type="checkbox" data-id="stretch" name="fit[]" id="stretch">Stretch Fit</span><span>0</span></li>
-              <li><span><input type="checkbox" data-id="adjustable" name="fit[]" id="adjustable">Adjustable</span><span>1</span></li>
+              <li><span><input type="checkbox" data-id="stretch" name="fit[]" id="stretch">Stretch Fit</span><span>{{ App\Helpers\ProductHelper::getProductCount('fit','stretch') }}</span></li>
+              <li><span><input type="checkbox" data-id="adjustable" name="fit[]" id="adjustable">Adjustable</span><span>{{ App\Helpers\ProductHelper::getProductCount('fit','adjustable') }}</span></li>
             </ul>
           </div>
         </div>
@@ -89,8 +93,8 @@
           </h2>
           <div class="accordion-content checks" data-field="bill">
             <ul>
-              <li><span><input type="checkbox" data-id="curved" name="fit[]" id="curved">Curved</span><span>0</span></li>
-              <li><span><input type="checkbox" data-id="flat" name="fit[]" id="flat">Flat</span><span>1</span></li>
+              <li><span><input type="checkbox" data-id="curved" name="fit[]" id="curved">Curved</span><span>{{ App\Helpers\ProductHelper::getProductCount('bill','curved') }}</span></li>
+              <li><span><input type="checkbox" data-id="flat" name="fit[]" id="flat">Flat</span><span>{{ App\Helpers\ProductHelper::getProductCount('bill','flat') }}</span></li>
             </ul>
           </div>
         </div>
@@ -103,7 +107,7 @@
           <div class="accordion-content checks" data-field="size">
             <ul>
               @foreach (App\Models\Size::groupBy('size_name')->get() as $size)
-              <li><span><input type="checkbox" data-id="{{ $size->id }}" name="size[]" id="{{ $size->id }}">{{ $size->size_name }}</span><span>1</span></li>
+              <li><span><input type="checkbox" data-id="{{ $size->id }}" name="size[]" id="{{ $size->id }}">{{ $size->size_name }}</span><span>{{ App\Helpers\ProductHelper::getProductCount('size_id',$size->id,'product_size_colors') }}</span></li>
               @endforeach
             </ul>
           </div>
@@ -117,7 +121,7 @@
           <div class="accordion-content checks" data-field="brand">
             <ul>
               @foreach (App\Models\Brand::groupBy('brand')->get() as $brand)
-              <li><span><input type="checkbox" data-id="{{ $brand->id }}" name="brand[]" id="{{ $brand->id }}">{{ $brand->brand }}</span><span>{{ ($brand->id == 1)? 1 : 0 }}</span></li>
+              <li><span><input type="checkbox" data-id="{{ $brand->id }}" name="brand[]" id="{{ $brand->id }}">{{ $brand->brand }}</span><span>{{ App\Helpers\ProductHelper::getProductCount('brand_id',$brand->id) }}</span></li>
               @endforeach
             </ul>
           </div>
@@ -144,9 +148,9 @@
           </h2>
           <div class="accordion-content checks" data-field="closure">
             <ul>
-              <li><span><input type="checkbox" data-id="buckle" name="closure[]" id="buckle">Buckle</span><span>0</span></li>
-              <li><span><input type="checkbox" data-id="snapback" name="closure[]" id="snapback">Snapback</span><span>0</span></li>
-              <li><span><input type="checkbox" data-id="velcro" name="closure[]" id="velcro">Velcro</span><span>1</span></li>
+              <li><span><input type="checkbox" data-id="buckle" name="closure[]" id="buckle">Buckle</span><span>{{ App\Helpers\ProductHelper::getProductCount('closure','buckle') }}</span></li>
+              <li><span><input type="checkbox" data-id="snapback" name="closure[]" id="snapback">Snapback</span><span>{{ App\Helpers\ProductHelper::getProductCount('closure','snapback') }}</span></li>
+              <li><span><input type="checkbox" data-id="velcro" name="closure[]" id="velcro">Velcro</span><span>{{ App\Helpers\ProductHelper::getProductCount('closure','velcro') }}</span></li>
             </ul>
           </div>
         </div>
@@ -170,8 +174,19 @@
       <div class="product-section">
         @foreach($prods as $product)
         <div class="prodBox">
-
-          <img class="wishlistImg" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image">
+          @if(Auth::check())
+          @if($product->wishlist->count() > 0)
+          <a class="wishlist-remove" href="javascript:;" data-href="{{ route('user-wishlist-remove',$product->id) }}">
+            <img class="wishlistImg remove" src="{{ asset('assets/front/images/heart-red.png') }}" alt="wishlist Image">
+          </a>
+          @else
+          <a class="new" href="javascript:;" data-href="{{ route('user-wishlist-add',$product->id) }}">
+            <img class="wishlistImg new" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image">
+          </a>
+          @endif
+          @else
+          <a href="{{ route('user.login') }}"><img class="wishlistImg" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image"></a>
+          @endif
           <div class="prod-image">
             <div class="swiper prodImageSlider">
               @if($product->getColorImages)
@@ -289,7 +304,7 @@
             var imgElement = '<div class="swiper-slide"><img src="' + imageUrl + '" alt="Product Image"></div>';
             swiperWrapper.append(imgElement);
           });
-          
+
           $('.select_color img').removeClass('color_active');
 
           // Add 'active' class to the clicked color image
@@ -319,19 +334,19 @@
       var field = $(this).data('field');
       filters[field] = [];
       $(this).find('input[type="checkbox"]:checked').each(function() {
-        if ($(this).data('id') == 'stretch') {
-          $('#closure_filter').hide();
-        } else {
+        if ($(this).data('id') == 'adjustable') {
           $('#closure_filter').show();
+        } else {
+          $('#closure_filter').hide();
         }
         filters[field].push($(this).data('id'));
       });
     });
 
     // Add range slider values
-    if ($('#minRange').val() == 50 && $('#maxRange').val() == 100) {
-      filters['min_price'] = '';
-      filters['max_price'] = '';
+    if ($('#minRange').val() == '{{ $minPrice }}' && $('#maxRange').val() == '{{ $maxPrice }}') {
+      filters['min_price'] = '{{ $minPrice }}';
+      filters['max_price'] = '{{ $maxPrice }}';
     } else {
 
       filters['min_price'] = $('#minRange').val();

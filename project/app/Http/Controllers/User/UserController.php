@@ -23,8 +23,73 @@ class UserController extends UserBaseController
     {
         // dd('User Dashboard');
         $user = $this->user;
+        //get all message login user order_id wise
+       
+
         return view('user.dashboard', compact('user'));
     }
+
+    public function loadNotifications()
+    {
+        $user = $this->user;
+        $count = 0;
+        $messages = ChatMessage::where('user_id', 1)->where('is_seen',0) // Admin replies
+        ->whereIn('order_id', function ($query) use ($user) {
+            $query->select('id')
+                ->from('orders')
+                ->where('user_id', $user->id); // Logged-in user's orders
+        })
+        ->get();
+        $count += count($messages);
+
+        $orders = Order::where('user_id', $user->id)->where('is_seen', 0)->get();
+        // dd(count($orders));
+        $count += count($orders);
+        // dd($count);
+        $html = view('user.order.notifications', compact('messages', 'orders'))->render();
+
+        return response()->json(['count' => $count, 'html' => $html]);
+    }
+
+    public function showNotifications()
+    {
+        $user = $this->user;
+        $count = 0;
+        $messages = ChatMessage::where('user_id', 1)->where('is_seen', 0) // Admin replies
+        ->whereIn('order_id', function ($query) use ($user) {
+            $query->select('id')
+                ->from('orders')
+                ->where('user_id', $user->id); // Logged-in user's orders
+        })
+            ->get();
+        $count = count($messages);
+
+        if ($messages->count() > 0) {
+            foreach ($messages as $data) {
+                $data->is_seen = 1;
+                $data->update();
+            }
+        }
+        
+
+        $count += count($messages);
+
+        $orders = Order::where('user_id', $user->id)->where('is_seen',0)->get();
+
+        foreach ($orders as $o) {
+            $o->is_seen = 1;
+            $o->update();
+        }
+
+        $count += count($orders);
+
+        
+
+        $html = view('user.order.notifications', compact('messages', 'orders'))->render();
+
+        return response()->json(['count' => $count, 'html' => $html]);
+    }
+  
 
     public function profile()
     {
@@ -127,10 +192,10 @@ class UserController extends UserBaseController
         $messages = ChatMessage::where('order_id', $orderId)
             ->orderBy('created_at', 'asc')
             ->get();
-
+        
         $html = view('user.order.messages', compact('messages'))->render();
 
-        return response()->json(['html' => $html]);
+        return response()->json(['count' => count($messages), 'html' => $html]);
     }
 
     public function sendChat(Request $request)

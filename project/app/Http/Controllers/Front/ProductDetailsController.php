@@ -98,7 +98,7 @@ class ProductDetailsController extends FrontBaseController
                 // dd($colorIds);
                 // $color = Color::find($colorId);
                 
-                // Session::forget('cart');
+                
                 $oldCart = Session::get('cart');
                 // dd($oldCart);
                 $cart = new Cart($oldCart);
@@ -119,11 +119,52 @@ class ProductDetailsController extends FrontBaseController
         }
     }
 
+    public function updateProductSession(Request $request)
+    {
+        // Fetch existing session or create a new one
+        $productId = $request->input('product_id');
+        $productData = session()->get("products.$productId", []);
+
+        $product = Product::find($productId);
+        
+        // Update the session with the provided data
+        $productData['product_id'] = $productId;
+        $productData['quantity'] = $request->input('quantity');
+        $productData['embroidery_type'] = $request->input('embroidery_type');
+        $productData['front_embroidery'] = $request->input('front_embroidery');
+        $productData['side_embroidery'] = $request->input('side_embroidery');
+        $productData['side_embroidery_location'] = $request->input('side_embroidery_location');
+        $productData['back_embroidery'] = $request->input('back_embroidery');
+        $productData['back_embroidery_location'] = $request->input('back_embroidery_location');
+        if(!empty($request->input('color_ids'))){
+            $productData['color_ids'] = $request->input('color_ids');
+        }
+        $productData['constant'] = $product->constant;
+
+        // Save product data back to session
+        session()->put("products.$productId", $productData);
+
+        return response()->json(['success' => true, 'message' => 'Product data updated successfully', 'data' => $productData]);
+    }
+
+
+    function getProductSession(Request $request)
+    {
+        $productId = $request->input('product_id');
+        $productData = session()->get("products.$productId", []);
+        if(empty($productData)){
+            return response()->json(['success' => true, 'message' => 'Product not found in session']);
+        }
+        return response()->json(['success' => true, 'data' => $productData]);
+
+    }
+
     
 
 
     public function customization1(Request $request, $slug)
     {
+        // Session::forget('cart');
         $affilate_user = 0;
         $gs = $this->gs;
         $productt = Product::where('slug', '=', $slug)->firstOrFail();

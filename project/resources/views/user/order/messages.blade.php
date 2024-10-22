@@ -1,5 +1,11 @@
 @foreach($messages as $message)
-<div class="file-item">
+@php 
+$class = 'user_msg';
+if($message->user_id == 1){
+$class = 'admin_msg';
+}
+@endphp
+<div class="file-item {{ $class }}">
     <div class="file-info">
         <div class="img-file-info">
             <span class="files-icon">

@@ -100,21 +100,75 @@ function updateTotal() {
 }
 
 function increaseQty(index) {
-    const qtyInput = document.getElementById(`qty-${index}`);
+
+
+    const qtyInput = document.querySelector(`input[data-id="${index}"]`);
     let qty = parseInt(qtyInput.value);
+    // alert(index);
     qty++;
     qtyInput.value = qty;
-    updateSubTotal(index);
+    // updateSubTotal (index);
+    let color = $(qtyInput).data('color-id');
+    let model = $(qtyInput).data('model-id');
+    let size = $(qtyInput).data('size-id');
+    let pid = $(qtyInput).data('product-id');
+    saveToLocalStorage(pid);
+    // let size = $(quantityInput).data('size-id');
+    qty = $(qtyInput).val();
+    addCart(1, size, color);
+
+    let totalqty = 0;
+    $('.item_' + model).each(function () {
+        totalqty += parseFloat($(this).find('.item-qty').val());
+    });
+
+
+
+    constantCalculation(totalqty, pid, index, model);
+
 }
 
+
+
+
+function removeItem(index) {
+
+    $(`#cart-${index}`).remove();
+    // constantCalculation();
+    var total = 0;
+    $('.subtotal').each(function () {
+        total += parseFloat($(this).data('value'));
+    });
+    $('#total').html('$' + total.toFixed(2));
+}
+
+
 function decreaseQty(index) {
-    const qtyInput = document.getElementById(`qty-${index}`);
+
+
+    const qtyInput = document.querySelector(`input[data-id="${index}"]`);
     let qty = parseInt(qtyInput.value);
     if (qty > 1) {
         qty--;
         qtyInput.value = qty;
-        updateSubTotal(index);
+        // updateSubTotal (index);
+        let model = $(qtyInput).data('model-id');
+        let size = $(qtyInput).data('size-id');
+        let pid = $(qtyInput).data('product-id');
+        let color = $(qtyInput).data('color-id');
+        saveToLocalStorage(pid);
+        // let size = $(quantityInput).data('size-id');
+        qty = $(qtyInput).val();
+        removeCart(size, color, pid);
+        let totalqty = 0;
+        $('.item_' + model).each(function () {
+            totalqty += parseFloat($(this).find('.item-qty').val());
+        });
+
+        // alert(qty);
+        constantCalculation(totalqty, pid, index, model);
     }
+
 }
 
 

@@ -18,12 +18,16 @@
 		$(document).on("click", ".new", function (e) {
 			e.preventDefault();
 
-			if ($(this).data("href")) {
-				$.get($(this).data("href"), function (data) {
+			var $this = $(this); // Store the context
+
+			if ($this.data("href")) {
+
+				$.get($this.data("href"), function (data) {
 					if (data[0] == 1) {
 						toastr.success(data["success"]);
 						$("#wishlist-count").html(data[1]);
 						$("#wishlist-count1").html(data[1]);
+						$this.find('img').attr('src', data['img']);
 					} else {
 						toastr.error(data["error"]);
 					}
@@ -350,12 +354,22 @@
 
 		$(document).on("click", ".wishlist-remove", function (e) {
 			e.preventDefault();
-			$(this).parent().parent().parent().remove();
-			$.get($(this).data("href"), function (data) {
+
+			var $this = $(this); // Store the context
+
+			$.get($this.data("href"), function (data) {
 				$("#wishlist-count").html(data[1]);
 				$("#wishlist-count1").html(data[1]);
 				toastr.success(data["success"]);
-				$("table").load(mainurl + "/wishlists");
+				// $("table").load(mainurl + "/wishlists");
+				if($this.data('id')){
+					$('.p_'+$this.data('id')).remove();
+				}
+				if (data[1] == 0){
+					$(".wishlistContainer").html('<h4 style="text-align: center;width: 100%;">No Wishlist Found</h4>');
+				}
+				$this.find('img').attr('src', data['img']); // Use the stored context
+				
 			});
 		});
 

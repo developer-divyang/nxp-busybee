@@ -22,7 +22,10 @@
                             <button class="quantity-btn plus-btn">+</button>
                         </div>
                         <input type="hidden" id="d3" name="d3" class="d3" value="{{ ($productt->blank_price)? $productt->blank_price : 0 }}">
-                        <input type="hidden" id="e3" name="e3" class="e3" value="{{ ($productt->weight)? $productt->weight : 0 }}">
+                        <input type="hidden" id="d3" name="d3" class="d3" value="{{ ($productt->blank_price)? $productt->blank_price : 0 }}">
+                        <input type="hidden" id="constant-{{ $productt->id }}" name="constant" class="customize_constant-{{ $productt->id }}" value="{{ ($productt->constant)? $productt->constant : '' }}">
+                        <input type="hidden" id="customize_product_id" name="product_id" class="customize_product_id" value="{{ $productt->id }}">
+                        <input type="hidden" id="customize_color_id" name="color_ids" class="selected-colors" value="">
                     </div>
                 </div>
                 <!------------------------------->
@@ -40,7 +43,7 @@
                 <div class=" side_location" style="display:none">
                     <p style="font-size: 12px; margin-bottom: 4px;">Select side Embroidery Location</p>
                     <div class="custom-select ">
-                        <select id="j3" name="j3" class="j3" >
+                        <select id="j3" name="j3" class="j3">
                             <option value="">Select Side Embroidery Locations </option>
                             <option value="right">Right</option>
                             <option value="left">Left</option>
@@ -53,7 +56,7 @@
                 <div>
                     <p style="font-size: 12px; margin-bottom: 4px;">Select Embroidery Type</p>
                     <div class="custom-select">
-                        <select id="g3" name="g3" class="g3" >
+                        <select id="g3" name="g3" class="g3">
                             <option value="">Select Embroidery Type</option>
                             <option selected value="regular">Regular</option>
                             <option value="3D">3D</option>
@@ -90,7 +93,7 @@
                     <div class=" back_location" style="display:none">
                         <p style="font-size: 12px; margin-bottom: 4px;">Select back Embroidery Location</p>
                         <div class="custom-select">
-                            <select id="l3" name="l3" class="l3" >
+                            <select id="l3" name="l3" class="l3">
                                 <option value="">Select Back Embroidery Locations </option>
                                 <option value="center">Center</option>
                             </select>

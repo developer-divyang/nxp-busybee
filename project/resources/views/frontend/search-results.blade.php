@@ -13,12 +13,8 @@
             <div>Results <span>Products</span></div>
             <div class="sort">SORT BY
                 <select name="pets" id="pet-select">
-                    <option value="dog">Best Match</option>
-                    <option value="cat">Most Popular</option>
-                    <option value="hamster">Best Rated</option>
-                    <option value="parrot">Low to High</option>
-                    <option value="spider">High to Low</option>
-                    <option value="goldfish">Best Match</option>
+                    <option value="low_to_high">Low to High</option>
+                    <option value="high_to_low">High to Low</option>
                 </select>
             </div>
         </div>
@@ -29,23 +25,36 @@
             <div class="product-section">
                 @if(count($prods) > 0)
 
-                
+
                 @foreach($prods as $product)
                 <div class="prodBox">
 
-                    <img class="wishlistImg" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image">
+                    @if(Auth::check())
+                    @if($product->wishlist->count() > 0)
+                    <a class="wishlist-remove" href="javascript:;" data-href="{{ route('user-wishlist-remove',$product->id) }}">
+                        <img class="wishlistImg remove" src="{{ asset('assets/front/images/heart-red.png') }}" alt="wishlist Image">
+                    </a>
+                    @else
+                    <a class="new" href="javascript:;" data-href="{{ route('user-wishlist-add',$product->id) }}">
+                        <img class="wishlistImg new" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image">
+                    </a>
+                    @endif
+                    @else
+                    <a href="{{ route('user.login') }}"><img class="wishlistImg" src="{{ asset('assets/front/images/wishlist.png') }}" alt="wishlist Image"></a>
+                    @endif
                     <div class="prod-image">
                         <div class="swiper prodImageSlider">
-                            @if($product->getColors)
+                            @if($product->getColorImages)
+
 
                             @php
-                            $productColorImages = $product->getColors->first()->productColorImages;
-
+                            $productColorImages = $product->getColorImages->first()->image_path;
+                            $images = json_decode($productColorImages);
                             @endphp
 
                             <div class="swiper-wrapper img_slide_{{ $product->id }}">
-                                @foreach($productColorImages as $productColorImage)
-                                <div class="swiper-slide"><img src="{{ Storage::url($productColorImage->image_path) }}" alt="Product Image"></div>
+                                @foreach($images as $productColorImage)
+                                <div class="swiper-slide"><img src="{{ Storage::url($productColorImage) }}" alt="Product Image"></div>
                                 @endforeach
 
                             </div>
@@ -59,14 +68,17 @@
                         <a href="{{ route('front.product', $product->slug) }}">
                             <p>{{ $product->showName() }}</p>
                             <div class="price">
-                                <h5 id="offerPrice">$100 -</h5>
-                                <h5 id="oldPrice">$150</h5>
+                                <h5 id="offerPrice">{{ $product->setCurrency($product->min_price) }} -</h5>
+                                <h5 id="oldPrice">{{ $product->setCurrency($product->max_price) }}</h5>
                             </div>
                         </a>
-                        @if($product->getColors)
+                        @if($product->getColorImages)
 
                         <div class="color-choice">
-                            @foreach($product->getColors as $color)
+                            @foreach($product->getColorImages as $pcolor)
+                            @php
+                            $color = App\Models\Color::find($pcolor->color_id);
+                            @endphp
                             <div data-id="{{ $color->id }}" data-product="{{ $product->id }}" class="color select_color">
                                 <img src="{{ Storage::url($color->color_image) }}" class="img-fluid image-circle" alt="">
                             </div>

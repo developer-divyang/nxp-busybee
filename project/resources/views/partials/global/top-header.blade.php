@@ -34,8 +34,8 @@
    id="toggle"
    style="display: flex; justify-content: space-between; gap: 40px">
    <div class="nav-end">
-      <a href=""><img src="{{ asset('assets/front/images/heart.png') }}" alt="" /></a>
       @if(Auth::check())
+      <a href="{{ route('user-wishlists') }}"><img src="{{ asset('assets/front/images/heart.png') }}" alt="" /></a>
       <a href="{{ route('user-dashboard') }}"><img src="{{ asset('assets/front/images/user.png') }}" alt="" /></a>
       @else
       <a href="{{ route('user.login') }}"><img src="{{ asset('assets/front/images/user.png') }}" alt="" /></a>
