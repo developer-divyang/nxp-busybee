@@ -713,7 +713,9 @@
                                         </div>
                                     </div>
 
-                                    <!-- <div class="row">
+                                    
+
+                                    <div class="row">
                                         <div class="form-group">
                                             <input type="text" id="shipping_country" name="shipping_country" placeholder="Country">
                                         </div>
@@ -729,7 +731,57 @@
                                         <div class="form-group">
                                             <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
                                         </div>
+                                    </div>
+
+                                    <div class="row checkbox-group">
+                                        <input type="checkbox" id="same-address" name="same_address">
+                                        <label for="same-address">Shipping and Billing address are same</label>
+                                    </div>
+
+
+
+                                </div>
+                                <div class="form-container">
+                                    <!-- <div class="row checkbox-group">
+                                        <input type="checkbox" id="same-address" name="same_address">
+                                        <label for="same-address">Shipping and Billing address are same</label>
                                     </div> -->
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" id="billing_name" name="billing_name" placeholder="Full Name">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group full-width">
+                                            <input type="text" id="billing_address1" name="billing_address1" placeholder="Address Line 1">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group full-width">
+                                            <input type="text" id="billing__address2" name="billing_address2" placeholder="Address Line 2">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" id="billing_country" name="billing_country" placeholder="Country">
+                                        </div>
+                                        <div class="form-group d-none select_state">
+                                            <input type="text" id="billing_state" name="billing_state" placeholder="State">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" name="billing_city" id="billing_city" placeholder="Suburb/City">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="billing_postcode" id="billing_postcode" placeholder="Postcode">
+                                        </div>
+                                    </div>
 
 
 
@@ -737,7 +789,7 @@
                             </div>
                         </div>
                     </div>
-
+<!-- 
                     <button class="accordion-toggle">
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Billing <span>Address</span></h4>
                     </button>
@@ -791,16 +843,55 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <button class="accordion-toggle shipping_method" style="display: none;">
+                    <button class="accordion-toggle shipping_method" style="display: flex;">
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Shipping <span>Method</span></h4>
                     </button>
-                    <div class="accordion-content shipping_method" style="display: none;">
+                    <div class="accordion-content shipping_method" style="display: block;">
                         <div class="billingSection">
                             <div class="accorTop">
-                                <div class="form-container" id="shipping_method_list">
-
+                                <div class="form-container payment-options label-container" id="shipping_method_list">
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
+                                <label>
+                                            <input type="radio" name="payment_type" value="full" checked>
+                                            <span>Make Full Payment</span>
+                                        </label>
 
 
 
