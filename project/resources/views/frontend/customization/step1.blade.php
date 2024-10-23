@@ -218,14 +218,17 @@
                                         </div>
                                     </div>
                                     <div class="file-upload-container">
-                                        <div class="logo-container" id="drop-area">
+                                        <div id="drop-area" style="display: flex;">
                                             <span class="drag-text">Drag and drop here</span>
                                         </div>
                                         <label class="file-upload-button">
-                                            <input type="file" name="front_logo" id="logo-upload" hidden>
+                                            <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
                                             UPLOAD YOUR LOGO
                                         </label>
                                         <span class="file-name">No File Selected</span>
+                                    </div>
+                                    <div class="logotextarea" style="margin-top: 10px;">
+                                        <textarea class="logotextareamain" name="front_multi_logo_note" id="" placeholder="Front logo Notes"></textarea>
                                     </div>
 
                                     <div class="checkbox-group">
@@ -600,7 +603,7 @@
                                                 <td>
                                                     <div class="qty-control">
                                                         <button type="button" onclick="decreaseQty('{{ $pkey }}')">−</button>
-                                                        <input type="text" class="item-qty" data-id="{{ $pkey }}" data-model-id="{{ $productData->modelNumber->id }}" data-color-id="{{ $product['color'] }}" data-size-id="{{ $product['size'] }}" data-product-id="{{ $productData->id }}" value="{{ $product['qty'] }}" readonly name="qty[{{ $pkey }}]">
+                                                        <input type="text" class="item-qty" data-id="{{ $pkey }}" data-model-id="{{ $productData->modelNumber->id }}" data-c-id="{{ $color }}" data-color-id="{{ $product['color'] }}" data-size-id="{{ $product['size'] }}" data-product-id="{{ $productData->id }}" value="{{ $product['qty'] }}" readonly name="qty[{{ $pkey }}]">
                                                         <button type="button" onclick="increaseQty('{{ $pkey }}')">+</button>
                                                     </div>
                                                 </td>
@@ -612,7 +615,7 @@
                                                 </td>
 
                                                 <td>
-                                                    <button data-color-id="{{ $color }}" data-size-id="{{ $size }}" class="cancel-btn" onclick="removeItem(2)">&#x2715;</button>
+                                                    <button type="button" data-color-id="{{ $color }}" data-size-id="{{ $size }}" class="cancel-btn" onclick="removeItem(2)">&#x2715;</button>
                                                 </td>
                                             </tr>
                                             @endforeach
@@ -681,6 +684,60 @@
 
 
 
+
+
+                    <button class="accordion-toggle">
+                        <h4><img src="{{ asset('assets/front/images/shippingAdd.png') }}" alt=""> Shipping <span>Address</span></h4>
+                    </button>
+                    <div class="accordion-content">
+                        <div class="billingSection">
+                            <div class="accorTop">
+                                <div class="form-container">
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" id="shipping_name" placeholder="Full Name" name="shipping_name">
+                                        </div>
+
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group full-width">
+                                            <input type="text" id="shipping_address1" name="shipping_address1" placeholder="Address Line 1" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group full-width">
+                                            <input type="text" id="shipping_address2" name="shipping_address2" placeholder="Address Line 2">
+                                        </div>
+                                    </div>
+
+                                    <!-- <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" id="shipping_country" name="shipping_country" placeholder="Country">
+                                        </div>
+                                        <div class="form-group d-none select_state">
+                                            <input type="text" id="shipping_state" name="shipping_state" placeholder="State">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" name="shipping_city" id="shipping_city" placeholder="Suburb/City">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
+                                        </div>
+                                    </div> -->
+
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <button class="accordion-toggle">
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Billing <span>Address</span></h4>
                     </button>
@@ -688,6 +745,10 @@
                         <div class="billingSection">
                             <div class="accorTop">
                                 <div class="form-container">
+                                    <div class="row checkbox-group">
+                                        <input type="checkbox" id="same-address" name="same_address">
+                                        <label for="same-address">Shipping and Billing address are same</label>
+                                    </div>
 
                                     <div class="row">
                                         <div class="form-group">
@@ -709,14 +770,10 @@
 
                                     <div class="row">
                                         <div class="form-group">
-                                            <select class="form-control" id="billing_country" name="billing_country" required="">
-                                                @include('includes.countries')
-                                            </select>
+                                            <input type="text" id="billing_country" name="billing_country" placeholder="Country">
                                         </div>
                                         <div class="form-group d-none select_state">
-                                            <select class="form-control " id="billing_state" name="billing_state">
-
-                                            </select>
+                                            <input type="text" id="billing_state" name="billing_state" placeholder="State">
                                         </div>
                                     </div>
 
@@ -729,64 +786,23 @@
                                         </div>
                                     </div>
 
-                                    <div class="row checkbox-group">
-                                        <input type="checkbox" id="same-address" name="same_address">
-                                        <label for="same-address">Shipping and Billing address are same</label>
-                                    </div>
+
 
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <button class="accordion-toggle">
-                        <h4><img src="{{ asset('assets/front/images/shippingAdd.png') }}" alt=""> Shipping <span>Address</span></h4>
+                    <button class="accordion-toggle shipping_method" style="display: none;">
+                        <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Shipping <span>Method</span></h4>
                     </button>
-                    <div class="accordion-content">
+                    <div class="accordion-content shipping_method" style="display: none;">
                         <div class="billingSection">
                             <div class="accorTop">
-                                <div class="form-container">
+                                <div class="form-container" id="shipping_method_list">
 
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="shipping_name" placeholder="Full Name" name="shipping_name">
-                                        </div>
 
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="form-group full-width">
-                                            <input type="text" id="shipping_address1" name="shipping_address1" placeholder="Address Line 1">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group full-width">
-                                            <input type="text" id="shipping_address2" name="shipping_address2" placeholder="Address Line 2">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <select class="form-control" id="shipping_country" name="shipping__country" required="">
-                                                @include('includes.countries')
-                                            </select>
-                                        </div>
-                                        <div class="form-group d-none select_state">
-                                            <select class="form-control " id="shipping_state" name="shipping__state">
-
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" name="shipping_city" id="shipping_city" placeholder="Suburb/City">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
-                                        </div>
-                                    </div>
 
 
 
@@ -942,6 +958,8 @@
 
 @section('script')
 <script src="https://js.stripe.com/v3/"></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBmcmf6w_4MAPQkuyvAZylbf28XvsO4kzs&libraries=places"></script>
+
 
 @php
 $const = $productt->constant;
@@ -992,7 +1010,7 @@ $const = $productt->constant;
         });
         // Get the total amount from the hidden input
 
-        const totalAmount = parseFloat($('#total_amount').val());
+        let totalAmount = parseFloat($('#total_amount').val());
         // Update payment amount based on selected payment type
         document.querySelectorAll('input[name="payment_type"]').forEach(function(radio) {
             radio.addEventListener('change', function() {
@@ -1002,7 +1020,7 @@ $const = $productt->constant;
                 } else {
                     totalAmount = 30; // Deposit amount
                 }
-                document.getElementById('payment-amount').value = amount.toFixed(2);
+                document.getElementById('payment-amount').value = totalAmount.toFixed(2);
             });
         });
 
@@ -1062,6 +1080,157 @@ $const = $productt->constant;
 
     }
 
+
+    function initAutocomplete() {
+        // Create the autocomplete object, restricting to addresses in the USA
+        var autocomplete = new google.maps.places.Autocomplete(
+            document.getElementById('shipping_address1'), {
+                types: ['address'], // Restrict to address types
+                componentRestrictions: {
+                    country: 'US'
+                }, // Restrict to the USA
+                fields: ['address_components', 'geometry'] // Fetch address components and geometry
+            }
+        );
+
+        // Add listener for place changed event
+        autocomplete.addListener('place_changed', function() {
+            // Get the place details from the autocomplete object
+            var place = autocomplete.getPlace();
+
+            if (!place.address_components) {
+                return;
+            }
+
+            // Variables to store parsed address components
+            var city = '',
+                state = '',
+                postcode = '';
+
+            // console.log('Place:', place);
+
+
+            // Loop through address components and assign them to appropriate variables
+            $.each(place.address_components, function(i, component) {
+
+                var place = autocomplete.getPlace();
+                var types = component.types;
+                for (var i = 0; i < place.address_components.length; i++) {
+                    // console.log(place.address_components);
+
+                    for (var j = 0; j < place.address_components[i].types.length; j++) {
+                        if (place.address_components[i].types[j] == "postal_code") {
+                            console.log(place.address_components[i]);
+                            postcode = place.address_components[i].long_name;
+
+                        }
+                        if (place.address_components[i].types[j] == "locality") {
+                            console.log(place.address_components[i]);
+                            city = place.address_components[i].long_name;
+
+                        }
+                        if (place.address_components[i].types[j] == "administrative_area_level_1") {
+                            console.log(place.address_components[i]);
+                            state = place.address_components[i].short_name;
+
+                        }
+                    }
+                }
+
+                // console.log('Component:', component, 'Types:', types);
+
+                // if ($.inArray('locality', types) !== -1) {
+                //     city = component.long_name; // Extract city
+                // }
+                // if ($.inArray('administrative_area_level_1', types) !== -1) {
+                //     state = component.short_name; // Extract state (short name, like 'CA' for California)
+                // }
+                // if ($.inArray('postal_code', types) !== -1) {
+                //     postcode = component.long_name; // Extract postal code
+                // }
+            });
+
+            console.log('City:', city, 'State:', state, 'Postal Code:', postcode);
+
+
+            // Create or update form fields for state, city, and postcode
+            updateOrAppendField('#shipping_state', 'State', state);
+            updateOrAppendField('#shipping_city', 'City', city);
+            updateOrAppendField('#shipping_postcode', 'Postal Code', postcode);
+
+            getShippingMethods(city, state, postcode);
+        });
+    }
+
+
+    function getShippingMethods(city, state, postcode) {
+
+        var totalQty = 0;
+
+        $('.item-qty').each(function() {
+            totalQty += parseInt($(this).val());
+        });
+
+
+
+        $.ajax({
+            url: mainurl + '/user/get-shipping-methods', // Laravel route to get shipping methods
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                total_qty: totalQty,
+                city: city,
+                state: state,
+                postcode: postcode
+
+            },
+            success: function(response) {
+                if (response.is_success) {
+                    console.log('Shipping methods retrieved');
+                    console.log(response.data);
+
+                    // Clear the shipping method list
+                    $('#shipping_method_list').empty();
+
+                    // Loop through the shipping methods and append them to the list
+                    $.each(response.data, function(index, method) {
+                        var methodHtml = `
+            <div class="row">
+              <div class="form-group">
+                <input type="radio" id="shipping_method_${method.serviceCode}" name="shipping_method" value="${method.serviceCode}" data-cost="${method.shipmentCost}">
+                <label for="shipping_method_${method.serviceCode}">${method.serviceName} - ${method.shipmentCost}</label>
+              </div>
+            </div>`;
+                        $('#shipping_method_list').append(methodHtml);
+                    });
+
+                    // Show the shipping method section
+                    $('.shipping_method').show();
+                }else{
+                    toastr.error(response.message);
+                }
+            }
+        });
+    }
+
+    // Function to append or update form fields dynamically
+    function updateOrAppendField(selector, label, value) {
+        // Check if the field already exists
+        if ($(selector).length) {
+            $(selector).val(value); // Update the value if the field exists
+        } else {
+            // If the field doesn't exist, append it
+            var fieldHtml = `
+        <div class="row appended-field">
+          <div class="form-group full-width">
+            <label>${label}</label>
+            <input type="text" id="${selector.substring(1)}" name="${selector.substring(1)}" value="${value}" readonly>
+          </div>
+        </div>`;
+            $('#shipping_address1').closest('.form-container').append(fieldHtml);
+        }
+    }
+
     function getProductSession(productId) {
 
         $.ajax({
@@ -1088,8 +1257,8 @@ $const = $productt->constant;
                         var backEmbroideryLocation = response.data.back_embroidery_location;
                         var quantity = response.data.quantity;
                         var selected_colorIds = response.data.color_ids;
-
-                        $('.qty').val(quantity);
+                        // alert(sideEmbroideryLocation)
+                        $('.qty').val(1);
                         $('.g3').val(embroideryType);
                         $('.h3').val(frontEmbroidery);
                         $('.i3').val(sideEmbroidery);
@@ -1098,9 +1267,21 @@ $const = $productt->constant;
                         $('.l3').val(backEmbroideryLocation);
 
                         // Set the selected colors in hidden input
-                        $('.selected-colors').val(selected_colorIds);
+                        //set selected_colorIds array in local storage product id wise
+                        var itemsavedData = localStorage.getItem('selected_colors_' + pid);
+                        // alert(itemsavedData);
+                        if (itemsavedData) {
+                            let colorIdsArray = JSON.parse(itemsavedData);
+                        } else {
+                            let colorIdsArray = [];
+                            //selected_colorIds push in array
+                            colorIdsArray.push(selected_colorIds);
+                            //set array in local storage
+                            localStorage.setItem('selected_colors_' + pid, JSON.stringify(colorIdsArray));
+                        }
 
-                        getallItems(selected_colorIds);
+
+
 
                         if (sideEmbroidery == 'yes') {
                             $('.side_location').show();
@@ -1113,10 +1294,14 @@ $const = $productt->constant;
                         } else {
                             $('.back_location').hide();
                         }
+
+
+                        // alert(colorIdsArray);
+                        getallItems();
                     }
 
 
-                    constantCalculation(productId);
+                    constantCalculation();
 
                 }
             }
@@ -1130,26 +1315,22 @@ $const = $productt->constant;
         var pid = $('.customize_product_id').val();
         getProductSession(pid);
 
+        initAutocomplete();
+
         setTimeout(() => {
 
 
             $('.item-row').each(function() {
                 var model = $(this).data('model-id');
                 var totalmodelqty = 0;
-                $('.item-row').each(function() {
-                    if ($(this).data('model-id') == model) {
-                        totalmodelqty += parseInt($(this).find('.item-qty').val());
 
-
-
-                    }
-                    let pid = $(this).find('.item-qty').data('product-id');
-                    let index = $(this).find('.item-qty').data('id');
-                    constantCalculation(totalmodelqty, pid, index, model);
-                });
-
-
-
+                if ($(this).data('model-id') == model) {
+                    totalmodelqty += parseInt($(this).find('.item-qty').val());
+                }
+                // alert(totalmodelqty);
+                let pid = $(this).find('.item-qty').data('product-id');
+                let index = $(this).find('.item-qty').data('id');
+                constantCalculation(totalmodelqty, pid, index, model);
 
             });
 
@@ -1163,18 +1344,18 @@ $const = $productt->constant;
 
         $(document).on('change', '#same-address', function() {
             if ($(this).is(':checked')) {
-                $('#shipping_name').val($('#billing_name').val());
-                $('#shipping_address1').val($('#billing_address1').val());
-                $('#shipping_address2').val($('#billing_address2').val());
-                $('#shipping_country').val($('#billing_country').val()).trigger('change');
-                $('#shipping_state').val($('#billing_state').val());
-                $('#shipping_city').val($('#billing_city').val());
-                $('#shipping_postcode').val($('#billing_postcode').val());
+                $('#billing_name').val($('#shipping_name').val());
+                $('#billing_address1').val($('#shipping_address1').val());
+                $('#billing_address2').val($('#shipping_address2').val());
+                $('#billing_country').val($('#shipping_country').val());
+                $('#billing_state').val($('#shipping_state').val());
+                $('#billing_city').val($('#shipping_city').val());
+                $('#billing_postcode').val($('#shipping_postcode').val());
             } else {
                 $('#shipping_name').val('');
                 $('#shipping_address1').val('');
                 $('#shipping_address2').val('');
-                $('#shipping_country').val('').trigger('change');
+                $('#shipping_country').val('');
                 $('#shipping_state').val('');
                 $('#shipping_city').val('');
                 $('#shipping_postcode').val('');
@@ -1233,24 +1414,49 @@ $const = $productt->constant;
 
 
         $('#logo-upload').on('change', function(e) {
-            var file = e.target.files[0];
-            if (file) {
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    var preview = $('<img>', {
-                        src: e.target.result,
-                        class: 'logo-preview',
-                        alt: 'Logo Preview'
-                    });
-                    $('#drop-area').html(preview);
-                };
-                reader.readAsDataURL(file);
-                $('.file-name').text(file.name);
+            var files = e.target.files; // Get the list of files
+            $('.file-name').text(files.length + (files.length > 1 ? ' files selected' : ' file selected'));
+
+            // Clear existing logo containers
+            $('#drop-area').empty();
+
+            if (files.length > 0) {
+                // Loop through each file
+                Array.from(files).forEach(function(file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        // Create a new logo container for each image
+                        var logoContainer = $('<div>', {
+                            class: 'logo-container'
+                        });
+
+                        // Create an image preview
+                        var preview = $('<img>', {
+                            src: e.target.result,
+                            class: 'logo-preview',
+                            alt: 'Logo Preview',
+                            css: {
+                                width: '100px',
+                                height: '100px',
+                                margin: '5px'
+                            } // Optional: set size and spacing
+                        });
+
+                        // Append the image to the logo container
+                        logoContainer.append(preview);
+
+                        // Append the logo container to the drop area
+                        $('#drop-area').append(logoContainer);
+                    };
+                    reader.readAsDataURL(file);
+                });
             } else {
                 $('#drop-area').html('<span class="drag-text">Drag and drop here</span>');
                 $('.file-name').text('No File Selected');
             }
         });
+
+
 
 
     });
@@ -1259,50 +1465,6 @@ $const = $productt->constant;
 
 
 
-    function updateProductSession(productId, selectedColorArray = []) {
-        // var productId = $('#product_id').val();
-        var quantity = $('.qty').val();
-        var embroideryType = $('.g3').val();
-        var frontEmbroidery = $('.h3').val();
-        var sideEmbroidery = $('.i3').val();
-        var sideEmbroideryLocation = $('.j3').val();
-        var backEmbroidery = $('.k3').val();
-        var backEmbroideryLocation = $('.l3').val();
-
-
-        //selectedColor push to array only sleected color
-
-
-
-        $('.select_color .prod_color_active').each(function() {
-            selectedColorArray.push($(this).closest('.color').data('id'));
-        });
-
-
-        $.ajax({
-            url: mainurl + '/update-product-session', // Laravel route to handle session update
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                product_id: productId,
-                quantity: quantity,
-                embroidery_type: embroideryType,
-                front_embroidery: frontEmbroidery,
-                side_embroidery: sideEmbroidery,
-                side_embroidery_location: sideEmbroideryLocation,
-                back_embroidery: backEmbroidery,
-                back_embroidery_location: backEmbroideryLocation,
-                color_ids: selectedColorArray
-            },
-            success: function(response) {
-                if (response.success) {
-                    console.log('Product session updated');
-
-                    constantCalculation(response.data.product_id, response.data.constant);
-                }
-            }
-        });
-    }
 
 
     function removeCart(size, color, p_id = 0) {
@@ -1417,6 +1579,46 @@ $const = $productt->constant;
     }
 
 
+    function updateProductSession(productId, selectedColorid = '') {
+
+        var quantity = $('.qty').val();
+        var embroideryType = $('.g3').val();
+        var frontEmbroidery = $('.h3').val();
+        var sideEmbroidery = $('.i3').val();
+        var sideEmbroideryLocation = $('.j3').val();
+        var backEmbroidery = $('.k3').val();
+        var backEmbroideryLocation = $('.l3').val();
+
+
+        //selectedColor push to array only sleected color
+
+
+
+        $.ajax({
+            url: mainurl + '/update-product-session', // Laravel route to handle session update
+            method: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                product_id: productId,
+                quantity: quantity,
+                embroidery_type: embroideryType,
+                front_embroidery: frontEmbroidery,
+                side_embroidery: sideEmbroidery,
+                side_embroidery_location: sideEmbroideryLocation,
+                back_embroidery: backEmbroidery,
+                back_embroidery_location: backEmbroideryLocation,
+                color_ids: selectedColorid
+            },
+            success: function(response) {
+                if (response.success) {
+                    console.log('Product session updated');
+                    constantCalculation();
+                }
+            }
+        });
+    }
+
+
 
 
 
@@ -1437,35 +1639,20 @@ $const = $productt->constant;
             quantityInput.val(currentValue + 1);
             newqty = currentValue + 1
             f3 += 1;
-            // totalQty();
+            totalQty();
             // $('.qty').val(f3);
             var pid = '{{ $productt->id }}';
             let color = $(quantityInput).data('color-id');
             let size = $(quantityInput).data('size-id');
             qty = $(quantityInput).val();
             addCart(1, size, color);
-            alert(selected_colorIds);
             let selectedColorId = $(this).closest('.accorBoxRight').find('input[name="color_id[]"]').val(); // Get the color ID
-            storeOrUpdateProduct(productId, selectedColorId);
-
-
-            let products = JSON.parse(localStorage.getItem('products')) || {};
-
-            // If product exists in localStorage, set form fields with saved values
-            if (products[pid]) {
-                let productDetails = products[pid];
-
-                var totalqty = productDetails.quantity;
-                var colors = productDetails.colorId;
-                getallItems(colors, totalqty, token);
-            }
-
-
-
+            // alert(selectedColorId);
+            updateProductSession(pid, selectedColorId);
 
             constantCalculation();
 
-
+            updateColorId(selectedColorId, qty);
 
 
 
@@ -1474,33 +1661,70 @@ $const = $productt->constant;
         // updatecolorIds(pid, colorId, qty, token);
     });
 
+
+    function updateColorId(selectedColorId, qty) {
+        setTimeout(() => {
+            var colorIds = [];
+            var itemsavedData = localStorage.getItem('selected_colors_' + pid);
+            // alert(itemsavedData);
+
+            if (itemsavedData) {
+                let colorIdsArray = JSON.parse(itemsavedData);
+                if (!colorIdsArray.includes(selectedColorId)) {
+                    // If the new colorId doesn't exist, push it to the array
+                    colorIdsArray.push(selectedColorId);
+
+                    // Update localStorage with the updated array
+                    localStorage.setItem('selected_colors_' + pid, JSON.stringify(colorIdsArray));
+                    console.log('Color ID added and localStorage updated:', colorIdsArray);
+                } else {
+                    //if qty is 0 then remove color id from array
+                    if (qty == 0) {
+                        colorIdsArray = colorIdsArray.filter(function(item) {
+                            return item !== selectedColorId;
+                        });
+                        localStorage.setItem('selected_colors_' + pid, JSON.stringify(colorIdsArray));
+                        console.log('Color ID removed and localStorage updated:', colorIdsArray);
+                    }
+                    console.log('Color ID already exists:', selectedColorId);
+                }
+            }
+
+
+            getallItems();
+
+        }, 500);
+    }
+
     function totalQty() {
         setTimeout(() => {
-
-
-            // var sum = 0;
-            // $('.color-quantity').each(function() {
-            //     var value = parseInt($(this).val());
-            //     if (!isNaN(value)) {
-            //         sum += parseInt(value);
-            //     }
-            // });
-            // // alert(sum);
-            // $('.qty').val(sum);
+            var sum = 0;
+            $('.color-quantity').each(function() {
+                var value = parseInt($(this).val());
+                if (!isNaN(value)) {
+                    sum += parseInt(value);
+                }
+            });
+            // alert(sum);
+            $('.qty').val(sum);
         }, 500);
     }
 
 
-    function getallItems(colorIds, qty = 0, token = '') {
+    function getallItems(colorIds = [], qty = 0, token = '') {
 
 
+        var colorIdsArray = localStorage.getItem('selected_colors_' + pid);
+        // alert(colorIdsArray);
+        colorIdsArray = JSON.parse(colorIdsArray);
+        // alert(colorIdsArray);
 
 
         $.ajax({
             url: mainurl + "/get-all-items",
             type: 'POST',
             data: {
-                selected_color: colorIds,
+                selected_color: colorIdsArray,
                 product_id: pid,
                 _token: '{{ csrf_token() }}',
                 qty: qty,
@@ -1513,7 +1737,7 @@ $const = $productt->constant;
 
                     $('#itemDetails').html(response.html);
 
-                    // totalQty();
+                    totalQty();
                     // console.log(itemsavedData);
 
 
@@ -1546,7 +1770,7 @@ $const = $productt->constant;
             quantityInput.val(currentValue - 1);
 
             f3 -= 1;
-            // totalQty();
+            totalQty();
             // $('.qty').val(f3);
             var pid = '{{ $productt->id }}';
 
@@ -1555,20 +1779,16 @@ $const = $productt->constant;
             qty = $(quantityInput).val();
             removeCart(size, color);
             let selectedColorId = $(this).closest('.accorBoxRight').find('input[name="color_id[]"]').val(); // Get the color ID
-            updateProductSession(productId, selectedColorId);
 
-            let products = JSON.parse(localStorage.getItem('products')) || {};
+            updateProductSession(pid, selectedColorId);
 
-            // If product exists in localStorage, set form fields with saved values
-            if (products[pid]) {
-                let productDetails = products[pid];
-
-                var totalqty = productDetails.quantity;
-                var colors = productDetails.colorId;
-                getallItems(colors, totalqty, token);
-            }
 
             constantCalculation();
+
+
+            updateColorId(selectedColorId, qty);
+
+
         }
         let colorId = $(quantityInput).data('id');
         // updatecolorIds(pid, colorId, qty, token);
@@ -1577,7 +1797,7 @@ $const = $productt->constant;
         // alert($(this).val());
         var pid = $('.customize_product_id').val();
 
-        storeOrUpdateProduct(pid);
+        updateProductSession(pid);
         constantCalculation();
     });
 

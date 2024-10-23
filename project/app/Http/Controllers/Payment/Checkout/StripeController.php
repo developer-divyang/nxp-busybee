@@ -132,7 +132,7 @@ class StripeController extends CheckoutBaseControlller
         $item_name = $this->gs->title . " Order";
         $item_number = Str::random(4) . time();
         $item_amount = $total * 100;
-        $success_url = route('front.payment.return');
+        $success_url = route('user-dashboard');
 
 
         // Validate Card Data
@@ -305,7 +305,7 @@ class StripeController extends CheckoutBaseControlller
                     // OrderHelper::size_qty_check($cart); // For Size Quantiy Checking
                     // OrderHelper::stock_check($cart); // For Stock Checking
                     // OrderHelper::vendor_order_check($cart, $order); // For Vendor Order Checking
-
+                    // dd($order);
                     Session::put('temporder', $order);
                     Session::put('tempcart', $cart);
                     Session::forget('cart');

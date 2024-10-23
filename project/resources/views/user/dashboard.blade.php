@@ -234,7 +234,7 @@
                      <thead>
                         <tr>
                            <th>Your Order Items</th>
-                           <th>Logo File</th>
+                           <th>Front Logo File</th>
                            <th>SKU</th>
                            <th>Quantity</th>
                            <th>Price</th>
@@ -273,12 +273,15 @@
                               <div class="frostimg">
                                  <div class="frosting-cont">
                                     <div class="frosting-container">
-                                       <img src="{{ asset('assets/front/images/frostTwo.png') }}" alt="Logo" class="logo-file">
-                                       <p>Center <br> Logo</p>
+                                       @php
+                                       $logo = json_decode($item['front_logo']);
+                                       @endphp
+                                       <a href="{{ Storage::url($logo[0]) }}" target="_blank"> <img src="{{ Storage::url($logo[0]) }}" alt="Logo" class="logo-file"></a>
+                                       <p>Front <br> Logo</p>
                                     </div>
                                     <div class="frosting-container">
-                                       <img src="{{ asset('assets/front/images/frostTwo.png') }}" alt="Logo" class="logo-file">
-                                       <p>Center <br> Logo</p>
+                                       <a href="{{ Storage::url($item['back_logo']) }}" target="_blank"> <img src="{{ Storage::url($item['back_logo']) }}" alt="Logo" class="logo-file"></a>
+                                       <p>Back <br> Logo</p>
                                     </div>
                                  </div>
                               </div>

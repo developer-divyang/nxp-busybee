@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class ChatMessage extends Model
 {
@@ -26,6 +27,11 @@ class ChatMessage extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public static function countConversation()
+    {
+        return ChatMessage::where('user_id', '!=', Auth::guard('admin')->user()->id)->where('is_seen', 0)->latest('id')->get()->count();
     }
 }
 

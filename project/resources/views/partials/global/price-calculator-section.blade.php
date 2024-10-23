@@ -11,7 +11,7 @@
                     <div class="quantity-container QuanCont">
                         <span class="quantity-label">Quantity</span>
                         <div class="quantity-controls">
-                            <button class="quantity-btn minus-btn">−</button>
+                            <button class="quantity-btn minus-btn" style="pointer-events: none;">−</button>
                             @php
                             $quantity = 1;
                             if(isset($products)){
@@ -19,7 +19,7 @@
                             }
                             @endphp
                             <input type="text" class="quantity-input qty" name="f3" id="f3" value="{{ $quantity }}" readonly>
-                            <button class="quantity-btn plus-btn">+</button>
+                            <button class="quantity-btn plus-btn" style="pointer-events: none;">+</button>
                         </div>
                         <input type="hidden" id="d3" name="d3" class="d3" value="{{ ($productt->blank_price)? $productt->blank_price : 0 }}">
                         <input type="hidden" id="d3" name="d3" class="d3" value="{{ ($productt->blank_price)? $productt->blank_price : 0 }}">

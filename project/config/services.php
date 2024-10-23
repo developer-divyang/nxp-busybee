@@ -40,4 +40,8 @@ return [
         'secret_live' => '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',
     ],
 
+    'map' => [
+        'key' =>  'AIzaSyBmcmf6w_4MAPQkuyvAZylbf28XvsO4kzs',
+    ]
+
 ];

@@ -882,6 +882,28 @@ select {
 
 }
 
+.wishlist-page h2 {
+
+  font-size: 35px;
+
+  color: #303030;
+
+  margin-bottom: 5px;
+
+  font-weight: 600 !important;
+
+}
+
+
+
+.wishlist-page h2 span {
+
+  font-family: "Kaisei Decol", serif;
+
+  font-weight: 400;
+
+}
+
 
 
 .explore-content {

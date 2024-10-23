@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\ChatMessage;
 use App\Models\Notification;
 use DB;
+use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends AdminBaseController
 {
@@ -12,7 +14,7 @@ class NotificationController extends AdminBaseController
       $user_count = DB::table('notifications')->where('user_id','!=',null)->where('is_read','=',0)->count();
       $order_count = DB::table('notifications')->where('order_id','!=',null)->where('is_read','=',0)->count();
       $product_count = DB::table('notifications')->where('product_id','!=',null)->where('is_read','=',0)->count();
-      $conv_count = DB::table('notifications')->where('conversation_id','!=',null)->where('is_read','=',0)->count();
+      $conv_count = DB::table('chat_messages')->where('user_id','!=',Auth::guard('admin')->user()->id)->where('is_seen',0)->count();
 
       $data = array();        
       $data['user_count'] = $user_count;
@@ -79,16 +81,22 @@ class NotificationController extends AdminBaseController
 
   public function conv_notf_clear()
   {
-      $data = Notification::where('conversation_id','!=',null);
-      $data->delete();        
+    $datas = ChatMessage::where('user_id', '!=', Auth::guard('admin')->user()->id)->where('is_seen', 0)->latest('id')->get();
+    if ($datas->count() > 0) {
+      foreach ($datas as $data) {
+        $data->is_seen = 1;
+        $data->update();
+      }
+    }        
   } 
 
   public function conv_notf_show()
   {
-      $datas = Notification::where('conversation_id','!=',null)->latest('id')->get();
+    
+      $datas = ChatMessage::where('user_id', '!=', Auth::guard('admin')->user()->id)->where('is_seen', 0)->latest('id')->get();
       if($datas->count() > 0){
         foreach($datas as $data){
-          $data->is_read = 1;
+          $data->is_seen = 1;
           $data->update();
         }
       }       

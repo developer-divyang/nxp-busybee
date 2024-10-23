@@ -105,11 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (i <= index || visitedTabs.has(i)) {
                 tab.classList.remove("disabled");
                 // alert(index);
-                if (index == 2) {
-                    $('.quantity-btn').css('pointer-events', 'none');
-                }else{
-                    $('.quantity-btn').css('pointer-events', 'auto');
-                }
+                
             } else {
                 tab.classList.add("disabled");
             }
@@ -228,18 +224,18 @@ const plusBtn = document.querySelector('.plus-btn');
 const quantityInput = document.querySelector('.quantity-input');
 
 
-minusBtn.addEventListener('click', () => {
-    let currentValue = parseInt(quantityInput.value, 10);
-    if (currentValue > 1) {
-        quantityInput.value = currentValue - 1;
-    }
-});
+// minusBtn.addEventListener('click', () => {
+//     let currentValue = parseInt(quantityInput.value, 10);
+//     if (currentValue > 1) {
+//         quantityInput.value = currentValue - 1;
+//     }
+// });
 
 
-plusBtn.addEventListener('click', () => {
-    let currentValue = parseInt(quantityInput.value, 10);
-    quantityInput.value = currentValue + 1;
-});
+// plusBtn.addEventListener('click', () => {
+//     let currentValue = parseInt(quantityInput.value, 10);
+//     quantityInput.value = currentValue + 1;
+// });
 
 
 //tabs working with next button uisng jquery
@@ -430,10 +426,11 @@ function selectlogoBox(selectedBox) {
                     <textarea class="Additionaltextareamain" placeholder="Placement and Size Notes"></textarea>
                     <div class="upload-container">
                         <div class="upload-btn-wrapper">
-                            <button class="btn" onclick="handleButtonClick(event);">Upload Your Logo</button>
-                            <input type="file" name="${heading}" id="fileInput" onchange="showFileName()">
+                            <button class="btn" onclick="handleButtonClick('${heading}');">Upload Your Logo</button>
+                            <input type="file" name="${heading}" id="${heading}" onchange="showFileName('${heading}')">
                         </div>
-                        <span class="file-name" id="fileName">No File Selected</span>
+                        <img id="preview${heading}" src="" alt="Image Preview" style="display:none;max-width: 100px; max-height: 100px;"/>
+
                     </div>
                 </div>
             `;
@@ -477,25 +474,37 @@ function selectlogoBox(selectedBox) {
 }
 
 
-function handleButtonClick(event) {
+function handleButtonClick(id) {
     // Prevent default button behavior
     event.preventDefault();
+    // alert(id);
 
     // Trigger file input click
-    document.getElementById('fileInput').click();
+    document.getElementById(id).click();
 }
 
 
 
 
-function showFileName() {
-    const fileInput = document.getElementById('fileInput');
-    const fileName = document.getElementById('fileName');
-
+function showFileName(id) {
+    // alert(id);
+    const fileInput = document.getElementById(id);
+    const previewElement = document.getElementById('preview' + id);
+    // alert(fileInput.files[0].src);
     if (fileInput.files.length > 0) {
-        fileName.textContent = fileInput.files[0].name;
+        const file = fileInput.files[0];
+        // fileNameDisplay.textContent = file.name; // Set the file name
+
+        // Create a file reader to display the image preview
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            previewElement.src = e.target.result; // Set the preview source to the file
+            previewElement.style.display = 'block'; // Show the image preview
+        }
+        reader.readAsDataURL(file); // Read the file as a data URL
     } else {
-        fileName.textContent = 'No File Selected';
+        // fileNameDisplay.textContent = 'No File Selected'; // Set default message if no file is selected
+        previewElement.style.display = 'none'; // Hide the image preview
     }
 }
 
@@ -779,10 +788,19 @@ function increaseQty(index) {
     let model = $(qtyInput).data('model-id');
     let size = $(qtyInput).data('size-id');
     let pid = $(qtyInput).data('product-id');
-    saveToLocalStorage(pid);
+    
     // let size = $(quantityInput).data('size-id');
     qty = $(qtyInput).val();
     addCart(1, size, color);
+
+    
+    // alert(selectedColorId);
+    var color_id = $(qtyInput).data('c-id');
+    updateProductSession(pid);
+
+    // constantCalculation();
+
+    updateColorId(color_id, qty);
 
     let totalqty = 0;
     $('.item_' + model).each(function () {
@@ -794,6 +812,9 @@ function increaseQty(index) {
     constantCalculation(totalqty, pid, index, model);
 
 }
+
+
+
 
 
 

@@ -1251,6 +1251,7 @@ Route::get('/forgot','Auth\User\ForgotController@index')->name('user.forgot');
     // Display important Codes For Payment Gatweways
     Route::get('/payment/{slug1}/{slug2}','User\UserController@loadpayment')->name('user.load.payment');
     Route::get('/country/wise/state/{country_id}','Front\CheckoutController@getState')->name('country.wise.state');
+    Route::post('/get-shipping-methods', 'Front\CheckoutController@getShippingMethod')->name('shipping.methods');
 
     // User Wishlist
     Route::get('/wishlists','User\WishlistController@wishlists')->name('user-wishlists');

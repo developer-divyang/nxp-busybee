@@ -372,17 +372,17 @@
                                 <tr>
                                     <th width="45%">{{ __('Name') }}</th>
                                     <th width="10%">:</th>
-                                    <td width="45%">{{$order->customer_name}}</td>
+                                    <td width="45%">{{$order->user->name}}</td>
                                 </tr>
                                 <tr>
                                     <th width="45%">{{ __('Email') }}</th>
                                     <th width="10%">:</th>
-                                    <td width="45%">{{$order->customer_email}}</td>
+                                    <td width="45%">{{$order->user->email}}</td>
                                 </tr>
                                 <tr>
                                     <th width="45%">{{ __('Phone') }}</th>
                                     <th width="10%">:</th>
-                                    <td width="45%">{{$order->customer_phone}}</td>
+                                    <td width="45%">{{$order->user->mobile}}</td>
                                 </tr>
                                 <tr>
                                     <th width="45%">{{ __('Address') }}</th>
@@ -477,10 +477,13 @@
                                     <td width="45%">{{$order->pickup_location}}</td>
                                 </tr>
                                 @else
+                                @php
+                                $shipping = json_decode($order->shipping_address);
+                                @endphp
                                 <tr>
                                     <th width="45%"><strong>{{ __('Name') }}:</strong></th>
                                     <th width="10%">:</th>
-                                    <td>{{$order->shipping_name == null ? $order->customer_name : $order->shipping_name}}</td>
+                                    <td>{{$shipping->shipping_name == null ? $order->customer_name : $shipping->shipping_name}}</td>
                                 </tr>
                                 <tr>
                                     <th width="45%"><strong>{{ __('Email') }}:</strong></th>
@@ -495,12 +498,12 @@
                                 <tr>
                                     <th width="45%"><strong>{{ __('Address') }}:</strong></th>
                                     <th width="10%">:</th>
-                                    <td width="45%">{{$order->shipping_address == null ? $order->customer_address : $order->shipping_address}}</td>
+                                    <td width="45%">{{$shipping->shipping_address1 == null ? $order->customer_address : $shipping->shipping_address1.' '.$shipping->shipping_address2}}</td>
                                 </tr>
                                 <tr>
                                     <th width="45%"><strong>{{ __('Country') }}:</strong></th>
                                     <th width="10%">:</th>
-                                    <td width="45%">{{$order->shipping_country == null ? $order->customer_country : $order->shipping_country}}</td>
+                                    <td width="45%">{{$shipping->shipping_country == null ? $order->customer_country : $shipping->shipping_country}}</td>
                                 </tr>
 
 
@@ -588,7 +591,7 @@
                                 <tr>
                                 <tr>
                                     <th>{{ __('Product ID#') }}</th>
-                                    <th>{{ __('Shop Name') }}</th>
+                                    <th>{{ __('Order Detials') }}</th>
                                     <th>{{ __('Vendor Status') }}</th>
                                     <th>{{ __('Product Title') }}</th>
                                     <th>{{ __('Details') }}</th>
@@ -601,23 +604,38 @@
 
 
                                 @foreach($cart['items'] as $key1 => $product)
+                                @php
+
+                                $product_data = App\Models\Product::where('id',$product['item']['id'])->first();
+                                @endphp
+
                                 <tr>
 
                                     <td><input type="hidden" value="{{$key1}}">{{ $product['item']['id'] }}</td>
 
                                     <td>
-                                        @if($product['item']['user_id'] != 0)
-                                        @php
-                                        $user = App\Models\User::find($product['item']['user_id']);
-                                        @endphp
-                                        @if(isset($user))
-                                        <a target="_blank" href="{{route('admin-vendor-show',$user->id)}}">{{$user->shop_name}}</a>
-                                        @else
-                                        {{ __('Vendor Removed') }}
-                                        @endif
-                                        @else
-                                        <a href="javascript:;">{{ App\Models\Admin::find(1)->shop_name }}</a>
-                                        @endif
+                                        <p>
+
+                                            <strong>{{ __('Model Number') }} :</strong> {{ $product_data->modelNumber->model_number }}
+                                        </p>
+
+                                        <p>
+                                            <strong>{{ __('Front Logo Placement') }} :</strong> {{ $product['front_location'] }}
+                                        </p>
+
+                                        <p>
+                                            <strong>{{ __('Back Logo Placement') }} :</strong> {{ $product['back_location'] }}
+                                        </p>
+
+                                        <p>
+                                            <strong>{{ __('Side Logo Placement') }} :</strong> {{ ($product['side_location'])  ?? '' }}
+                                        </p>
+
+                                        <p>
+                                            <strong>{{ __('Embroidery Type') }} :</strong> {{ $product['embroidery_type'] }}
+                                        </p>
+
+
 
                                     </td>
                                     <td>
@@ -688,8 +706,7 @@
                                         @endif
                                         @if($product['color'])
                                         <p>
-                                            <strong>{{ __('color') }} :</strong> <span
-                                                style="width: 20px; height: 20px; display: inline-block; vertical-align: middle; border-radius: 50%; background: #{{$product['color']}};"></span>
+                                            <strong>{{ __('color') }} :</strong> {{str_replace('-',' ',$product['color'])}}
                                         </p>
                                         @endif
                                         <p>
@@ -710,9 +727,118 @@
 
                                         @endif
 
+                                        <a href="javascript:;" data-toggle="modal" data-target="#logo-modal{{$product['item']['id']}}">Logo Details</a>
+                                        <div class="modal fade" id="logo-modal{{$product['item']['id']}}" tabindex="-1" role="dialog" aria-labelledby="stock-modal" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered modal-lg">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Logo Details</h5>
+                                                        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row text-center">
+                                                            @if($product['front_logo'])
+                                                            <div class="col-md-12 ">
+                                                                <h3>All Front Logos</h3>
+                                                            </div>
+                                                            <div class="col-md-12 text-center row p-3">
+                                                                @foreach(json_decode($product['front_logo']) as $front_image)
+                                                                <div class="col-md-3">
+                                                                    <img src="{{ Storage::url($front_image) }}" alt="" style="width:100%">
+                                                                </div>
+                                                                @endforeach
+                                                            </div>
+                                                            <div class="col-md-12 ">
+                                                                <p class="text-center">Front logo Note : <strong>{{ $product['front_multi_logo_note'] }}</strong></p>
+                                                            </div>
+                                                            @endif
+                                                        </div>
+                                                        @if($product['back_logo'])
+                                                        <div class="row text-center">
+                                                            <div class="col-md-12 ">
+                                                                <h3> Back Logos</h3>
+                                                            </div>
+                                                            <div class="col-md-12 text-center row p-3">
+                                                                <div class="col-md-3">
+                                                                    <img src="{{ Storage::url($product['back_logo']) }}" alt="" style="width:100%">
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-md-12 ">
+                                                                <p class="text-center">Back logo Note : <strong>{{ $product['back_logo_note'] }}</strong></p>
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                        @if($product['left_logo'])
+                                                        <div class="row text-center">
+                                                            <div class="col-md-12 ">
+                                                                <h3> Left Logos</h3>
+                                                            </div>
+                                                            <div class="col-md-12 text-center row p-3">
+                                                                <div class="col-md-3">
+                                                                    <img src="{{ Storage::url($product['left_logo']) }}" alt="" style="width:100%">
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-md-12 ">
+                                                                <p class="text-center">Left logo Note : <strong>{{ $product['back_logo_note'] }}</strong></p>
+                                                            </div>
+                                                        </div>
+                                                        @endif
+                                                        @if($product['right_logo'])
+                                                        <div class="row text-center">
+                                                            <div class="col-md-12 ">
+                                                                <h3> Right Logos</h3>
+                                                            </div>
+                                                            <div class="col-md-12 text-center row p-3">
+                                                                <div class="col-md-3">
+                                                                    <img src="{{ Storage::url($product['right_logo']) }}" alt="" style="width:100%">
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="col-md-12 ">
+                                                                <p class="text-center">Right logo Note : <strong>{{ $product['right_logo_note'] }}</strong></p>
+                                                            </div>
+                                                        </div>
+                                                        @endif
+
+                                                        @if($product['order_note'])
+                                                        <div class="row text-center">
+                                                            <div class="col-md-12 ">
+                                                                <h3> Order Note:</h3>
+                                                            </div>
+                                                            <div class="col-md-12 text-center row p-3">
+                                                                <div class="col-md-3">
+                                                                    <p>{{ $product['order_note'] }}</p>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        @endif
+
+                                                        @if($product['thread_color_note'])
+                                                        <div class="row text-center">
+                                                            <div class="col-md-12 ">
+                                                                <h3> Thread Color Note:</h3>
+                                                            </div>
+                                                            <div class="col-md-12 text-center row p-3">
+                                                                <div class="col-md-3">
+                                                                    <p>{{ $product['thread_color_note'] }}</p>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        @endif
+
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </td>
 
-                                    <td> {{ \PriceHelper::showCurrencyPrice($product['price'] * $order->currency_value)  }} <small>{{ $product['discount'] == 0 ? '' : '('.$product['discount'].'% '.__('Off').')' }}</small>
+                                    <td> {{ \PriceHelper::showCurrencyPrice($product['sub_total'] * $order->currency_value)  }} <small>{{ $product['discount'] == 0 ? '' : '('.$product['discount'].'% '.__('Off').')' }}</small>
                                     </td>
                                     <td>
 

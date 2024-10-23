@@ -92,23 +92,30 @@ class ProductDetailsController extends FrontBaseController
 
             if ($productt) {
                 // $request = $request->all();
-
-                $colorIds = $request->input('selected_color');
-                $quantity = $request->input('quantity');
+                $productData = session()->get("products.$productt->id", []);
+                $colorIds = $request->selected_color;
+                $quantity = $request->input('qty');
+                $selected_color = $request->input('selected_color');
                 // dd($colorIds);
                 // $color = Color::find($colorId);
-                
-                
+
+
                 $oldCart = Session::get('cart');
                 // dd($oldCart);
                 $cart = new Cart($oldCart);
                 $products = $cart->items;
 
-               
-            //    dd($products['3OSFMKelly']['qty']);
 
-                // dd($products[$productt->id. $color->color_name. $size->size_name]);
-            
+
+                if ($products) {
+                    foreach ($products as $key => $product) {
+                        if ($product['qty'] == 0 || $product['qty'] < 0) {
+                            unset($products[$key]);
+                        }
+                    }
+                }
+
+                // dd(count($products));
 
                 $html =  view('frontend.ajax.variation-items', compact('productt', 'request', 'products', 'colorIds'))->render();
             }
@@ -126,7 +133,7 @@ class ProductDetailsController extends FrontBaseController
         $productData = session()->get("products.$productId", []);
 
         $product = Product::find($productId);
-        
+        // dd($productData);
         // Update the session with the provided data
         $productData['product_id'] = $productId;
         $productData['quantity'] = $request->input('quantity');
@@ -136,9 +143,9 @@ class ProductDetailsController extends FrontBaseController
         $productData['side_embroidery_location'] = $request->input('side_embroidery_location');
         $productData['back_embroidery'] = $request->input('back_embroidery');
         $productData['back_embroidery_location'] = $request->input('back_embroidery_location');
-        if(!empty($request->input('color_ids'))){
-            $productData['color_ids'] = $request->input('color_ids');
-        }
+        $productData['color_ids'] = $request->color_ids;
+
+
         $productData['constant'] = $product->constant;
 
         // Save product data back to session
@@ -151,15 +158,17 @@ class ProductDetailsController extends FrontBaseController
     function getProductSession(Request $request)
     {
         $productId = $request->input('product_id');
+        //remove product from session
+        // session()->forget("products.$productId");
         $productData = session()->get("products.$productId", []);
-        if(empty($productData)){
+        // dd($productData);
+        if (empty($productData)) {
             return response()->json(['success' => true, 'message' => 'Product not found in session']);
         }
         return response()->json(['success' => true, 'data' => $productData]);
-
     }
 
-    
+
 
 
     public function customization1(Request $request, $slug)

@@ -137,12 +137,18 @@ class CartController extends FrontBaseController
                 // dd($itemKey);
                 if (isset($cart->items[$itemKey])) {
 
+                    $front_json = '';
                     if ($request->file('front_logo')) {
+                        //front_logo is array
 
-                        $image = $request->file('front_logo');
-                        $imageName = time() . Str::random(8) . '.' . $image->getClientOriginalExtension();
-                        $color_image = Storage::disk('public')->put($imageName, file_get_contents($image));
-                        $front_logo = $imageName;
+                        $front_logo = [];
+                        foreach ($request->file('front_logo') as $image) {
+                            $imageName = time() . Str::random(8) . '.' . $image->getClientOriginalExtension();
+                            $color_image = Storage::disk('public')->put($imageName, file_get_contents($image));
+                            $front_logo[] = $imageName;
+                        }
+                        $front_json = json_encode($front_logo);
+
                     }
                     // dd($front_logo);
 
@@ -199,7 +205,7 @@ class CartController extends FrontBaseController
                     $cart->items[$itemKey]['order_type'] = $request->order;
                     //upload pending
                     if ($request->file('front_logo')) {
-                        $cart->items[$itemKey]['front_logo'] = $front_logo;
+                        $cart->items[$itemKey]['front_logo'] = $front_json;
                     }
 
                     if ($request->file('right_logo')) {
@@ -226,6 +232,7 @@ class CartController extends FrontBaseController
                     $cart->items[$itemKey]['front_location'] = $request->h3;
                     $cart->items[$itemKey]['embroidery_type'] = $request->g3;
 
+                    $cart->items[$itemKey]['front_multi_logo_note'] = $request->front_multi_logo_note;
                     $cart->items[$itemKey]['front_logo_note'] = $request->front_logo_note;
                     $cart->items[$itemKey]['thread_color_note'] = $request->thread_color_note;
                     $cart->items[$itemKey]['right_logo_note'] = $request->right_logo_note;
@@ -247,6 +254,11 @@ class CartController extends FrontBaseController
                 foreach ($cart->items as $data) {
                     $cart->totalPrice += $data['price'] * $data['qty']; // Multiply price by quantity
                 }
+                //dd($cart);
+                if($cart->items[$itemKey]['qty'] == 0){
+                    unset($cart->items[$itemKey]);
+                }
+                
                 Session::put('cart', $cart);
             }
         }

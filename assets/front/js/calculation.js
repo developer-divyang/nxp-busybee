@@ -248,15 +248,17 @@ function constantCalculation(qty = 0, p_id = 0, key = '', model = 0) {
 
     if (key != '') {
 
-
+// alert($('.item_price_' + model).attr('id'));
         if (model > 0) {
-            $('.item_price_' + model).html('$' + per_cap + '<input type="hidden" id="price-input-' + key + '" value="' + per_cap + '" name="price[' + key + ']">');
+            // if ($('.item_price_' + model).attr('id') == 'price-' + key) {
+                $('#price-' + key).html('$' + per_cap + '<input type="hidden" id="price-input-' + key + '" value="' + per_cap + '" name="price[' + key + ']">');
             let sub_total = 0;
             $('.item_' + model).each(function () {
                 sub_total = parseFloat(per_cap) * parseFloat($(this).find('.item-qty').val());
-                $(this).find('.sub_total_' + model).html('$' + sub_total.toFixed(2) + '<input type="hidden" id="subtotal-input-' + key + '" value="' + sub_total.toFixed(2) + '" name="subtotal[' + key + ']">');
-                $(this).find('.sub_total_' + model).attr('data-value', sub_total.toFixed(2));
+                $(this).find('#subtotal-' + key).html('$' + sub_total.toFixed(2) + '<input type="hidden" id="subtotal-input-' + key + '" value="' + sub_total.toFixed(2) + '" name="subtotal[' + key + ']">');
+                $(this).find('#subtotal-' + key).attr('data-value', sub_total.toFixed(2));
             });
+        // }
 
         }
 
@@ -280,71 +282,9 @@ function constantCalculation(qty = 0, p_id = 0, key = '', model = 0) {
         $('.price').show();
     }
 
-
-
-    // alert(pid);
-    var pid = $('.customize_product_id').val();
-    // var selectedColorId = $('.customize_color_id').val();
-    // storeOrUpdateProduct(pid, selectedColorId);
-
-    // loadFromLocalStorage(pid);
-
-
-
 }
 
 
-
-
-
-
-
-
-
-function updatecolorIds(productId, colorId, qty, token) {
-    // Get the existing product data from localStorage
-    var storedData = localStorage.getItem('product_items_' + productId);
-    var productData = storedData ? JSON.parse(storedData) : {};
-
-    var colorIdArray = productData.color_id || []; // Retrieve colorIdArray or initialize as empty
-
-    var index = colorIdArray.indexOf(colorId);
-    if (index === -1) {
-        // If it doesn't exist, push it to the array
-        colorIdArray.push(colorId);
-    } else {
-
-        $('.color_' + colorId).each(function () {
-            var allZero = true;  // Flag to check if all quantities are 0
-
-            $(this).find('.quantity-input').each(function () {
-                if ($(this).val() !== '0') {
-                    allZero = false;  // If any value is not 0, set the flag to false
-                }
-            });
-
-
-            if (allZero) {
-                var index = colorIdArray.indexOf(colorId);
-                if (index !== -1) {
-                    colorIdArray.splice(index, 1);
-                }
-            }
-        });
-
-    }
-
-    productData.colorIdArray = colorIdArray; // Update the colorIdArray
-
-    // Save the updated product data back to localStorage
-    localStorage.setItem('product_items_' + productId, JSON.stringify(productData));
-
-    //settime out for getallitems
-
-    setTimeout(() => {
-        getallItems(colorIdArray, qty, token)
-    }, 500);
-}
 
 
 
@@ -377,7 +317,7 @@ function foreachInputFieldSetVariable() {
     $('select').each(function () {
         var id = $(this).attr('name');
         window[id] = $(this).val();
-        $('.' + id).val(window[id]);
+        // $('.' + id).val(window[id]);
 
     });
 }

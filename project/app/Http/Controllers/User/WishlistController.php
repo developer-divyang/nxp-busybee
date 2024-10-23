@@ -65,8 +65,8 @@ class WishlistController extends UserBaseController
         {
             $data[0] = 1;
             $data['img'] = asset('assets/front/images/wishlist.png');
-            $data[1] = count($user->wishlists);
             $ck->delete();
+            $data[1] = count($user->wishlists);
             $data['success'] = __('Successfully Removed From Wishlist.');
             return response()->json($data);
         }

@@ -46,7 +46,7 @@
           <div class="accordion-content checks" data-field="profile">
             <ul>
               <li><span><input type="checkbox" data-id="high" name="profile[]" id="highProfile">High Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','high') }}</span></li>
-              <li><span><input type=" checkbox" data-id="low" name="profile[]" id="lowProfile">Low Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','low') }}</span></li>
+              <li><span><input type="checkbox" data-id="low" name="profile[]" id="lowProfile">Low Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','low') }}</span></li>
               <li><span><input type="checkbox" data-id="mid" name="profile[]" id="midProfile">Mid Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','mid') }}</span></li>
               <li><span><input type="checkbox" data-id="pro" name="profile[]" id="proStyle">Pro Style</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','pro') }}</span></li>
             </ul>
@@ -175,7 +175,10 @@
         @foreach($prods as $product)
         <div class="prodBox">
           @if(Auth::check())
-          @if($product->wishlist->count() > 0)
+          @php 
+          $wishlist = App\Models\Wishlist::where('user_id', Auth::user()->id)->where('product_id', $product->id)->first();
+          @endphp
+          @if($wishlist)
           <a class="wishlist-remove" href="javascript:;" data-href="{{ route('user-wishlist-remove',$product->id) }}">
             <img class="wishlistImg remove" src="{{ asset('assets/front/images/heart-red.png') }}" alt="wishlist Image">
           </a>

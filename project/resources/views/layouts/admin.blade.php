@@ -79,7 +79,7 @@
 									<li class="bell-area">
 										<a id="notf_conv" class="dropdown-toggle-1" href="javascript:;">
 											<i class="far fa-envelope"></i>
-											<span id="conv-notf-count">{{ App\Models\Notification::countConversation() }}</span>
+											<span id="conv-notf-count">{{ App\Models\ChatMessage::countConversation() }}</span>
 										</a>
 										<div class="dropdown-menu">
 											<div class="dropdownmenu-wrapper" data-href="{{ route('conv-notf-show') }}" id="conv-notf-show">

@@ -35,12 +35,16 @@
    style="display: flex; justify-content: space-between; gap: 40px">
    <div class="nav-end">
       @if(Auth::check())
-      <a href="{{ route('user-wishlists') }}"><img src="{{ asset('assets/front/images/heart.png') }}" alt="" /></a>
+      <a href="{{ route('user-wishlists') }}" style="position: relative;">
+         <span style="position:absolute; display:flex; align-items:center; justify-content:center; color:white; font-size:12px; height:18px;width:18px; border-radius: 50%; background-color:red;top:-10px;right:-10px;z-index:99" id="wishlist-count">{{ Auth::user()->wishlistCount() }}</span>
+         <img src="{{ asset('assets/front/images/heart.png') }}" alt="" /></a>
       <a href="{{ route('user-dashboard') }}"><img src="{{ asset('assets/front/images/user.png') }}" alt="" /></a>
       @else
       <a href="{{ route('user.login') }}"><img src="{{ asset('assets/front/images/user.png') }}" alt="" /></a>
       @endif
-      <a href="{{ route('front.cartview') }}"><img src="{{ asset('assets/front/images/shopping-cart.png') }}" alt="" /></a>
+      <a href="{{ route('front.cartview') }}" style="position: relative;">
+         <span style="position:absolute; display:flex; align-items:center; justify-content:center; color:white; font-size:12px; height:18px;width:18px; border-radius: 50%; background-color:red;top:-10px;right:-10px;z-index:99" id="cart-count">{{ Session::has('cart') ? count(Session::get('cart')->items) : '0' }}</span>
+         <img src="{{ asset('assets/front/images/shopping-cart.png') }}" alt="" /></a>
    </div>
    <img src="{{ asset('assets/front/images/ham.png') }}" alt="" class="ham">
 </div>
