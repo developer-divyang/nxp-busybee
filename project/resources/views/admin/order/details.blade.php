@@ -13,6 +13,48 @@
         border-radius: 8px;
     }
 
+    .download-btn {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #fff;
+        padding: 10px 10px;
+        text-decoration: none;
+        opacity: 0;
+        border-radius: 20px;
+        background-color: #000;
+        color: #fff;
+
+    }
+
+
+
+    .logo-img:hover {
+
+        cursor: pointer;
+        transition: all ease 0.3s;
+
+    }
+
+    .logo-img {
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+    }
+
+    .logo-img:hover .download-btn {
+        opacity: 1;
+        color: #fff;
+    }
+
+    .download-btn:hover {
+        text-decoration: none;
+        color: #fff;
+    }
+
     .header {
         display: flex;
         gap: 40px;
@@ -241,7 +283,7 @@
                                 <tr>
                                     <th width="45%">{{ __('Total Product') }}</th>
                                     <td width="10%">:</td>
-                                    <td width="45%">{{$order->totalQty}}</td>
+                                    <td width="45%">{{$cart['totalQty']}}</td>
                                 </tr>
                                 @if($order->shipping_title != null)
                                 <tr>
@@ -252,6 +294,16 @@
                                 @endif
 
                                 @if($order->shipping_cost != 0)
+                                <tr>
+                                    <th width="45%">{{ __('Shipping Method') }}</th>
+                                    <td width="10%">:</td>
+                                    <td width="45%">{{ $order->shipping_method }}</td>
+                                </tr>
+                                <tr>
+                                    <th width="45%">{{ __('Shipping Title') }}</th>
+                                    <td width="10%">:</td>
+                                    <td width="45%">{{ $order->shipping_lebel }}</td>
+                                </tr>
                                 <tr>
                                     <th width="45%">{{ __('Shipping Cost') }}</th>
                                     <td width="10%">:</td>
@@ -306,7 +358,17 @@
                                 <tr>
                                     <th width="45%">{{ __('Total Cost') }}</th>
                                     <td width="10%">:</td>
+                                    <td width="45%">{{ \PriceHelper::showOrderCurrencyPrice((($order->pay_amount + $order->pending_amount)  * $order->currency_value),$order->currency_sign) }}</td>
+                                </tr>
+                                <tr>
+                                    <th width="45%">{{ __('Paied Amount') }}</th>
+                                    <td width="10%">:</td>
                                     <td width="45%">{{ \PriceHelper::showOrderCurrencyPrice((($order->pay_amount + $order->wallet_price)  * $order->currency_value),$order->currency_sign) }}</td>
+                                </tr>
+                                <tr>
+                                    <th width="45%">{{ __('Pending Amount') }}</th>
+                                    <td width="10%">:</td>
+                                    <td width="45%">{{ \PriceHelper::showOrderCurrencyPrice((($order->pending_amount + $order->wallet_price)  * $order->currency_value),$order->currency_sign) }}</td>
                                 </tr>
                                 <tr>
                                     <th width="45%">{{ __('Ordered Date') }}</th>
@@ -606,6 +668,7 @@
                                 @foreach($cart['items'] as $key1 => $product)
                                 @php
 
+
                                 $product_data = App\Models\Product::where('id',$product['item']['id'])->first();
                                 @endphp
 
@@ -620,11 +683,11 @@
                                         </p>
 
                                         <p>
-                                            <strong>{{ __('Front Logo Placement') }} :</strong> {{ $product['front_location'] }}
+                                            <strong>{{ __('Front Logo Placement') }} :</strong> {{ ($product['front_location']) ?? '' }}
                                         </p>
 
                                         <p>
-                                            <strong>{{ __('Back Logo Placement') }} :</strong> {{ $product['back_location'] }}
+                                            <strong>{{ __('Back Logo Placement') }} :</strong> {{ ($product['back_location']) ?? '' }}
                                         </p>
 
                                         <p>
@@ -632,7 +695,7 @@
                                         </p>
 
                                         <p>
-                                            <strong>{{ __('Embroidery Type') }} :</strong> {{ $product['embroidery_type'] }}
+                                            <strong>{{ __('Embroidery Type') }} :</strong> {{ ($product['embroidery_type']) ?? '' }}
                                         </p>
 
 
@@ -710,7 +773,7 @@
                                         </p>
                                         @endif
                                         <p>
-                                            <strong>{{ __('Price') }} :</strong> {{ \PriceHelper::showCurrencyPrice(($product['item_price'] ) * $order->currency_value) }}
+                                            <strong>{{ __('Price') }} :</strong> {{ \PriceHelper::showCurrencyPrice(($product['price'] ) * $order->currency_value) }}
                                         </p>
                                         <p>
                                             <strong>{{ __('Qty') }} :</strong> {{$product['qty']}} {{ $product['item']['measure'] }}
@@ -735,16 +798,22 @@
                                                         <h5 class="modal-title">Logo Details</h5>
                                                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                                                     </div>
-                                                    <div class="modal-body">
-                                                        <div class="row text-center">
-                                                            @if($product['front_logo'])
+                                                    <div class="modal-body p-5">
+                                                        <div class="row text-center" style="border-bottom: #d1bcbc 1px solid;margin-bottom:10px;">
+                                                            @if(isset($product['front_logo']))
                                                             <div class="col-md-12 ">
                                                                 <h3>All Front Logos</h3>
                                                             </div>
                                                             <div class="col-md-12 text-center row p-3">
-                                                                @foreach(json_decode($product['front_logo']) as $front_image)
-                                                                <div class="col-md-3">
+                                                                @foreach(json_decode($product['front_logo']) as $k => $front_image)
+                                                                @php
+                                                                $k = $k + 1;
+                                                                @endphp
+                                                                <div class="col-md-3 logo-img" style="position:relative">
                                                                     <img src="{{ Storage::url($front_image) }}" alt="" style="width:100%">
+
+                                                                    <a class="download-btn" data-name="front-logo-{{ $k }}" href="{{ Storage::url($front_image) }}" download><i class="fas fa-download"></i></a>
+
                                                                 </div>
                                                                 @endforeach
                                                             </div>
@@ -753,14 +822,15 @@
                                                             </div>
                                                             @endif
                                                         </div>
-                                                        @if($product['back_logo'])
-                                                        <div class="row text-center">
+                                                        @if(isset($product['back_logo']))
+                                                        <div class="row text-center" style="border-bottom: #d1bcbc 1px solid;margin-bottom:10px;">
                                                             <div class="col-md-12 ">
                                                                 <h3> Back Logos</h3>
                                                             </div>
                                                             <div class="col-md-12 text-center row p-3">
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-3 logo-img" style="position:relative">
                                                                     <img src="{{ Storage::url($product['back_logo']) }}" alt="" style="width:100%">
+                                                                    <a class="download-btn" data-name="back-logo" href=" {{ Storage::url($front_image) }}" download><i class="fas fa-download"></i></a>
                                                                 </div>
 
                                                             </div>
@@ -769,14 +839,15 @@
                                                             </div>
                                                         </div>
                                                         @endif
-                                                        @if($product['left_logo'])
-                                                        <div class="row text-center">
+                                                        @if(isset($product['left_logo']))
+                                                        <div class="row text-center" style="border-bottom: #d1bcbc 1px solid;margin-bottom:10px;">
                                                             <div class="col-md-12 ">
                                                                 <h3> Left Logos</h3>
                                                             </div>
                                                             <div class="col-md-12 text-center row p-3">
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-3 logo-img" style="position:relative">
                                                                     <img src="{{ Storage::url($product['left_logo']) }}" alt="" style="width:100%">
+                                                                    <a class="download-btn" data-name="left-logo" href="{{ Storage::url($front_image) }}" download><i class="fas fa-download"></i></a>
                                                                 </div>
 
                                                             </div>
@@ -785,14 +856,15 @@
                                                             </div>
                                                         </div>
                                                         @endif
-                                                        @if($product['right_logo'])
-                                                        <div class="row text-center">
+                                                        @if(isset($product['right_logo']))
+                                                        <div class="row text-center" style="border-bottom: #d1bcbc 1px solid;margin-bottom:10px;">
                                                             <div class="col-md-12 ">
                                                                 <h3> Right Logos</h3>
                                                             </div>
                                                             <div class="col-md-12 text-center row p-3">
-                                                                <div class="col-md-3">
+                                                                <div class="col-md-3 logo-img" style="position:relative">
                                                                     <img src="{{ Storage::url($product['right_logo']) }}" alt="" style="width:100%">
+                                                                    <a class="download-btn" data-name="right-logo" href="{{ Storage::url($front_image) }}" download><i class="fas fa-download"></i></a>
                                                                 </div>
 
                                                             </div>
@@ -802,8 +874,8 @@
                                                         </div>
                                                         @endif
 
-                                                        @if($product['order_note'])
-                                                        <div class="row text-center">
+                                                        @if(isset($product['order_note']))
+                                                        <div class="row text-center" style="border-bottom: #d1bcbc 1px solid;margin-bottom:10px;">
                                                             <div class="col-md-12 ">
                                                                 <h3> Order Note:</h3>
                                                             </div>
@@ -816,8 +888,8 @@
                                                         </div>
                                                         @endif
 
-                                                        @if($product['thread_color_note'])
-                                                        <div class="row text-center">
+                                                        @if(isset($product['thread_color_note']))
+                                                        <div class="row text-center" style="border-bottom: #d1bcbc 1px solid;margin-bottom:10px;">
                                                             <div class="col-md-12 ">
                                                                 <h3> Thread Color Note:</h3>
                                                             </div>
@@ -1082,6 +1154,18 @@
 <script type="text/javascript">
     (function($) {
         "use strict";
+
+
+        $('.download-btn').on('click', function(event) {
+            event.preventDefault(); // Prevent the default anchor behavior
+            var imageUrl = $(this).attr('href');
+            var link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = $(this).data('name');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
 
 
 

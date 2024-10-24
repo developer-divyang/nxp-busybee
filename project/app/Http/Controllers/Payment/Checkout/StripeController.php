@@ -132,7 +132,7 @@ class StripeController extends CheckoutBaseControlller
         $item_name = $this->gs->title . " Order";
         $item_number = Str::random(4) . time();
         $item_amount = $total * 100;
-        $success_url = route('user-dashboard');
+        
 
 
         // Validate Card Data
@@ -259,13 +259,25 @@ class StripeController extends CheckoutBaseControlller
                     $input['user_id'] = Auth::check() ? Auth::user()->id : NULL;
                     $input['affilate_users'] = $affilate_users;
                     $input['pay_amount'] = $total / $this->curr->value;
+                    $input['pending_amount'] = $request->payment_type === 'half' ? $request->total_amount - 30 : 0;
                     $input['order_number'] = $item_number;
                     $input['billing_address'] = json_encode($billing_address);
                     $input['shipping_address'] = json_encode($shipping_address);
+                    $input['shipping_name'] = $request->shipping_name;
+                    $input['shipping_country'] = $request->shipping_country;
+                    // $input['shipping_address'] = $request->shipping_address1;
+                    $input['shipping_city'] = $request->shipping_city;
+                    $input['shipping_zip'] = $request->shipping_postcode;
+                    
                     $input['wallet_price'] = $request->wallet_price / $this->curr->value;
                     $input['payment_status'] = "Completed";
                     $input['txnid'] = $charge->balance_transaction;
                     $input['charge_id'] = $charge->id;
+                    $input['method'] = 'Stripe';
+                    $input['currency_sign'] = $this->curr->sign;
+                    $input['currency_value'] = $this->curr->value;
+                    $input['shipping_title'] = $request->shipping_label;
+
                     // if ($input['tax_type'] == 'state_tax') {
                     //     $input['tax_location'] = State::findOrFail($input['tax'])->state;
                     // } else {
@@ -343,6 +355,7 @@ class StripeController extends CheckoutBaseControlller
                     $mailer = new GeniusMailer();
                     // $mailer->sendCustomMail($data);
                     // dd('success');
+                    $success_url = route('user-order', $order->id);
                     return response()->json(['is_success' => true, 'message' => 'Payment successful','url' => $success_url]);
                 }
             } catch (Exception $e) {

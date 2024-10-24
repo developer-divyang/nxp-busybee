@@ -2251,30 +2251,6 @@ input[type="password"] {
 .full-width {
     flex-basis: 100%;
 }
-.billingSection .accorTop{
-display: flex!important;
-flex-wrap: nowrap!important;
-align-items: start!important;
-gap:12px;
-}
-
-@media(max-width:600px){
-    .billingSection .accorTop{
-        display: flex!important;
-        flex-wrap: wrap!important;
-        align-items: start!important;
-        gap:0px;
-        }
-}
-
-/* .radio-selection{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    white-space: nowrap;
-} */
-
-
 
 .billingSection input[type="text"],
 select {
@@ -2318,12 +2294,6 @@ input[type="checkbox"] {
 }
 
 /* ------------------payment checkout----------------- */
-
-.label-container{
-    width: 100%!important;
-}
-
-
 .payment-form-container {
     width: 100%;
     border-radius: 8px;
@@ -2343,7 +2313,6 @@ input[type="checkbox"] {
     display: flex;
     gap: 20px;
     margin-bottom: 20px;
-    flex-wrap: wrap;
 }
 
 .payment-options label {
@@ -2351,8 +2320,6 @@ input[type="checkbox"] {
     align-items: center;
     gap: 5px;
     font-size: 16px;
-    white-space: nowrap;
-    
 }
 
 .payment-options input[type="radio"] {
@@ -2821,9 +2788,6 @@ button.btn-place-order:hover {
 
 
 @media(max-width: 480px) {
-    .label-container{
-        width: 50%!important;
-    }
     .qty-control input {
         width: 50px;
         text-align: center;

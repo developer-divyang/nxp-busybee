@@ -1,6 +1,7 @@
 @extends('layouts.front')
 @section('css')
 <link rel="stylesheet" href="{{asset('assets/front/css/dashboard.css')}}">
+<link rel="stylesheet" href="{{asset('assets/admin/css/fontawesome.css')}}">
 @endsection
 @section('content')
 <div class="dashboardMain">
@@ -50,7 +51,7 @@
                            <th>Order Number</th>
                            <th>Order Items</th>
                            <th>Order Date</th>
-                           <th>Total</th>
+                           <th>Payment</th>
                            <th>Delivery Date</th>
                            <th>Status</th>
                         </tr>
@@ -78,12 +79,17 @@
                                  <img src="{{ Storage::url($images[0]) }}" alt="Olive Hat">
                               </div>
                               <div>
-                                 <h4>{{ $product['color'] }}</h4>
+                                 <h4>{{ $productData->modelNumber->model_number }}</h4>
                                  <p>Size: {{ $product['size'] }}<br>Items: {{ $cart['totalQty'] }}</p>
                               </div>
                            </td>
                            <td>{{date('d M Y',strtotime($order->created_at))}}</td>
-                           <td>{{ \PriceHelper::showAdminCurrencyPrice(($order->pay_amount  * $order->currency_value),$order->currency_sign) }}</td>
+                           <td>
+
+                              <p>Total :{{ \PriceHelper::showOrderCurrencyPrice((($order->pay_amount + $order->pending_amount) * $order->currency_value), $order->currency_sign) }}</p>
+                              <p>Paid :{{ \PriceHelper::showOrderCurrencyPrice((($order->pay_amount) * $order->currency_value), $order->currency_sign) }} </p>
+                              <p>Pending : {{ \PriceHelper::showOrderCurrencyPrice((($order->pending_amount) * $order->currency_value),$order->currency_sign)}}</p>
+                           </td>
                            <td></td>
                            <td><span class="status confirmed">{{ucwords($order->status)}}</span></td>
                         </tr>
@@ -272,15 +278,17 @@
                            <td>
                               <div class="frostimg">
                                  <div class="frosting-cont">
-                                    <div class="frosting-container">
+                                    <div class="frosting-container logo-img" style="position:relative">
                                        @php
-                                       $logo = json_decode($item['front_logo']);
+                                       $logo=json_decode($item['front_logo']);
                                        @endphp
-                                       <a href="{{ Storage::url($logo[0]) }}" target="_blank"> <img src="{{ Storage::url($logo[0]) }}" alt="Logo" class="logo-file"></a>
+                                       <img src="{{ Storage::url($logo[0]) }}" alt="Logo" class="logo-file">
+                                       <a class="download-btn" data-name="front-logo-1" href="{{ Storage::url($logo[0]) }}" download><i class="fas fa-download"></i></a>
                                        <p>Front <br> Logo</p>
                                     </div>
-                                    <div class="frosting-container">
-                                       <a href="{{ Storage::url($item['back_logo']) }}" target="_blank"> <img src="{{ Storage::url($item['back_logo']) }}" alt="Logo" class="logo-file"></a>
+                                    <div class="frosting-container logo-img" style="position:relative">
+                                       <img src="{{ Storage::url($item['back_logo']) }}" alt="Logo" class="logo-file">
+                                       <a class="download-btn" data-name="back-logo" href="{{ Storage::url($item['back_logo']) }}" download><i class="fas fa-download"></i></a>
                                        <p>Back <br> Logo</p>
                                     </div>
                                  </div>
@@ -369,7 +377,7 @@
                         <th>Order Number</th>
                         <th>Order Items</th>
                         <th>Order Date</th>
-                        <th>Total</th>
+                        <th>Payment</th>
                         <th>Delivery Date</th>
                         <th>Status</th>
                         <th>Mockup</th>
@@ -402,21 +410,34 @@
                                  <img src="{{ Storage::url($images[0]) }}" alt="Olive Hat" class="order-item-image">
                               </div>
                               <div>
-                                 <strong>{{ $product['color'] }}</strong><br>
+                                 <strong>{{ $productData->modelNumber->model_number }}</strong><br>
                                  Size: {{ $product['size'] }}<br>
                                  Items: {{ $cart['totalQty'] }}
                               </div>
                            </div>
                         </td>
                         <td>{{ date('d M Y',strtotime($order->created_at)) }}</td>
-                        <td>{{ \PriceHelper::showAdminCurrencyPrice(($order->pay_amount  * $order->currency_value),$order->currency_sign) }}</td>
+                        <td>
+
+                           <p>Total :{{ \PriceHelper::showOrderCurrencyPrice((($order->pay_amount + $order->pending_amount) * $order->currency_value), $order->currency_sign) }}</p>
+                           <p>Paid :{{ \PriceHelper::showOrderCurrencyPrice((($order->pay_amount) * $order->currency_value), $order->currency_sign) }} </p>
+                           <p>Pending : {{ \PriceHelper::showOrderCurrencyPrice((($order->pending_amount) * $order->currency_value),$order->currency_sign)}}</p>
+                        </td>
                         <td></td>
                         <td><span class="order-status-button order-status-confirmed">{{ ucwords($order->status) }}</span></td>
-                        <td class="view-td">
+                        <td class="view-td" style="display: flex;gap:5px">
                            <div class="view-wrapper" data-id="{{ $order->id }}">
-                              <img src="{{ asset('assets/front/images/image-icon.png') }}" alt="view">
-                              <p>view</p>
+                              <a href="{{ route('user-order',$order->id) }}">
+                                 <img src="{{ asset('assets/front/images/image-icon.png') }}" alt="view">
+                                 <p>view</p>
+                              </a>
                            </div>
+                           <div class="view-wrapper" data-id="{{ $order->id }}">
+                              <a href="{{ route('user-order',$order->id) }}#chatting"><img src="{{ asset('assets/front/images/chat.png') }}" alt="view">
+                                 <p>Chat</p>
+                              </a>
+                           </div>
+
                         </td>
                      </tr>
 
@@ -526,6 +547,17 @@
          headers: {
             'X-CSRF-TOKEN': '{{ csrf_token() }}'
          }
+      });
+
+      $('.download-btn').on('click', function(event) {
+         event.preventDefault(); // Prevent the default anchor behavior
+         var imageUrl = $(this).attr('href');
+         var link = document.createElement('a');
+         link.href = imageUrl;
+         link.download = $(this).data('name');
+         document.body.appendChild(link);
+         link.click();
+         document.body.removeChild(link);
       });
 
 

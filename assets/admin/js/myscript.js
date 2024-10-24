@@ -14,7 +14,7 @@
 
 
 
-  $('.select2').select2();
+  // $('.select2').select2();
 
 
 
@@ -983,7 +983,7 @@ if(admin_loader == 1)
 
 
 $(document).on('click','.delivery',function(){
-
+// alert('fghj');
 if(admin_loader == 1)
 
   {
