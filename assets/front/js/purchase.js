@@ -577,7 +577,7 @@ function handleFiles(files) {
 }
 
 function previewImage(file) {
-    const dropArea = document.getElementById('drop-area');
+    const dropArea = document.getElementById('file-list');
 
     // Only handle image files
     if (!file.type.startsWith('image/')) {
@@ -598,8 +598,28 @@ function previewImage(file) {
         img.style.filter = 'none';
 
         // Clear previous content and append the new image
-        dropArea.innerHTML = '';
-        dropArea.appendChild(img);
+        // dropArea.innerHTML = '';
+
+        var logoContainer = $('<div>', {
+            class: 'logo-container'
+        });
+
+        // Create an image preview
+        var preview = $('<img>', {
+            src: e.target.result,
+            class: 'logo-preview',
+            alt: 'Logo Preview',
+            css: {
+                width: '100px',
+                height: '100px',
+                margin: '5px'
+            } // Optional: set size and spacing
+        });
+
+        // Append the image to the logo container
+        logoContainer.append(preview);
+        // dropArea.appendChild(logoContainer);
+        $('#file-list').append(logoContainer);
     }
 
     reader.readAsDataURL(file);

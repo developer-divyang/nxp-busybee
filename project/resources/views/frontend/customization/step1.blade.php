@@ -153,95 +153,98 @@
                             <h4><img src="{{ asset('assets/front/images/uploadImg.png') }}" alt="uploadImg">Upload <span>Your Logo</span></h4>
                         </button>
                         <div class="accordion-content">
-                        <div class="uploadTop" style="display: flex; justify-content: space-between;">
-                            <!-- Upload Left Section -->
-                            <div class="uploadLeft">
-                                <div class="radio-group">
-                                    @if (Auth::check())
+                            <div class="uploadTop" style="display: flex; justify-content: space-between;">
+                                <!-- Upload Left Section -->
+                                <div class="uploadLeft">
+                                    <div class="radio-group">
+                                        @if (Auth::check())
                                         <label class="radio-container">
                                             <input type="radio" name="order" value="previous" id="previousRadio">
                                             <span class="checkmark"></span>
                                             I Have Ordered With This Logo Before
                                         </label>
-                                    @else
+                                        @else
                                         <label class="radio-container">
                                             <input type="radio" name="order" class="user_login" value="previous" id="previousRadio">
                                             <span class="checkmark"></span>
                                             I Have Ordered With This Logo Before
                                         </label>
-                                    @endif
-                                    <label class="radio-container">
-                                        <input type="radio" name="order" value="first-time" id="firstTimeRadio" checked>
-                                        <span class="checkmark checked"></span>
-                                        This Is My First Time Ordering
-                                    </label>
-                                </div>
-
-                                <div class="uploadCont">
-                                    <div class="contentOne" id="contentOne">
-                                        <div class="uploadTextWrapper">
-                                            <h3>Upload Your Logo</h3>
-                                            <ul>
-                                                <li>Any image of your logo will work (even a screenshot or photo). We redraw and recreate all designs during artwork setup.</li>
-                                                <li>Every logo must be hand converted by one of our designers into a new file that works for our machines.</li>
-                                                <li>We test and tweak every logo until the output meets or exceeds our very high quality standards.</li>
-                                                <li>We keep your artwork on file for all future orders.</li>
-                                                <li>Upload file size should be max 5MB and we support file formats like .jpg, .png, .svg, .eps, .ai etc...</li>
-                                            </ul>
-                                        </div>
+                                        @endif
+                                        <label class="radio-container">
+                                            <input type="radio" name="order" value="first-time" id="firstTimeRadio" checked>
+                                            <span class="checkmark checked"></span>
+                                            This Is My First Time Ordering
+                                        </label>
                                     </div>
-                                    <div class="contentTwo" id="contentTwo" style="display:none;">
-                                        <div class="container">
-                                            <h2>Choose Your Logo</h2>
-                                            <div class="logo-wrapper">
-                                                @if (Auth::check())
+
+                                    <div class="uploadCont">
+                                        <div class="contentOne" id="contentOne">
+                                            <div class="uploadTextWrapper">
+                                                <h3>Upload Your Logo</h3>
+                                                <ul>
+                                                    <li>Any image of your logo will work (even a screenshot or photo). We redraw and recreate all designs during artwork setup.</li>
+                                                    <li>Every logo must be hand converted by one of our designers into a new file that works for our machines.</li>
+                                                    <li>We test and tweak every logo until the output meets or exceeds our very high quality standards.</li>
+                                                    <li>We keep your artwork on file for all future orders.</li>
+                                                    <li>Upload file size should be max 5MB and we support file formats like .jpg, .png, .svg, .eps, .ai etc...</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="contentTwo" id="contentTwo" style="display:none;">
+                                            <div class="container">
+                                                <h2>Choose Your Logo</h2>
+                                                <div class="logo-wrapper">
+                                                    @if (Auth::check())
                                                     @if(Auth::user()->logos->count() > 0)
-                                                        @foreach(Auth::user()->logos as $logo)
-                                                            <div class="logo-container" onclick="selectLogo(this)">
-                                                                <img src="{{ Storage::url($logo->logo) }}" alt="Logo 1" class="inactive-logo">
-                                                            </div>
-                                                        @endforeach
+                                                    @foreach(Auth::user()->logos as $logo)
+                                                    <div class="logo-container" onclick="selectLogo(this)">
+                                                        <img src="{{ Storage::url($logo->logo) }}" alt="Logo 1" class="inactive-logo">
+                                                    </div>
+                                                    @endforeach
                                                     @else
-                                                        <div class="no-logo">
-                                                            <h3>No Logos Found</h3>
-                                                            <p>You have not uploaded any logos yet. Please upload a logo to continue.</p>
-                                                        </div>
+                                                    <div class="no-logo">
+                                                        <h3>No Logos Found</h3>
+                                                        <p>You have not uploaded any logos yet. Please upload a logo to continue.</p>
+                                                    </div>
                                                     @endif
-                                                @endif
+                                                    @endif
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                <div class="file-upload-container">
-                                    <div id="drop-area" style="display: flex;">
-                                        <span class="drag-text">Drag and drop here</span>
+                                    <div class="file-upload-container">
+                                        <div id="drop-area" style="display: flex;">
+                                            <span class="drag-text">Drag and drop here</span>
+                                        </div>
+                                        <div id="file-list" style="display: flex;">
+
+                                        </div>
+                                        <label class="file-upload-button">
+                                            <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
+                                            UPLOAD YOUR LOGO
+                                        </label>
+                                        <span class="file-name">No File Selected</span>
                                     </div>
-                                    <label class="file-upload-button">
-                                        <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
-                                        UPLOAD YOUR LOGO
-                                    </label>
-                                    <span class="file-name">No File Selected</span>
-                                </div>
 
-                                <div class="logotextarea" style="margin-top: 10px;">
-                                    <textarea class="logotextareamain" name="front_multi_logo_note" id="" placeholder="Front logo Notes"></textarea>
-                                </div>
+                                    <div class="logotextarea" style="margin-top: 10px;">
+                                        <textarea class="logotextareamain" name="front_multi_logo_note" id="" placeholder="Front logo Notes"></textarea>
+                                    </div>
 
-                                <div class="checkbox-group">
-                                    <label class="checkbox-container">
-                                        <input type="checkbox" checked>
-                                        <span class="checkmark"></span>
-                                        I own the rights to the artwork being used or have permission from the owner to use it
-                                    </label>
-                                </div>
-                            </div> <!-- .uploadLeft ends -->
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" checked>
+                                            <span class="checkmark"></span>
+                                            I own the rights to the artwork being used or have permission from the owner to use it
+                                        </label>
+                                    </div>
+                                </div> <!-- .uploadLeft ends -->
 
-                            <!-- Upload Right Section -->
-                            <div class="uploadRight" id="uploadRight">
-                                <img src="{{ asset('assets/front/images/uploadLogo.png') }}" alt="">
-                            </div> <!-- .uploadRight ends -->
-                        </div> <!-- .uploadTop ends -->
+                                <!-- Upload Right Section -->
+                                <div class="uploadRight" id="uploadRight">
+                                    <img src="{{ asset('assets/front/images/uploadLogo.png') }}" alt="">
+                                </div> <!-- .uploadRight ends -->
+                            </div> <!-- .uploadTop ends -->
 
 
 
@@ -712,34 +715,30 @@
                                         </div>
                                     </div>
 
-<<<<<<< HEAD
-                                    
-=======
+                                    <<<<<<< HEAD=======>>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
 
->>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <input type="text" id="shipping_country" name="shipping_country" value="USA" placeholder="Country">
+                                            </div>
+                                            <div class="form-group d-none select_state">
+                                                <input type="text" id="shipping_state" name="shipping_state" placeholder="State">
+                                            </div>
+                                        </div>
 
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="shipping_country" name="shipping_country" value="USA" placeholder="Country">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <input type="text" name="shipping_city" id="shipping_city" placeholder="Suburb/City">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
+                                            </div>
                                         </div>
-                                        <div class="form-group d-none select_state">
-                                            <input type="text" id="shipping_state" name="shipping_state" placeholder="State">
-                                        </div>
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" name="shipping_city" id="shipping_city" placeholder="Suburb/City">
+                                        <div class="row checkbox-group">
+                                            <input type="checkbox" id="same-address" name="same_address">
+                                            <label for="same-address">Shipping and Billing address are same</label>
                                         </div>
-                                        <div class="form-group">
-                                            <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
-                                        </div>
-                                    </div>
-
-                                    <div class="row checkbox-group">
-                                        <input type="checkbox" id="same-address" name="same_address">
-                                        <label for="same-address">Shipping and Billing address are same</label>
-                                    </div>
 
 
 
@@ -750,46 +749,44 @@
                                         <label for="same-address">Shipping and Billing address are same</label>
                                     </div> -->
 
-<<<<<<< HEAD
-=======
-                                    <p style="margin-bottom: 10px;">Billing Address</p>
+                                    <<<<<<< HEAD=======<p style="margin-bottom: 10px;">Billing Address</p>
 
->>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="billing_name" name="billing_name" placeholder="Full Name">
+                                        >>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <input type="text" id="billing_name" name="billing_name" placeholder="Full Name">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="form-group full-width">
-                                            <input type="text" id="billing_address1" name="billing_address1" placeholder="Address Line 1">
+                                        <div class="row">
+                                            <div class="form-group full-width">
+                                                <input type="text" id="billing_address1" name="billing_address1" placeholder="Address Line 1">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="form-group full-width">
-                                            <input type="text" id="billing__address2" name="billing_address2" placeholder="Address Line 2">
+                                        <div class="row">
+                                            <div class="form-group full-width">
+                                                <input type="text" id="billing__address2" name="billing_address2" placeholder="Address Line 2">
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="billing_country" name="billing_country" placeholder="Country">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <input type="text" id="billing_country" name="billing_country" placeholder="Country">
+                                            </div>
+                                            <div class="form-group d-none select_state">
+                                                <input type="text" id="billing_state" name="billing_state" placeholder="State">
+                                            </div>
                                         </div>
-                                        <div class="form-group d-none select_state">
-                                            <input type="text" id="billing_state" name="billing_state" placeholder="State">
-                                        </div>
-                                    </div>
 
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" name="billing_city" id="billing_city" placeholder="Suburb/City">
+                                        <div class="row">
+                                            <div class="form-group">
+                                                <input type="text" name="billing_city" id="billing_city" placeholder="Suburb/City">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="text" name="billing_postcode" id="billing_postcode" placeholder="Postcode">
+                                            </div>
                                         </div>
-                                        <div class="form-group">
-                                            <input type="text" name="billing_postcode" id="billing_postcode" placeholder="Postcode">
-                                        </div>
-                                    </div>
 
 
 
@@ -1509,7 +1506,7 @@ $const = $productt->constant;
             $('.file-name').text(files.length + (files.length > 1 ? ' files selected' : ' file selected'));
 
             // Clear existing logo containers
-            $('#drop-area').empty();
+            // $('#file-list').empty();
 
             if (files.length > 0) {
                 // Loop through each file
@@ -1537,7 +1534,7 @@ $const = $productt->constant;
                         logoContainer.append(preview);
 
                         // Append the logo container to the drop area
-                        $('#drop-area').append(logoContainer);
+                        $('#file-list').append(logoContainer);
                     };
                     reader.readAsDataURL(file);
                 });
