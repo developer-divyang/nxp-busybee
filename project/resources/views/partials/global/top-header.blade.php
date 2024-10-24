@@ -7,9 +7,7 @@
       <a href="{{ route('front.category') }}">
          <li class="" data-page="product">Product</li>
       </a>
-      <a href="">
-         <li class="" data-page="blog">Blog</li>
-      </a>
+      
       <a href="">
          <li class="" data-page="about">About us</li>
       </a>
@@ -19,9 +17,7 @@
       <a href="">
          <li class="" data-page="reviews">Reviews</li>
       </a>
-      <a href="">
-         <li class="" data-page="blog2">Blog</li>
-      </a>
+      
       <a href="">
          <li class="" data-page="faqs">FAQ's</li>
       </a>
