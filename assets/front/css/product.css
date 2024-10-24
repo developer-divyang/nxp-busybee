@@ -149,15 +149,21 @@ body {
 
 
 .center-nav ul {
-
   width: 100%;
-
   display: flex;
-
-  /* justify-content: space-between; */
-
   max-width: 350px;
-
+}
+.center-nav ul:nth-child(1) {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end!important;
+  max-width: 350px;
+}
+.center-nav ul:nth-child(2) {
+  width: 100%;
+  display: flex;
+  
+  max-width: 350px;
 }
 
 
@@ -2883,30 +2889,23 @@ input[type=range]::-moz-range-thumb {
   }
 
 
-
   .center-nav ul {
-
     width: 100%;
-
     display: flex;
-
-    justify-content: space-between;
-
     max-width: 350px;
-
-    padding: 0;
-
-    /* Reset default padding */
-
-    margin: 0;
-
-    /* Reset default margin */
-
-    list-style: none;
-
-    /* Remove default list styling */
-
-  }
+}
+.center-nav ul:nth-child(1) {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end!important;
+    max-width: 350px;
+}
+.center-nav ul:nth-child(2) {
+    width: 100%;
+    display: flex;
+    
+    max-width: 350px;
+}
 
 
 
