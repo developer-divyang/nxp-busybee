@@ -257,9 +257,10 @@ class StripeController extends CheckoutBaseControlller
                     $order = new Order;
                     $input['cart'] = $new_cart;
                     $input['user_id'] = Auth::check() ? Auth::user()->id : NULL;
+                    $input['stripe_customer_id'] = $customer->id;
                     $input['affilate_users'] = $affilate_users;
                     $input['pay_amount'] = $total / $this->curr->value;
-                    $input['pending_amount'] = $request->payment_type === 'half' ? $request->total_amount - 30 : 0;
+                    $input['pending_amount'] = $request->payment_type == 'half' ? $request->total_amount - 30 : 0;
                     $input['order_number'] = $item_number;
                     $input['billing_address'] = json_encode($billing_address);
                     $input['shipping_address'] = json_encode($shipping_address);
