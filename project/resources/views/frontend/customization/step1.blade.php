@@ -214,18 +214,20 @@
                                     </div>
 
                                     <div class="file-upload-container">
-                                        <div id="drop-area" style="display: flex;">
+                                    <div id="file-list" >
+
+                                    </div>
+                                        <div id="drop-area"
+                                         style="display: flex;height:120px; width:170px; border-radius:20px; align-items:center; justify-content:center;gap:6px;">
                                             <span class="drag-text">Drag and drop here</span>
                                         </div>
-                                        <div id="file-list" style="display: flex;">
-
-                                        </div>
-                                        <label class="file-upload-button">
-                                            <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
-                                            UPLOAD YOUR LOGO
-                                        </label>
-                                        <span class="file-name">No File Selected</span>
+                                        
                                     </div>
+                                    <label class="file-upload-button">
+                                        <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
+                                        UPLOAD YOUR LOGO
+                                    </label>
+                                    <span class="file-name">No File Selected</span>
 
                                     <div class="logotextarea" style="margin-top: 10px;">
                                         <textarea class="logotextareamain" name="front_multi_logo_note" id="" placeholder="Front logo Notes"></textarea>

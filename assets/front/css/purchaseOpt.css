@@ -1105,10 +1105,11 @@ select:focus {
 .file-upload-container {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 6px;
     font-family: Arial, sans-serif;
     font-size: 14px;
     color: #666;
+    flex-wrap: wrap;
 }
 
 .file-upload-button {
@@ -1221,8 +1222,9 @@ h2 {
 }
 
 .logo-container {
-    width: 150px;
+    width: 170px;
     height: 120px;
+    min-width: 170px;
     border: 2px dashed #ddd;
     border-radius: 12px;
     display: flex;
@@ -1239,8 +1241,9 @@ h2 {
 .logo-container img {
     max-width: 80px;
     max-height: 80px;
-    filter: grayscale(100%);
+    /* filter: grayscale(100%); */
     transition: filter 0.3s ease;
+    object-fit: cover;
 }
 
 .logo-container.selected img {
@@ -1264,6 +1267,28 @@ h2 {
 
 /* ---------------------contentTwo------------------------ */
 
+
+
+
+#file-list {
+    display: flex;
+    gap: 6px;
+    max-width: 600px;
+    overflow-x: scroll;
+    white-space: nowrap;
+    scrollbar-width: thin; 
+    
+  }
+
+  #file-list::-webkit-scrollbar {
+    height: 8px; /* For Chrome, Safari and Opera */
+  }
+  
+  #file-list::-webkit-scrollbar-thumb {
+    background-color: #D07531!important; 
+    
+  }
+  
 
 /* -----------------UploadRight------------------- */
 .uploadRight {
@@ -3137,11 +3162,29 @@ button.btn-place-order:hover {
         margin-bottom: 15px;
         width: 100%;
     }
+    #file-list {
+        display: flex;
+        gap: 6px;
+        max-width: 300px;
+        overflow-x: scroll;
+        white-space: nowrap;
+        scrollbar-width: thin; 
+        
+      }
 }
 
 
 
 @media(min-width: 481px) and (max-width:768px) {
+    #file-list {
+        display: flex;
+        gap: 6px;
+        max-width: 400px;
+        overflow-x: scroll;
+        white-space: nowrap;
+        scrollbar-width: thin; 
+        
+      }
     .qty-control input {
         width: 50px;
         text-align: center;
@@ -3404,6 +3447,15 @@ button.btn-place-order:hover {
 }
 
 @media(min-width: 769px) and (max-width:1024px) {
+    #file-list {
+        display: flex;
+        gap: 6px;
+        max-width: 600px;
+        overflow-x: scroll;
+        white-space: nowrap;
+        scrollbar-width: thin; 
+        
+      }
     .qty-control input {
         width: 50px;
         text-align: center;
