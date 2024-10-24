@@ -717,30 +717,30 @@
                                         </div>
                                     </div>
 
-                                    <<<<<<< HEAD=======>>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
 
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <input type="text" id="shipping_country" name="shipping_country" value="USA" placeholder="Country">
-                                            </div>
-                                            <div class="form-group d-none select_state">
-                                                <input type="text" id="shipping_state" name="shipping_state" placeholder="State">
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <input type="text" name="shipping_city" id="shipping_city" placeholder="Suburb/City">
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
-                                            </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" id="shipping_country" name="shipping_country" value="USA" placeholder="Country">
                                         </div>
+                                        <div class="form-group d-none select_state">
+                                            <input type="text" id="shipping_state" name="shipping_state" placeholder="State">
+                                        </div>
+                                    </div>
 
-                                        <div class="row checkbox-group">
-                                            <input type="checkbox" id="same-address" name="same_address">
-                                            <label for="same-address">Shipping and Billing address are same</label>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" name="shipping_city" id="shipping_city" placeholder="Suburb/City">
                                         </div>
+                                        <div class="form-group">
+                                            <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
+                                        </div>
+                                    </div>
+
+                                    <div class="row checkbox-group">
+                                        <input type="checkbox" id="same-address" name="same_address">
+                                        <label for="same-address">Shipping and Billing address are same</label>
+                                    </div>
 
 
 
@@ -751,44 +751,44 @@
                                         <label for="same-address">Shipping and Billing address are same</label>
                                     </div> -->
 
-                                    <<<<<<< HEAD=======<p style="margin-bottom: 10px;">Billing Address</p>
+                                    <p style="margin-bottom: 10px;">Billing Address</p>
 
-                                        >>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <input type="text" id="billing_name" name="billing_name" placeholder="Full Name">
-                                            </div>
-                                        </div>
 
-                                        <div class="row">
-                                            <div class="form-group full-width">
-                                                <input type="text" id="billing_address1" name="billing_address1" placeholder="Address Line 1">
-                                            </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" id="billing_name" name="billing_name" placeholder="Full Name">
                                         </div>
+                                    </div>
 
-                                        <div class="row">
-                                            <div class="form-group full-width">
-                                                <input type="text" id="billing__address2" name="billing_address2" placeholder="Address Line 2">
-                                            </div>
+                                    <div class="row">
+                                        <div class="form-group full-width">
+                                            <input type="text" id="billing_address1" name="billing_address1" placeholder="Address Line 1">
                                         </div>
+                                    </div>
 
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <input type="text" id="billing_country" name="billing_country" placeholder="Country">
-                                            </div>
-                                            <div class="form-group d-none select_state">
-                                                <input type="text" id="billing_state" name="billing_state" placeholder="State">
-                                            </div>
+                                    <div class="row">
+                                        <div class="form-group full-width">
+                                            <input type="text" id="billing__address2" name="billing_address2" placeholder="Address Line 2">
                                         </div>
+                                    </div>
 
-                                        <div class="row">
-                                            <div class="form-group">
-                                                <input type="text" name="billing_city" id="billing_city" placeholder="Suburb/City">
-                                            </div>
-                                            <div class="form-group">
-                                                <input type="text" name="billing_postcode" id="billing_postcode" placeholder="Postcode">
-                                            </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" id="billing_country" name="billing_country" placeholder="Country">
                                         </div>
+                                        <div class="form-group d-none select_state">
+                                            <input type="text" id="billing_state" name="billing_state" placeholder="State">
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <input type="text" name="billing_city" id="billing_city" placeholder="Suburb/City">
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="text" name="billing_postcode" id="billing_postcode" placeholder="Postcode">
+                                        </div>
+                                    </div>
 
 
 
@@ -852,7 +852,7 @@
                         </div>
                     </div> -->
 
-                    <button class="accordion-toggle shipping_method" style="display: flex;">
+                    <button class="accordion-toggle shipping_method" style="display: none;">
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Shipping <span>Method</span></h4>
                     </button>
                     <div class="accordion-content shipping_method" style="display: block;">
@@ -873,10 +873,13 @@
                                 <div class="payment-form-container">
 
                                     <div class="total-container" id="amount_div">
-                                        <p style="margin-bottom: 10px;">Total: <span style="font-weight:800;" id="paytotal" data-value="720.00">$720.00</span></p>
+                                        <p style="margin-bottom: 10px;">Sub Total: <span style="font-weight:800;" id="paytotal" data-value="720.00">$720.00</span></p>
                                         <p style="margin-bottom: 10px;">Shipping Charge: <span style="font-weight:800;" id="shipping_charge">$720.00</span></p>
                                         <p>-------------------------------------</p>
-                                        <p style="margin-bottom: 10px;">Total Payable Amount: <span style="font-weight:800;" id="payable_amount">$720.00</span></p>
+                                        <p style="margin-bottom: 10px;">Total Amount: <span style="font-weight:800;" id="payable_amount">$720.00</span></p>
+                                        <p style="margin-bottom: 10px;display:none">Deposit Amount: <span style="font-weight:800;" id="deposite_amount">$30.00</span></p>
+                                        <p style="margin-bottom: 10px;display:none">Pending Amount: <span style="font-weight:800;" id="pending_amount"></span></p>
+
                                         <input type="hidden" name="total_amount" id="total_pay_amount" value="720.00">
                                     </div>
 
@@ -1082,10 +1085,19 @@ $const = $productt->constant;
                 let amount;
                 if (this.value === 'full') {
                     totalAmount = totalAmount; // Full payment
+                    $('#deposite_amount').parent().hide();
+                    $('#pending_amount').parent().hide();
                 } else {
                     totalAmount = 30; // Deposit amount
+                    var pendingAmount = parseFloat($('#total_pay_amount').val()) - totalAmount;
+                    $('#deposite_amount').parent().show();
+                    $('#pending_amount').html('$' + pendingAmount.toFixed(2));
+                    $('#pending_amount').parent().show();
+
+
                 }
                 document.getElementById('payment-amount').value = totalAmount.toFixed(2);
+
             });
         });
 
@@ -1281,6 +1293,15 @@ $const = $productt->constant;
         let baseTotal = parseFloat($('#paytotal').data('value'));
         // Get the shipping cost from the selected radio button's data-cost attribute
         let shippingCost = parseFloat($(this).data('cost'));
+
+        var totalQty = 0;
+
+        $('.item-qty').each(function() {
+            totalQty += parseInt($(this).val());
+        });
+
+        shippingCost = shippingCost * totalQty;
+        // alert(ShippingCost);
 
         $('#shipping-cost').val(shippingCost);
         //set lable text in hidden input
