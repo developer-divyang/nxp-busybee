@@ -214,14 +214,14 @@
                                     </div>
 
                                     <div class="file-upload-container">
-                                    <div id="file-list" >
+                                        <div id="file-list">
 
-                                    </div>
+                                        </div>
                                         <div id="drop-area"
-                                         style="display: flex;height:120px; width:170px; border-radius:20px; align-items:center; justify-content:center;gap:6px;">
+                                            style="display: flex;height:120px; width:170px; border-radius:20px; align-items:center; justify-content:center;gap:6px;">
                                             <span class="drag-text">Drag and drop here</span>
                                         </div>
-                                        
+
                                     </div>
                                     <label class="file-upload-button">
                                         <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
@@ -1237,6 +1237,14 @@ $const = $productt->constant;
 
             getShippingMethods(city, state, postcode);
         });
+
+
+        //on keyup shipping_state, shipping_city, shipping_postcode call getShippingMethods function
+        $(document).on('blur', '#shipping_state, #shipping_city, #shipping_postcode', function() {
+            var city = $('#shipping_city').val();
+            var state = $('#shipping_state').val();
+            var postcode = $('#shipping_postcode').val(); getShippingMethods(city, state, postcode);
+        });
     }
 
 
@@ -1262,12 +1270,13 @@ $const = $productt->constant;
 
             },
             success: function(response) {
+                $('#shipping_method_list').empty();
+                // $('.shipping_method').show();
                 if (response.is_success) {
                     console.log('Shipping methods retrieved');
                     console.log(response.data);
 
                     // Clear the shipping method list
-                    $('#shipping_method_list').empty();
 
                     // Loop through the shipping methods and append them to the list
                     $.each(response.data, function(index, method) {
@@ -1547,9 +1556,10 @@ $const = $productt->constant;
                             class: 'logo-preview',
                             alt: 'Logo Preview',
                             css: {
-                                width: '100px',
-                                height: '100px',
-                                margin: '5px'
+                                width: '100%',
+                                height: '100%',
+                                margin: '5px',
+                                objectFit: 'contain'
                             } // Optional: set size and spacing
                         });
 
@@ -1558,6 +1568,8 @@ $const = $productt->constant;
 
                         // Append the logo container to the drop area
                         $('#file-list').append(logoContainer);
+                        $('#uploadRight').hide();
+                        $('.file-name').text($('.logo-container').length + ' Logo(s) Uploaded');
                     };
                     reader.readAsDataURL(file);
                 });

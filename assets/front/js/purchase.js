@@ -610,9 +610,10 @@ function previewImage(file) {
             class: 'logo-preview',
             alt: 'Logo Preview',
             css: {
-                width: '100px',
-                height: '100px',
-                margin: '5px'
+                width: '100%',
+                height: '100%',
+                margin: '5px',
+                objectFit: 'contain'
             } // Optional: set size and spacing
         });
 
@@ -620,6 +621,8 @@ function previewImage(file) {
         logoContainer.append(preview);
         // dropArea.appendChild(logoContainer);
         $('#file-list').append(logoContainer);
+        $('#uploadRight').hide();
+        $('.file-name').text($('.logo-container').length + ' Logo(s) Uploaded');
     }
 
     reader.readAsDataURL(file);

@@ -223,7 +223,7 @@ class CheckoutController extends FrontBaseController
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json(['is_success' => false, 'message' => $validator->errors()]);
+            return response()->json(['is_success' => false, 'message' => $validator->errors()->first()]);
         }
 
         $total_qty = $request->total_qty;
@@ -301,8 +301,12 @@ if($total_qty >= 1 && $total_qty <= 6){
             $response = curl_exec($ch);
             curl_close($ch);
             $response = json_decode($response, true);
-            // dd($response);
-            return response()->json(['is_success' => true, 'data' => $response]);
+            
+            if(isset($response['Message'])){
+                return response()->json(['is_success' => false, 'message' => $response['Message'].' Enter valid City State Or Postcode.']);
+            }else{
+                return response()->json(['is_success' => true, 'data' => $response]);
+            }
             
         }
         catch (\Exception $e) {
