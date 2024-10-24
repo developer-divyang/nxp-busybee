@@ -45,10 +45,10 @@
           </h2>
           <div class="accordion-content checks" data-field="profile">
             <ul>
-              <li><span><input type="checkbox" data-id="high" name="profile[]" id="highProfile">High Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','high') }}</span></li>
-              <li><span><input type="checkbox" data-id="low" name="profile[]" id="lowProfile">Low Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','low') }}</span></li>
-              <li><span><input type="checkbox" data-id="mid" name="profile[]" id="midProfile">Mid Profile</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','mid') }}</span></li>
-              <li><span><input type="checkbox" data-id="pro" name="profile[]" id="proStyle">Pro Style</span><span>{{ App\Helpers\ProductHelper::getProductCount('profile','pro') }}</span></li>
+              <li><span><input type="checkbox" data-id="high" name="profile[]" id="highProfile">High Profile</span></li>
+              <li><span><input type="checkbox" data-id="low" name="profile[]" id="lowProfile">Low Profile</span></li>
+              <li><span><input type="checkbox" data-id="mid" name="profile[]" id="midProfile">Mid Profile</span></li>
+              <li><span><input type="checkbox" data-id="pro" name="profile[]" id="proStyle">Pro Style</span></li>
             </ul>
           </div>
         </div>
@@ -67,7 +67,7 @@
               $count = 1;
               }
               @endphp
-              <li><span><input type="checkbox" data-id="{{ $color->id }}" name="color[]" id="{{ $color->id }}">{{ $color->color_group }}</span><span>{{ App\Helpers\ProductHelper::getProductCount('color_id',$color->id,'product_color_images') }}</span></li>
+              <li><span><input type="checkbox" data-id="{{ $color->id }}" name="color[]" id="{{ $color->id }}">{{ $color->color_group }}</span></li>
               @endforeach
             </ul>
           </div>
@@ -80,8 +80,8 @@
           </h2>
           <div class="accordion-content checks" data-field="fit">
             <ul>
-              <li><span><input type="checkbox" data-id="stretch" name="fit[]" id="stretch">Stretch Fit</span><span>{{ App\Helpers\ProductHelper::getProductCount('fit','stretch') }}</span></li>
-              <li><span><input type="checkbox" data-id="adjustable" name="fit[]" id="adjustable">Adjustable</span><span>{{ App\Helpers\ProductHelper::getProductCount('fit','adjustable') }}</span></li>
+              <li><span><input type="checkbox" data-id="stretch" name="fit[]" id="stretch">Stretch Fit</span></li>
+              <li><span><input type="checkbox" data-id="adjustable" name="fit[]" id="adjustable">Adjustable</span></li>
             </ul>
           </div>
         </div>
@@ -93,8 +93,8 @@
           </h2>
           <div class="accordion-content checks" data-field="bill">
             <ul>
-              <li><span><input type="checkbox" data-id="curved" name="fit[]" id="curved">Curved</span><span>{{ App\Helpers\ProductHelper::getProductCount('bill','curved') }}</span></li>
-              <li><span><input type="checkbox" data-id="flat" name="fit[]" id="flat">Flat</span><span>{{ App\Helpers\ProductHelper::getProductCount('bill','flat') }}</span></li>
+              <li><span><input type="checkbox" data-id="curved" name="fit[]" id="curved">Curved</span></li>
+              <li><span><input type="checkbox" data-id="flat" name="fit[]" id="flat">Flat</span></li>
             </ul>
           </div>
         </div>
@@ -107,7 +107,7 @@
           <div class="accordion-content checks" data-field="size">
             <ul>
               @foreach (App\Models\Size::groupBy('size_name')->get() as $size)
-              <li><span><input type="checkbox" data-id="{{ $size->id }}" name="size[]" id="{{ $size->id }}">{{ $size->size_name }}</span><span>{{ App\Helpers\ProductHelper::getProductCount('size_id',$size->id,'product_size_colors') }}</span></li>
+              <li><span><input type="checkbox" data-id="{{ $size->id }}" name="size[]" id="{{ $size->id }}">{{ $size->size_name }}</span></li>
               @endforeach
             </ul>
           </div>
@@ -121,7 +121,7 @@
           <div class="accordion-content checks" data-field="brand">
             <ul>
               @foreach (App\Models\Brand::groupBy('brand')->get() as $brand)
-              <li><span><input type="checkbox" data-id="{{ $brand->id }}" name="brand[]" id="{{ $brand->id }}">{{ $brand->brand }}</span><span>{{ App\Helpers\ProductHelper::getProductCount('brand_id',$brand->id) }}</span></li>
+              <li><span><input type="checkbox" data-id="{{ $brand->id }}" name="brand[]" id="{{ $brand->id }}">{{ $brand->brand }}</span></li>
               @endforeach
             </ul>
           </div>
@@ -148,9 +148,9 @@
           </h2>
           <div class="accordion-content checks" data-field="closure">
             <ul>
-              <li><span><input type="checkbox" data-id="buckle" name="closure[]" id="buckle">Buckle</span><span>{{ App\Helpers\ProductHelper::getProductCount('closure','buckle') }}</span></li>
-              <li><span><input type="checkbox" data-id="snapback" name="closure[]" id="snapback">Snapback</span><span>{{ App\Helpers\ProductHelper::getProductCount('closure','snapback') }}</span></li>
-              <li><span><input type="checkbox" data-id="velcro" name="closure[]" id="velcro">Velcro</span><span>{{ App\Helpers\ProductHelper::getProductCount('closure','velcro') }}</span></li>
+              <li><span><input type="checkbox" data-id="buckle" name="closure[]" id="buckle">Buckle</span></li>
+              <li><span><input type="checkbox" data-id="snapback" name="closure[]" id="snapback">Snapback</span></li>
+              <li><span><input type="checkbox" data-id="velcro" name="closure[]" id="velcro">Velcro</span></li>
             </ul>
           </div>
         </div>
@@ -386,7 +386,7 @@
           $('.loader').fadeOut(1000);
           $('#pagination-links').html('');
 
-          toastr.error('Error fetching products');
+          // toastr.error('Error fetching products');
         }
       },
       error: function(xhr) {

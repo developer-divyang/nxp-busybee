@@ -8,6 +8,8 @@
 
   font-family: 'Inter', sans-serif;
 
+  
+
 }
 
 
@@ -23,6 +25,15 @@
 
 .alert-info .alert-link {
   color: #062c33
+}
+
+.view-wrapper a p{
+  text-decoration: none;
+  color: #000;
+}
+
+#chatting {
+  scroll-behavior: smooth;
 }
 
 .alert-warning {

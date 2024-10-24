@@ -73,14 +73,28 @@ class OrderController extends AdminBaseController
                                 $id = '<a href="'.route('admin-order-invoice',$data->id).'">'.$data->order_number.'</a>';
                                 return $id;
                             })
+                            ->editColumn('customer_email', function (Order $data) {
+                                $id = '<a href="mailto:'.$data->user->email.'">'.$data->user->email.'</a>';
+                                return $id;
+                            })
+                            ->editColumn('totalQty', function(Order $data) {
+            
+                            $cart = json_decode($data->cart, true);
+                                $id = $cart['totalQty'];
+                                return $id;
+                            })
                             ->editColumn('pay_amount', function (Order $data) {
-                                return \PriceHelper::showOrderCurrencyPrice((($data->pay_amount + $data->wallet_price) * $data->currency_value),$data->currency_sign);
+                            $pay_amount = '';
+                            $pay_amount .=  '<p>Total : ' . \PriceHelper::showOrderCurrencyPrice((($data->pay_amount + $data->pending_amount) * $data->currency_value), $data->currency_sign) . '</p>';
+                            $pay_amount .=  '<p>Paid : ' . \PriceHelper::showOrderCurrencyPrice((($data->pay_amount) * $data->currency_value), $data->currency_sign) . '</p>';
+                            $pay_amount .=  '<p>Pending : '.\PriceHelper::showOrderCurrencyPrice((($data->pending_amount) * $data->currency_value),$data->currency_sign).'</p>';
+                                return $pay_amount;
                             })
                             ->addColumn('action', function(Order $data) {
                                 $orders = '<a href="javascript:;" data-href="'. route('admin-order-edit',$data->id) .'" class="delivery" data-toggle="modal" data-target="#modal1"><i class="fas fa-dollar-sign"></i> '.__('Delivery Status').'</a>';
                                 return '<div class="godropdown"><button class="go-dropdown-toggle">'.__('Actions').'<i class="fas fa-chevron-down"></i></button><div class="action-list"><a href="' . route('admin-order-show',$data->id) . '" > <i class="fas fa-eye"></i> '.__('View Details').'</a><a href="javascript:;" class="send" data-email="'. $data->customer_email .'" data-toggle="modal" data-target="#vendorform"><i class="fas fa-envelope"></i> '.__('Send').'</a><a href="javascript:;" data-href="'. route('admin-order-track',$data->id) .'" class="track" data-toggle="modal" data-target="#modal1"><i class="fas fa-truck"></i> '.__('Track Order').'</a>'.$orders.'</div></div>';
                             }) 
-                            ->rawColumns(['id','action'])
+                            ->rawColumns(['id','action', 'customer_email', 'pay_amount'])
                             ->toJson(); //--- Returning Json Data To Client Side
     }
 

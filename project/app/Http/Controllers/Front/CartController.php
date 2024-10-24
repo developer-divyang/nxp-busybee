@@ -255,7 +255,7 @@ class CartController extends FrontBaseController
                     $cart->totalPrice += $data['price'] * $data['qty']; // Multiply price by quantity
                 }
                 //dd($cart);
-                if($cart->items[$itemKey]['qty'] == 0){
+                if($cart->items[$itemKey]['qty'] < 1){
                     unset($cart->items[$itemKey]);
                 }
                 

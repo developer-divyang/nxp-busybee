@@ -57,7 +57,7 @@
                             <button type="button" class="counter-btn minus-btn">−</button>
 
                             @php
-                            $quantity = 0;
+                            $quantity = 1;
 
                             if(isset($products[$productt->id . $size_n->size_name . $color->color_name])){
                             $quantity = $products[$productt->id. $size_n->size_name. $color->color_name]['qty'];

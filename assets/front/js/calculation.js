@@ -250,6 +250,7 @@ function constantCalculation(qty = 0, p_id = 0, key = '', model = 0) {
 
 // alert($('.item_price_' + model).attr('id'));
         if (model > 0) {
+            // alert(f3);
             // if ($('.item_price_' + model).attr('id') == 'price-' + key) {
                 $('#price-' + key).html('$' + per_cap + '<input type="hidden" id="price-input-' + key + '" value="' + per_cap + '" name="price[' + key + ']">');
             let sub_total = 0;
@@ -270,6 +271,13 @@ function constantCalculation(qty = 0, p_id = 0, key = '', model = 0) {
         $('.subtotal').each(function () {
             total += parseFloat($(this).attr('data-value'));
         });
+
+        $('#paytotal').html('$' + total.toFixed(2));
+        $('#paytotal').attr('data-value', total.toFixed(2));
+        $('#shipping_charge').html('$' + 0.00);
+        $('#payable_amount').html('$' + total.toFixed(2));
+        $('#total_pay_amount').val(total.toFixed(2));        
+
         $('#total').html('$' + total.toFixed(2));
         $('#total_amount').val(total.toFixed(2));
 

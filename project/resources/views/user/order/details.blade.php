@@ -2,6 +2,7 @@
 @section('css')
 
 <link rel="stylesheet" href="{{ asset('assets/front/css/order-details.css') }}">
+<link rel="stylesheet" href="{{asset('assets/admin/css/fontawesome.css')}}">
 @endsection
 @section('content')
 
@@ -102,15 +103,17 @@
                             <td>
                                 <div class="frostimg">
                                     <div class="frosting-cont">
-                                        <div class="frosting-container">
+                                        <div class="frosting-container  logo-img" style="position:relative">
                                             @php
                                             $logo = json_decode($item['front_logo']);
                                             @endphp
-                                            <a href="{{ Storage::url($logo[0]) }}" target="_blank"> <img src="{{ Storage::url($logo[0]) }}" alt="Logo" class="logo-file"></a>
+                                            <img src="{{ Storage::url($logo[0]) }}" alt="Logo" class="logo-file">
+                                            <a class="download-btn" data-name="front-logo-1" href="{{ Storage::url($logo[0]) }}" download><i class="fas fa-download"></i></a>
                                             <p>Front <br> Logo</p>
                                         </div>
-                                        <div class="frosting-container">
-                                            <a href="{{ Storage::url($item['back_logo']) }}" target="_blank"> <img src="{{ Storage::url($item['back_logo']) }}" alt="Logo" class="logo-file"></a>
+                                        <div class="frosting-container  logo-img" style="position:relative">
+                                            <img src="{{ Storage::url($item['back_logo']) }}" alt="Logo" class="logo-file">
+                                            <a class="download-btn" data-name="back-logo" href="{{ Storage::url($item['back_logo']) }}" download><i class="fas fa-download"></i></a>
                                             <p>Back <br> Logo</p>
                                         </div>
                                     </div>
@@ -149,21 +152,22 @@
                 </div>
 
             </div>
+            <div id="chatting">
+                <div class="chat-container" style="min-height:300px;max-height:400px; overflow-y:scroll;border-right: 2px solid #00000040;border-left: 2px solid #00000040;" id="chat-container{{ $order->id }}">
+                    <!-- Chat messages will be appended here -->
+                              
+                </div>
 
-            <div class="chat-container" style="min-height:300px;max-height:400px; overflow-y:scroll;border-right: 2px solid #00000040;border-left: 2px solid #00000040;" id="chat-container{{ $order->id }}">
-                <!-- Chat messages will be appended here -->
-                          
-            </div>
-
-            <div class="comment-input{{ $order->id }}">
-                <div class="comment-wrapper">
-                    <input type="text" id="comment-text{{ $order->id }}" placeholder="Enter Your Comments">
-                    <input type="file" id="file-upload{{ $order->id }}" style="display: none;" onchange="updateFileName(this)">
-                    <div style="display:flex; gap:10px;align-item-center;">
-                        <label for="file-upload{{ $order->id }}" class="file-upload-button"><img src="{{ asset('assets/front/images/upload1.png') }}" height="15px"> </label>
-                        <span style="font-size:14px;" class="file-name" id="file-name{{ $order->id }}">No file chosen</span>
+                <div class="comment-input{{ $order->id }}">
+                    <div class="comment-wrapper">
+                        <input type="text" id="comment-text{{ $order->id }}" placeholder="Enter Your Comments">
+                        <input type="file" id="file-upload{{ $order->id }}" style="display: none;" onchange="updateFileName(this)">
+                        <div style="display:flex; gap:10px;align-item-center;">
+                            <label for="file-upload{{ $order->id }}" class="file-upload-button"><img src="{{ asset('assets/front/images/upload1.png') }}" height="15px"> </label>
+                            <span style="font-size:14px;" class="file-name" id="file-name{{ $order->id }}">No file chosen</span>
+                        </div>
+                        <button class="comment-send-btn" data-id="{{ $order->id }}" id="send-comment{{ $order->id }}"><img src="http://localhost/nxp-busybee/assets/front/images/sendArrow.png" alt="">Send</button>
                     </div>
-                    <button class="comment-send-btn" data-id="{{ $order->id }}" id="send-comment{{ $order->id }}"><img src="http://localhost/nxp-busybee/assets/front/images/sendArrow.png" alt="">Send</button>
                 </div>
             </div>
 

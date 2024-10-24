@@ -153,96 +153,97 @@
                             <h4><img src="{{ asset('assets/front/images/uploadImg.png') }}" alt="uploadImg">Upload <span>Your Logo</span></h4>
                         </button>
                         <div class="accordion-content">
-                        <div class="uploadTop" style="display: flex; justify-content: space-between;">
-                            <!-- Upload Left Section -->
-                            <div class="uploadLeft">
-                                <div class="radio-group">
-                                    @if (Auth::check())
+                            <div class="uploadTop">
+                                <div class="uploadLeft">
+                                    <div class="radio-group">
+                                        @if (Auth::check())
                                         <label class="radio-container">
                                             <input type="radio" name="order" value="previous" id="previousRadio">
                                             <span class="checkmark"></span>
                                             I Have Ordered With This Logo Before
                                         </label>
-                                    @else
+                                        @else
                                         <label class="radio-container">
                                             <input type="radio" name="order" class="user_login" value="previous" id="previousRadio">
                                             <span class="checkmark"></span>
                                             I Have Ordered With This Logo Before
                                         </label>
-                                    @endif
-                                    <label class="radio-container">
-                                        <input type="radio" name="order" value="first-time" id="firstTimeRadio" checked>
-                                        <span class="checkmark checked"></span>
-                                        This Is My First Time Ordering
-                                    </label>
-                                </div>
-
-                                <div class="uploadCont">
-                                    <div class="contentOne" id="contentOne">
-                                        <div class="uploadTextWrapper">
-                                            <h3>Upload Your Logo</h3>
-                                            <ul>
-                                                <li>Any image of your logo will work (even a screenshot or photo). We redraw and recreate all designs during artwork setup.</li>
-                                                <li>Every logo must be hand converted by one of our designers into a new file that works for our machines.</li>
-                                                <li>We test and tweak every logo until the output meets or exceeds our very high quality standards.</li>
-                                                <li>We keep your artwork on file for all future orders.</li>
-                                                <li>Upload file size should be max 5MB and we support file formats like .jpg, .png, .svg, .eps, .ai etc...</li>
-                                            </ul>
-                                        </div>
+                                        @endif
+                                        <label class="radio-container">
+                                            <input type="radio" name="order" value="first-time" id="firstTimeRadio" checked>
+                                            <span class="checkmark checked"></span>
+                                            This Is My First Time Ordering
+                                        </label>
                                     </div>
-                                    <div class="contentTwo" id="contentTwo" style="display:none;">
-                                        <div class="container">
-                                            <h2>Choose Your Logo</h2>
-                                            <div class="logo-wrapper">
-                                                @if (Auth::check())
+
+                                    <div class="uploadCont">
+                                        <div class="contentOne" id="contentOne">
+                                            <div class="uploadTextWrapper">
+                                                <h3>Upload Your Logo</h3>
+                                                <ul>
+                                                    <li>Any image of your logo will work (even a screen shot or photo). We redraw and recreate all designs during artwork setup.</li>
+                                                    <li>Every logo must be hand converted by one of our designers into a new file that works for our machines.</li>
+                                                    <li>We test and tweak every logo until the output meets or exceeds our very high quality standards.</li>
+                                                    <li>We keep your artwork on file for all future orders.</li>
+                                                    <li>Upload file size should be max 5MB and we support file formats like .jpg, .png, .svg, .eps, .ai etc...</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="contentTwo" id="contentTwo" style="display:none;">
+                                            <div class="container">
+                                                <h2>Choose Your Logo</h2>
+                                                <div class="logo-wrapper">
+                                                    @if (Auth::check())
                                                     @if(Auth::user()->logos->count() > 0)
-                                                        @foreach(Auth::user()->logos as $logo)
-                                                            <div class="logo-container" onclick="selectLogo(this)">
-                                                                <img src="{{ Storage::url($logo->logo) }}" alt="Logo 1" class="inactive-logo">
-                                                            </div>
-                                                        @endforeach
+                                                    @foreach(Auth::user()->logos as $logo)
+                                                    <div class="logo-container" onclick="selectLogo(this)">
+                                                        <img src="{{ Storage::url($logo->logo) }}" alt="Logo 1" class="inactive-logo">
+                                                    </div>
+                                                    @endforeach
+
+
+
                                                     @else
-                                                        <div class="no-logo">
-                                                            <h3>No Logos Found</h3>
-                                                            <p>You have not uploaded any logos yet. Please upload a logo to continue.</p>
-                                                        </div>
+                                                    <div class="no-logo">
+                                                        <h3>No Logos Found</h3>
+                                                        <p>You have not uploaded any logos yet. Please upload a logo to continue.</p>
+                                                    </div>
+
                                                     @endif
+                                                </div>
                                                 @endif
+
+
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="file-upload-container">
-                                    <div id="drop-area" style="display: flex;">
-                                        <span class="drag-text">Drag and drop here</span>
+                                    <div class="file-upload-container">
+                                        <div id="drop-area" style="display: flex;">
+                                            <span class="drag-text">Drag and drop here</span>
+                                        </div>
+                                        <label class="file-upload-button">
+                                            <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
+                                            UPLOAD YOUR LOGO
+                                        </label>
+                                        <span class="file-name">No File Selected</span>
                                     </div>
-                                    <label class="file-upload-button">
-                                        <input type="file" name="front_logo[]" id="logo-upload" hidden="" multiple>
-                                        UPLOAD YOUR LOGO
-                                    </label>
-                                    <span class="file-name">No File Selected</span>
+                                    <div class="logotextarea" style="margin-top: 10px;">
+                                        <textarea class="logotextareamain" name="front_multi_logo_note" id="" placeholder="Front logo Notes"></textarea>
+                                    </div>
+
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" checked>
+                                            <span class="checkmark"></span>
+                                            I own the rights to the artwork being used or have permission from the owner to use it
+                                        </label>
+                                    </div>
                                 </div>
 
-                                <div class="logotextarea" style="margin-top: 10px;">
-                                    <textarea class="logotextareamain" name="front_multi_logo_note" id="" placeholder="Front logo Notes"></textarea>
+                                <div class="uploadRight" id="uploadRight">
+                                    <img src="{{ asset('assets/front/images/uploadLogo.png') }}" alt="">
                                 </div>
-
-                                <div class="checkbox-group">
-                                    <label class="checkbox-container">
-                                        <input type="checkbox" checked>
-                                        <span class="checkmark"></span>
-                                        I own the rights to the artwork being used or have permission from the owner to use it
-                                    </label>
-                                </div>
-                            </div> <!-- .uploadLeft ends -->
-
-                            <!-- Upload Right Section -->
-                            <div class="uploadRight" id="uploadRight">
-                                <img src="{{ asset('assets/front/images/uploadLogo.png') }}" alt="">
-                            </div> <!-- .uploadRight ends -->
-                        </div> <!-- .uploadTop ends -->
-
+                            </div>
 
 
                         </div>
@@ -686,13 +687,13 @@
 
 
                     <button class="accordion-toggle">
-                        <h4><img src="{{ asset('assets/front/images/shippingAdd.png') }}" alt=""> Shipping & Billing <span>Address</span></h4>
+                        <h4><img src="{{ asset('assets/front/images/shippingAdd.png') }}" alt=""> Shipping <span>Address</span></h4>
                     </button>
                     <div class="accordion-content">
                         <div class="billingSection">
                             <div class="accorTop">
                                 <div class="form-container">
-                                    <p style="margin-bottom: 10px;">Shipping Address</p>
+
                                     <div class="row">
                                         <div class="form-group">
                                             <input type="text" id="shipping_name" placeholder="Full Name" name="shipping_name">
@@ -712,15 +713,9 @@
                                         </div>
                                     </div>
 
-<<<<<<< HEAD
-                                    
-=======
-
->>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
-
-                                    <div class="row">
+                                    <!-- <div class="row">
                                         <div class="form-group">
-                                            <input type="text" id="shipping_country" name="shipping_country" value="USA" placeholder="Country">
+                                            <input type="text" id="shipping_country" name="shipping_country" placeholder="Country">
                                         </div>
                                         <div class="form-group d-none select_state">
                                             <input type="text" id="shipping_state" name="shipping_state" placeholder="State">
@@ -734,62 +729,7 @@
                                         <div class="form-group">
                                             <input type="text" name="shipping_postcode" id="shipping_postcode" placeholder="Postcode">
                                         </div>
-                                    </div>
-
-                                    <div class="row checkbox-group">
-                                        <input type="checkbox" id="same-address" name="same_address">
-                                        <label for="same-address">Shipping and Billing address are same</label>
-                                    </div>
-
-
-
-                                </div>
-                                <div class="form-container">
-                                    <!-- <div class="row checkbox-group">
-                                        <input type="checkbox" id="same-address" name="same_address">
-                                        <label for="same-address">Shipping and Billing address are same</label>
                                     </div> -->
-
-<<<<<<< HEAD
-=======
-                                    <p style="margin-bottom: 10px;">Billing Address</p>
-
->>>>>>> 9f509426e4b81697ea47f80d2acc136fda684c48
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="billing_name" name="billing_name" placeholder="Full Name">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group full-width">
-                                            <input type="text" id="billing_address1" name="billing_address1" placeholder="Address Line 1">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group full-width">
-                                            <input type="text" id="billing__address2" name="billing_address2" placeholder="Address Line 2">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" id="billing_country" name="billing_country" placeholder="Country">
-                                        </div>
-                                        <div class="form-group d-none select_state">
-                                            <input type="text" id="billing_state" name="billing_state" placeholder="State">
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="form-group">
-                                            <input type="text" name="billing_city" id="billing_city" placeholder="Suburb/City">
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="text" name="billing_postcode" id="billing_postcode" placeholder="Postcode">
-                                        </div>
-                                    </div>
 
 
 
@@ -797,7 +737,7 @@
                             </div>
                         </div>
                     </div>
-                    <!-- 
+
                     <button class="accordion-toggle">
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Billing <span>Address</span></h4>
                     </button>
@@ -851,15 +791,21 @@
                                 </div>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
 
-                    <button class="accordion-toggle shipping_method" style="display: flex;">
+                    <button class="accordion-toggle shipping_method" style="display: none;">
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Shipping <span>Method</span></h4>
                     </button>
-                    <div class="accordion-content shipping_method" style="display: block;">
+                    <div class="accordion-content shipping_method" style="display: none;">
                         <div class="billingSection">
                             <div class="accorTop">
-                                <div class="form-container payment-options label-container" id="shipping_method_list">
+                                <div class="form-container" id="shipping_method_list">
+
+
+
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -869,17 +815,9 @@
                         <h4><img src="{{ asset('assets/front/images/billingAdd.png') }}" alt=""> Make a <span>Payment</span></h4>
                     </button>
                     <div class="accordion-content">
-                        <div class="makeAPayment" style="display: none;">
+                        <div class="makeAPayment">
                             <div class="accorTop">
                                 <div class="payment-form-container">
-
-                                    <div class="total-container" id="amount_div">
-                                        <p style="margin-bottom: 10px;">Total: <span style="font-weight:800;" id="paytotal" data-value="720.00">$720.00</span></p>
-                                        <p style="margin-bottom: 10px;">Shipping Charge: <span style="font-weight:800;" id="shipping_charge">$720.00</span></p>
-                                        <p>-------------------------------------</p>
-                                        <p style="margin-bottom: 10px;">Total Payable Amount: <span style="font-weight:800;" id="payable_amount">$720.00</span></p>
-                                        <input type="hidden" name="total_amount" id="total_pay_amount" value="720.00">
-                                    </div>
 
                                     <!-- Payment Options -->
                                     <div class="payment-options">
@@ -909,7 +847,6 @@
                                     <br>
                                     <div class="row">
                                         <input type="hidden" id="shipping-cost" name="shipping_cost" value="0">
-                                        <input type="hidden" id="shipping-name" name="shipping_lebel" value="">
                                         <input type="hidden" id="packing-cost" name="packing_cost" value="0">
                                         <input type="hidden" id="shipping-title" name="shipping_title" value="0">
                                         <input type="hidden" id="packing-title" name="packing_title" value="0">
@@ -1038,9 +975,6 @@ $const = $productt->constant;
 
     if (document.getElementById('card-element')) {
 
-
-
-
         const stripe = Stripe(stripe_key);
         var elements = stripe.elements();
         var style = {
@@ -1076,7 +1010,7 @@ $const = $productt->constant;
         });
         // Get the total amount from the hidden input
 
-        let totalAmount = parseFloat($('#total_pay_amount').val());
+        let totalAmount = parseFloat($('#total_amount').val());
         // Update payment amount based on selected payment type
         document.querySelectorAll('input[name="payment_type"]').forEach(function(radio) {
             radio.addEventListener('change', function() {
@@ -1260,50 +1194,24 @@ $const = $productt->constant;
 
                     // Loop through the shipping methods and append them to the list
                     $.each(response.data, function(index, method) {
-                        var methodHtml = `<label>
-                                            <input type="radio" id="shipping_method_${method.serviceCode}" name="shipping_method" value="${method.serviceCode}" data-cost="${method.shipmentCost}">
-                                            <span>${method.serviceName} - ${method.shipmentCost}</span>
-                                        </label>
-                                <label>`;
+                        var methodHtml = `
+            <div class="row">
+              <div class="form-group">
+                <input type="radio" id="shipping_method_${method.serviceCode}" name="shipping_method" value="${method.serviceCode}" data-cost="${method.shipmentCost}">
+                <label for="shipping_method_${method.serviceCode}">${method.serviceName} - ${method.shipmentCost}</label>
+              </div>
+            </div>`;
                         $('#shipping_method_list').append(methodHtml);
                     });
 
                     // Show the shipping method section
                     $('.shipping_method').show();
-                } else {
+                }else{
                     toastr.error(response.message);
                 }
             }
         });
     }
-
-    $(document).on('change', 'input[name="shipping_method"]', function() {
-
-        let baseTotal = parseFloat($('#paytotal').data('value'));
-        // Get the shipping cost from the selected radio button's data-cost attribute
-        let shippingCost = parseFloat($(this).data('cost'));
-
-        $('#shipping-cost').val(shippingCost);
-        //set lable text in hidden input
-        $('#shipping-name').val($(this).next().text());
-
-        // Update the shipping charge display
-        $('#shipping_charge').text('$' + shippingCost.toFixed(2));
-
-        // Calculate the new total payable amount
-        // alert(baseTotal);
-        // alert(shippingCost);
-        let totalPayable = baseTotal + shippingCost;
-
-        // Update the total payable amount display
-        $('#payable_amount').text('$' + totalPayable.toFixed(2));
-
-        // Update the hidden total amount input field
-        $('#total_pay_amount').val(totalPayable.toFixed(2));
-
-        // Show the amount div if it is hidden
-        $('.makeAPayment').show();
-    });
 
     // Function to append or update form fields dynamically
     function updateOrAppendField(selector, label, value) {
@@ -1415,14 +1323,15 @@ $const = $productt->constant;
             $('.item-row').each(function() {
                 var model = $(this).data('model-id');
                 var totalmodelqty = 0;
-                $('.item-row').each(function() {
-                    if ($(this).data('model-id') == model) {
-                        totalmodelqty += parseInt($(this).find('.item-qty').val());
-                    }
-                });
+
+                if ($(this).data('model-id') == model) {
+                    totalmodelqty += parseInt($(this).find('.item-qty').val());
+                }
+                // alert(totalmodelqty);
                 let pid = $(this).find('.item-qty').data('product-id');
                 let index = $(this).find('.item-qty').data('id');
                 constantCalculation(totalmodelqty, pid, index, model);
+
             });
 
             const totalAmount = parseFloat($('#total_amount').val());
@@ -1446,7 +1355,7 @@ $const = $productt->constant;
                 $('#shipping_name').val('');
                 $('#shipping_address1').val('');
                 $('#shipping_address2').val('');
-                $('#shipping_country').val('USA');
+                $('#shipping_country').val('');
                 $('#shipping_state').val('');
                 $('#shipping_city').val('');
                 $('#shipping_postcode').val('');
